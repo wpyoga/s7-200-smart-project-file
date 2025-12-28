@@ -12,6 +12,8 @@ NOTE: Chinese/Mandarin README coming soon
 - Convert the project file format into JSON or other standard formats.
 - Generate the project file from a JSON file.
 - Generate a copy-and-paste-able output for Symbol Tables and Data Pages.
+- Make the project file compatible with git for version control.
+  - This should be possible through the use of git commit hooks.
 
 ## Insights
 
