@@ -12,6 +12,13 @@
 * doesn't seem to contain any timestamp  
   * previous versions have a problem with project timestamp, investigate this
 
+## V3
+
+Notes
+- V3 file format is slightly different.
+- The compressed part seems to be compressed and then encrypted, somehow.
+- The encryption key may be stored inside the file, or it may be stored within the executable.
+
 ## main file structure
 
 * 4 bytes header  
