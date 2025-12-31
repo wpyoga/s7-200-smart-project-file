@@ -14,6 +14,14 @@ NOTE: Chinese/Mandarin README coming soon
 - Generate a copy-and-paste-able output for Symbol Tables and Data Pages.
 - Make the project file compatible with git for version control.
   - This should be possible through the use of git commit hooks.
+- Convert program blocks into SCL and vice versa.
+
+## Non-goals
+
+We are not trying to:
+- Break any password protection on a project file.
+- Retrieve any password that is used to protect a project file.
+- Compete with Siemens in any way, shape, or form.
 
 ## Insights
 
@@ -23,7 +31,6 @@ NOTE: Chinese/Mandarin README coming soon
 
 - I don't have a copy of STEP7-200 Micro/WIN SMART v1.0, so I haven't been able to work out
   too many details on the older (oldest) version of the project file format.
-- STEP7-200 Micro/WIN SMART v3.0 changed the format somewhat significantly, and I haven't been able to analyze it.
 
 ## Trivia
 
