@@ -68,4 +68,12 @@ File types:
   - protection flags `00 00` is invalid
 - https://wiki.openssl.org/index.php/EVP_Authenticated_Encryption_and_Decryption
 - `7z` unzips the files just fine, although it complains about header errors.
+- when using `zipdetails` to analyze the archive, note that:
+  - warnings of unexpected padding is misplaced, the supposed padding is the actual compressed data
 - It seems that the directory entries are Windows paths, thus they have backslashes in them.
+- When the zip archive contents are re-archived and re-integrated into a new project file, it seems to work just fine regardless of:
+  - file order
+  - compression level
+- the absolute minimum files that need to be present are:
+  - `template.smartprojs`
+  - `template\template.devproj`
