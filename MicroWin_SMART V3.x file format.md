@@ -23,7 +23,7 @@
 
 ## Project Data
 
-Project data is a zip archive. For example, the default template project contains files in this order:
+Project data is a zip archive. For example, the default template project `template.smartv3` contains files in this order:
 - `template\m_mNGMotionCamCfgMap.xml`
 - `template\m_mNGMotionAxisCfgMap.xml`
   - motion-control related
@@ -66,14 +66,23 @@ File types:
 
 - Protection flags `00 03`, `00 04`, ... don't produce any error when the file is opened, but will revert to `00 02` when the file is saved.
   - protection flags `00 00` is invalid
+- Project protection password only externally encrypts the zip archive, and does not affect the zipped data in any way.
 - https://wiki.openssl.org/index.php/EVP_Authenticated_Encryption_and_Decryption
 - `7z` unzips the files just fine, although it complains about header errors.
-- when using `zipdetails` to analyze the archive, note that:
-  - warnings of unexpected padding is misplaced, the supposed padding is the actual compressed data
+- When using `zipdetails` to analyze the archive, note that:
+  - Warnings of unexpected padding is misplaced, the supposed padding is the actual compressed data.
 - It seems that the directory entries are Windows paths, thus they have backslashes in them.
-- When the zip archive contents are re-archived and re-integrated into a new project file, it seems to work just fine regardless of:
-  - file order
+- When the zip archive contents are extracted, then re-archived and re-integrated into a new project file, it seems to work just fine regardless of:
+  - order of files
   - compression level
-- the absolute minimum files that need to be present are:
+- Only Store and Deflate compression methods are supported.
+- The absolute minimum files that need to be present inside the zip archive are:
   - `template.smartprojs`
   - `template\template.devproj`
+- The zip archive was created in a non-compliant way, in which backslashes `\` are used instead of forward slashes `/` as directory separators.
+  However, reorganizing the files on Linux using directories and then re-archiving the files works just fine.
+- STEP 7-Micro/WIN SMART V3 recognizes the project name from the project file name. Internally stored names are overwritten on save.
+  This means that renaming a project file will change its internal name the next time it is saved.
+- Within the zip archive, there is a file `<project_name>.smartprojs`. This XML file references a file `<project_name>\<project_name>.devproj`.
+  Note the use of backslash as directory separator. This directory separator must always be a backslash -- changing it into a forward slash leads to an error when the file is opened.
+- However, the file paths inside `<project_name>\<project_name>.devproj` can be converted into forward slashes and it will not raise an error.
