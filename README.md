@@ -29,8 +29,8 @@ We are not trying to:
 
 ## File format documentation
 
-- [V2.x](MicroWIN SMART V2.x file format.md)
-- [V3.x](MicroWIN SMART V3.x file format.md)
+- [Micro/WIN SMART V2.x file format](MicroWIN%20SMART%20V2.x%20file%20format.md)
+- [Micro/WIN SMART V3.x file format](MicroWIN%20SMART%20V3.x%20file%20format.md)
 
 ## Insights
 
