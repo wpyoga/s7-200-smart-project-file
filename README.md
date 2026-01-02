@@ -8,20 +8,29 @@ NOTE: Chinese/Mandarin README coming soon
 
 ## Goals
 
+Immediate goals:
 - Reverse engineer the project file format.
 - Convert the project file format into JSON or other standard formats.
 - Generate the project file from a JSON file.
 - Generate a copy-and-paste-able output for Symbol Tables and Data Pages.
 - Make the project file compatible with git for version control.
   - This should be possible through the use of git commit hooks.
+
+Nice-to-have goals:
 - Convert program blocks into SCL and vice versa.
+- Convert program blocks into AWL.
 
 ## Non-goals
 
 We are not trying to:
-- Break any password protection on a project file.
+- Break or circumvent any password protection on a project file.
 - Retrieve any password that is used to protect a project file.
 - Compete with Siemens in any way, shape, or form.
+
+## File format documentation
+
+- [V2.x](MicroWIN SMART V2.x file format.md)
+- [V3.x](MicroWIN SMART V3.x file format.md)
 
 ## Insights
 
