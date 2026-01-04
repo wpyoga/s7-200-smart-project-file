@@ -1,5 +1,11 @@
 # S7-200 SMART 工程文件格式
 
+[English](README.md)
+
+> *主仓库：* https://github.com/wpyoga/s7-200-smart-project-file
+>
+> 请在github上提交Issue和PR，或者向[工控人家园论坛wpyoga](http://www.ymmfa.com/u-gkuid-616507.html)发短消息。
+
 本项目旨在对 S7-200 SMART 系列 PLC 的**工程文件结构和存储格式**进行分析。
 
 更具体地说，这是 **STEP 7-Micro/WIN SMART** 所使用的工程文件格式。
@@ -16,7 +22,7 @@
 - 使工程文件能够兼容 git 进行版本控制
   - 可通过 git 提交钩子（commit hooks）实现
 
-### 可选目标（Nice-to-have）
+### 可选目标（Nice-to-have/非必须）
 - 在程序块（Program Block）与 SCL 之间进行双向转换
 - 将程序块转换为 AWL
 
