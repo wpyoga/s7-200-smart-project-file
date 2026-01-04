@@ -26,12 +26,17 @@ project_name, zip_ext = path.splitext(zip_basename)
 if ".zip" != zip_ext.lower():
   print("Error: specify a zip archive to process into a '.smartv3' project file")
   sys.exit(1)
-project_file = project_name + ".smartv3"
+# TODO: maybe use ".smartV3" instead? just like how MWSmart V3 does it
+# or maybe scan the directory and figure out whether we use the capitalized form or not
+# just use ".smartV3" for now
+project_file = project_name + ".smartV3"
 
 with open(sys.argv[1], "rb") as f:
   plaintext = f.read()
 
 # TODO: allow user to password-protect the project
+# TODO: allow user to select version here
+# as of today, 2026-01-04, there are two versions: R03.00.00.00 and R03.01.00.00
 header = b'\0' * 4 \
   + b'R03.00.00.00' \
   + b'\0' * 104 \

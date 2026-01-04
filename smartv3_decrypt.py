@@ -34,7 +34,7 @@ with open(sys.argv[1], "rb") as f:
   tag = d[-16:]
 
 if header[:4] != b'\0' * 4 \
-  or header[4:16] != b'R03.00.00.00' \
+  or header[4:16] not in [b'R03.00.00.00', b'R03.01.00.00'] \
   or header[16:120] != b'\0' * 104 \
   or header[122:] != b'\0' * 134:
   print("Warning: file header does not look right, see below")

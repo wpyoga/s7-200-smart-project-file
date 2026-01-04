@@ -9,6 +9,11 @@ import os
 
 
 dir_name = sys.argv[1]
+
+if not os.path.isdir(dir_name):
+  print(f"Error: {dir_name} must be a directory")
+  sys.exit(1)
+
 dir_basename = os.path.basename(os.path.normpath(dir_name))
 zip_file = dir_basename + ".zip"
 
