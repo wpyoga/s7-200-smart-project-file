@@ -35,7 +35,7 @@ Notes
   * R01.00.00.00 \-\> original template file
 * 26 null bytes
 * 2 bytes salt
-  * if salt is 00 00, file is not password-protected
+  * if salt is 00 00, and password hash is all null, file is not password-protected
   * salt is appended to password, i.e. sha512("password"+"salt")
 * 64 or 20 bytes password hash
   * 64 bytes if R02.04.00.00 (SHA512)
