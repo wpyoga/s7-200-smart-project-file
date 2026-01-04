@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-> *主仓库：* https://github.com/wpyoga/s7-200-smart-project-file
+> 主仓库： https://github.com/wpyoga/s7-200-smart-project-file
 >
 > 请在github上提交Issue和PR，或者向[工控人家园论坛wpyoga](http://www.ymmfa.com/u-gkuid-616507.html)发短消息。
 

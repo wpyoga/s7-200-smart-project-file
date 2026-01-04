@@ -1,5 +1,9 @@
 # S7-200 SMART Project File Format
 
+> Main repository URL: https://github.com/wpyoga/s7-200-smart-project-file
+>
+> Please post Issues and PRs on the main github repository, or send a message to [wpyoga on 工控人家园论坛](http://www.ymmfa.com/u-gkuid-616507.html) (Chinese BBS site).
+
 [中文](README.zh-Hans.md)
 
 This project aims to reverse engineer the project file format for the S7-200 SMART series PLCs.
