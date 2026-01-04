@@ -11,6 +11,12 @@
   * all 2-byte sequences are in little endian byte order
 * doesn't seem to contain any timestamp
   * previous versions have a problem with project timestamp, investigate this
+* project password protection is based on password authentication
+  * zlib stream is unchanged
+  * password is salted then hashed
+  * salt is stored in the file
+  * when file is opened, the program asks for password
+  * if password is correct, the file is loaded, otherwise a new empty project is opened instead
 
 ## V3
 
@@ -27,9 +33,13 @@ Notes
 * 12 bytes version
   * R02.04.00.00 \-\> saved by MicroWin SMART v2.8
   * R01.00.00.00 \-\> original template file
-* 92 or 48 null bytes
-  * 92 null bytes in case of R02.04.00.00
-  * 48 null bytes if R01.00.00.00
+* 26 null bytes
+* 2 bytes salt
+  * if salt is 00 00, file is not password-protected
+  * salt is appended to password, i.e. sha512("password"+"salt")
+* 64 or 20 bytes password hash
+  * 64 bytes if R02.04.00.00 (SHA512)
+  * 20 bytes if R01.00.00.00 (SHA1)
 * 4 bytes, little endian number of bytes of uncompressed stream
 * zlib compressed stream
   * in case of R03.00.00.00, this is not a simple zlib compressed stream
