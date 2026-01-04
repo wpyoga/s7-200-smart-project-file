@@ -1,8 +1,10 @@
 # S7-200 SMART Project File Format
 
+[中文](README.zh-Hans.md)
+
 This project aims to reverse engineer the project file format for the S7-200 SMART series PLCs.
 
-More specifically, this is the project file format used by STEP7-200 Micro/WIN SMART.
+More specifically, this is the project file format used by STEP 7-Micro/WIN SMART.
 
 NOTE: Chinese/Mandarin README coming soon
 
@@ -38,7 +40,7 @@ We are not trying to:
 
 ## Blockers
 
-- I don't have a copy of STEP7-200 Micro/WIN SMART v1.0, so I haven't been able to work out
+- I don't have a copy of STEP 7-Micro/WIN SMART v1.0, so I haven't been able to work out
   too many details on the older (oldest) version of the project file format.
 
 ## Trivia
