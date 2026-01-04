@@ -4,7 +4,9 @@
 
 - 256 bytes file header
   - 4 bytes null
-  - 12 bytes version string: R03.00.00.00
+  - 12 bytes version string:
+    - R03.00.00.00
+    - R03.01.00.00
   - 104 bytes null
   - 2 bytes protection flags
     - 00 02: project is not password protected
@@ -38,14 +40,24 @@ Project data is a zip archive. For example, the default template project `templa
 - `template\m_aUdtTable.xml`
   - stores UDT tables
 - `template\Program Block\MAIN.poubin`
-  - these are binary files with XML appended.
-  - header: `08 e8 03 00`
-- `template\Program Block\INT_0.poubin`
-  - these are binary files with XML appended.
-  - header: `08 e9 03 00`
 - `template\Program Block\SBR_0.poubin`
-  - these are binary files with XML appended.
-  - header: `08 ea 03 00`
+- `template\Program Block\INT_0.poubin`
+- `template\Program Block\FB_0.poubin`
+  - these are binary files with XML embedded
+    - in v3.0, the XML is at the end
+    - in v3.1, there is additional binary data after the XML
+  - header for main program block: `08 e8 03`
+    - 08 is the version
+    - e8 03 is the main program block marker
+  - header for subroutine: `08 e9 03`
+    - 08 is the version
+    - e9 03 is the subroutine program block marker
+  - header for interrupt routine: `08 ea 03`
+    - 08 is the version
+    - ea 03 is the interrupt routine program block marker
+  - header for function block: `08 eb 03`
+    - 08 is the version
+    - eb 03 is the function block program block marker
 - `template\m_mStatusCharts.xml`
   - describes status charts
 - `template\m_memAllocator.xml`
@@ -54,6 +66,11 @@ Project data is a zip archive. For example, the default template project `templa
   - PLC user data, by default it contains only Admin
 - `template\template.devproj`
   - main project file
+  - contains program version that created the file -- maybe we can use this to determine the file header when writing
+  - `AllFeatureList` contains a CPU configuration block in Base64
+  - DevMode contains all nulls
+  - `%[PROJECT]  /  %[OBJECT]` is print header, `%[PAGE]` is print footer
+  - each `file` element has a `hashvalue` attribute, and it is the SHA512 checksum of the file, in Base64
 - `template.smartprojs`
   - top-level project XML file
 
@@ -86,3 +103,7 @@ File types:
 - Within the zip archive, there is a file `<project_name>.smartprojs`. This XML file references a file `<project_name>\<project_name>.devproj`.
   Note the use of backslash as directory separator. This directory separator must always be a backslash -- changing it into a forward slash leads to an error when the file is opened.
 - However, the file paths inside `<project_name>\<project_name>.devproj` can be converted into forward slashes and it will not raise an error.
+- Each program version (so far) only writes a single file version. For example:
+  - V3.0 writes R03.00.00.00
+  - V3.1 writes R03.01.00.00
+  - V2.7 and V2.8 writes R02.04.00.00
