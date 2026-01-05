@@ -10,8 +10,6 @@ This project aims to reverse engineer the project file format for the S7-200 SMA
 
 More specifically, this is the project file format used by STEP 7-Micro/WIN SMART.
 
-NOTE: Chinese/Mandarin README coming soon
-
 ## Goals
 
 Immediate goals:

@@ -1,6 +1,6 @@
 meta:
   id: smartv3
-  title: SMART V3 project file 
+  title: SMART V3 project file
   file-extension: smartV3
   ks-version: 0.11
   endian: le
