@@ -1,5 +1,14 @@
 "use strict";
 
+const passwordElem = document.getElementById("password");
+const hashElem = document.getElementById("hashtext");
+const fileElem = document.getElementById("projectfile");
+const statusElem = document.getElementById("status");
+const outputElem = document.getElementById("output");
+
+var passwordProtected = false;
+var projectFileValid = false;
+
 // accepts a well-formatted hex string and returns an integer array
 // all whitespace is stripped from the hex string
 // results are undefined otherwise
@@ -41,16 +50,6 @@ function arrayToHexStr(arr, spaces = 0, cols = 0) {
     return arr
       .map((b) => b.toString(16).padStart(2, "0"))
       .join(" ".repeat(spaces));
-}
-
-function hash() {
-  var password = document.getElementById("password").value;
-  if (password.length === 0) password = DEFAULT_PASSWORD;
-  sha256str(password).then((hashBuf) => {
-    document.getElementById("hashtext").innerText = arrayToHexStr(
-      Array.from(new Uint8Array(hashBuf))
-    );
-  });
 }
 
 function arrayCompare(arr1, arr2) {
@@ -96,12 +95,7 @@ function checkHex(buf, start, len, hexStr) {
   );
 }
 
-// accept an arrayBuffer containing the file data
-async function processProjectFile(buf) {
-  // TODO: remove
-  document.getElementById("output").innerHTML =
-    "<pre>" + arrayToHexStr(Array.from(new Uint8Array(buf)), 1, 32) + "</pre>";
-
+function checkUploadedFile(buf) {
   // check the file contents
   if (
     !checkNulls(buf, 0, 4) ||
@@ -109,40 +103,56 @@ async function processProjectFile(buf) {
     !checkNulls(buf, 16, 104) ||
     !checkNulls(buf, 122, 134)
   ) {
-    document.getElementById("output").innerHTML =
-      "File does not look like a SMART V3 project file.<br/><pre>" +
-      arrayToHexStr(Array.from(new Uint8Array(buf)), 1, 32) +
+    statusElem.innerHTML = "File does not look like a SMART V3 project file.";
+    outputElem.innerHTML =
+      "<pre>" +
+      arrayToHexStr(Array.from(new Uint8Array(buf)), 1, 64) +
       "</pre>";
-    return;
+    return false;
   }
 
-  var passwordProtected;
   if (checkHex(buf, 120, 2, "00 01")) passwordProtected = true;
   else if (checkHex(buf, 120, 2, "00 02")) passwordProtected = false;
   else {
-    document.getElementById("output").innerHTML =
-      "File does not look like a SMART V3 project file.<br/><pre>" +
-      arrayToHexStr(Array.from(new Uint8Array(buf)), 1, 32) +
+    statusElem.innerHTML = "File does not look like a SMART V3 project file.";
+    outputElem.innerHTML =
+      "<pre>" +
+      arrayToHexStr(Array.from(new Uint8Array(buf)), 1, 64) +
       "</pre>";
+    return false;
+  }
+
+  return true;
+}
+
+// accept an arrayBuffer containing the file data
+async function processProjectFile(buf) {
+  try {
+    var plaintext = await decryptProjectData(buf, passwordProtected);
+  } catch (err) {
+    console.log(err);
+    if (passwordProtected) {
+      statusElem.innerText = "Decryption failure, check your password.";
+    } else {
+      statusElem.innerText = "Decryption failure: " + err;
+    }
+    outputElem.innerHTML = "";
     return;
   }
 
-  decryptProjectData(buf, passwordProtected)
-    .then((plaintext) => {
-      console.log("plaintext", plaintext);
-      console.log(new Uint8Array(plaintext));
-      document.getElementById("output").innerHTML =
-        "<pre>" +
-        arrayToHexStr(Array.from(new Uint8Array(plaintext)), 1, 64) +
-        "</pre>";
-    })
-    .catch((err) => console.log(err));
+  console.log("plaintext", plaintext);
+  console.log(new Uint8Array(plaintext));
+  statusElem.innerText = "File decrypted successfully.";
+  outputElem.innerHTML =
+    "<pre>" +
+    arrayToHexStr(Array.from(new Uint8Array(plaintext)), 1, 64) +
+    "</pre>";
 }
 
 async function decryptProjectData(buf, passwordProtected) {
   var keyBuf;
   if (passwordProtected) {
-    var password = document.getElementById("password").value;
+    var password = passwordElem.value;
     if (password.length === 0) password = DEFAULT_PASSWORD;
     keyBuf = await window.crypto.subtle.digest(
       "SHA-256",
@@ -178,11 +188,29 @@ async function decryptProjectData(buf, passwordProtected) {
   );
 }
 
-function showFile() {
-  var file = document.getElementById("projectfile").files[0];
+function processFile() {
+  var file = fileElem.files[0];
   const reader = new FileReader();
-  reader.onload = (e) => processProjectFile(e.target.result);
+  reader.onload = (e) => {
+    projectFileValid = checkUploadedFile(e.target.result);
+    if (projectFileValid) processProjectFile(e.target.result);
+  };
   reader.readAsArrayBuffer(file);
+}
+
+async function passwordUpdated() {
+  var password = passwordElem.value;
+  if (password.length === 0) password = DEFAULT_PASSWORD;
+  sha256str(password).then((hashBuf) => {
+    hashElem.innerHTML =
+      "<code>" + arrayToHexStr(Array.from(new Uint8Array(hashBuf))) + "</code>";
+  });
+
+  if (fileElem.files) processFile();
+}
+
+function fileUpdated() {
+  processFile();
 }
 
 const IV = hexStrToBuf("95 A6 34 68 4A 46 A9 70 EE 90 76 49");

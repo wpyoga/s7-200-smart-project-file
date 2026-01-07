@@ -1,17 +1,17 @@
 <html>
   <body>
     password:
-    <input id="password" onInput="hash()" autofocus />
+    <input id="password" onInput="passwordUpdated()" autofocus />
     <br />
     hash:
     <output id="hashtext"></output>
     <br />
-    smartV3 file: <input id="projectfile" type="file" onChange="showFile()" />
+    smartV3 file: <input id="projectfile" type="file" onChange="fileUpdated()" />
     <br />
     status:
     <output id="status"></output>
     <br />
-    decrypted:
+    output:
     <output id="output"></output>
   </body>
   <!-- https://github.com/gildas-lormeau/zip.js/blob/master/dist/zip.min.js -->
