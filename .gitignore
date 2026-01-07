@@ -5,3 +5,5 @@ s[0-9][0-9][0-9]
 *.smart
 *.smartv3
 *.smartV3
+*.zip
+*.orig
