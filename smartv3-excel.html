@@ -1,125 +1,21 @@
 <html>
-  <script>
-    "use strict";
-
-    // accepts a well-formatted hex string and returns an integer array
-    // all whitespace is stripped from the hex string
-    // results are undefined otherwise
-    function hexStrToArray(str) {
-      str
-        .replace(/\s+/g, "")
-        .match(/../g)
-        .map((x) => parseInt(x, 16));
-    }
-
-    async function sha512(str) {
-      buf = new TextEncoder().encode(str);
-      digest = await window.crypto.subtle.digest("SHA-512", buf);
-      return Array.from(new Uint8Array(digest));
-    }
-
-    function arrayToHexStr(arr, spaces = 0, cols = 0) {
-      if (cols !== 0) {
-        return arr
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("")
-          .match(/.{1,cols}/g)
-          .join("\n");
-      } else
-        return arr
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join(" ".repeat(spaces));
-    }
-
-    function hash() {
-      var password = document.getElementById("password").value;
-      sha512(password).then((hash) => {
-        document.getElementById("hashtext").innerText = arrayToHexStr(hash);
-      });
-    }
-
-    function arrayCompare(arr1, arr2) {
-      // console.log("compare");
-      // console.log(arr1);
-      // console.log(arr2);
-      return (
-        arr1.length === arr2.length &&
-        arr1.every((val, idx) => val === arr2[idx])
-      );
-    }
-
-    function checkNulls(buf, start, len) {
-      return arrayCompare(
-        new Uint8Array(buf).subarray(start, start + len),
-        new Array(len).fill(0)
-      );
-    }
-
-    function checkString(buf, start, len, str) {
-      return arrayCompare(
-        new Uint8Array(buf).subarray(start, start + len),
-        new TextEncoder().encode(str)
-      );
-    }
-
-    function checkStrings(buf, start, len, strArray) {
-      return !strArray.every((str) => !checkString(buf, start, len, str));
-    }
-
-    // accept an arrayBuffer containing the file data
-    function processProjectFile(buf) {
-      document.getElementById("decrypted").innerText = arrayToHexStr(
-        Array.from(new Uint8Array(buf)),
-        1
-      );
-
-      // check the file contents
-      // var data = new Uint8Array(buf);
-      // console.log(data.subarray(0, 4));
-      // console.log(new Uint8Array([0, 0, 0, 0]));
-      if (
-        !checkNulls(buf, 0, 4) ||
-        !checkStrings(buf, 4, 12, ["R03.00.00.00", "R03.01.00.00"]) ||
-        !checkNulls(buf, 16, 104) ||
-        !checkNulls(buf, 122, 134)
-      ) {
-        document.getElementById("decrypted").innerHTML =
-          "File does not look like a SMART V3 project file.<br/><pre>" +
-          arrayToHexStr(Array.from(new Uint8Array(buf)), 1, 32) +
-          "</pre>";
-        return;
-      }
-    }
-
-    function showFile() {
-      var file = document.getElementById("projectfile").files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => processProjectFile(e.target.result);
-      reader.readAsArrayBuffer(file);
-    }
-
-    const IV = hexStrToArray("95 A6 34 68 4A 46 A9 70 EE 90 76 49");
-    const AAD = hexStrToArray(
-      "4A 14 B3 A5 7B C9 F4 92 EB 46 87 94 62 EF B9 C6"
-    );
-    const DEFAULT_PASSWORD = "SMART200_V3_PRJ_KEY";
-  </script>
+  <!-- https://github.com/gildas-lormeau/zip.js/blob/master/dist/zip.min.js -->
+  <script src="zip.min.js"></script>
+  <!-- main program -->
+  <script src="smartv3-excel.js"></script>
   <body>
     password:
-    <input
-      id="password"
-      onInput="hash()"
-      onLoad="hash()"
-      autofocus
-      value="SMART200_V3_PRJ_KEY"
-    />
+    <input id="password" onInput="hash()" autofocus />
     <br />
     hash:
     <output id="hashtext"></output>
     <br />
     smartV3 file: <input id="projectfile" type="file" onChange="showFile()" />
     <br />
+    status:
+    <output id="status"></output>
+    <br />
     decrypted:
-    <div id="decrypted"></div>
+    <output id="output"></output>
   </body>
 </html>
