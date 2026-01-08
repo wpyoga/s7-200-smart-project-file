@@ -1,18 +1,19 @@
 <html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
   <body>
-    password:
-    <input id="password" onInput="passwordUpdated()" autofocus />
+    project password: <input id="password" autofocus />
     <br />
-    hash:
-    <output id="hashtext"></output>
+    hash: <output id="hashtext"></output>
     <br />
-    smartV3 file: <input id="projectfile" type="file" onChange="fileUpdated()" />
+    <!-- https://issues.chromium.org/issues/376094901 -->
+    <!-- For now, we cannot use accept=".smartv3" since it filters out files with ".smartV3" extension -->
+    smartV3 file: <input id="projectfile" type="file" />
     <br />
-    status:
-    <output id="status"></output>
+    status: <output id="status"></output>
     <br />
-    output:
-    <output id="output"></output>
+    output: <output id="output"></output>
   </body>
   <!-- https://github.com/gildas-lormeau/zip.js/blob/v2.8.12/dist/zip.min.js -->
   <script src="zip.min.js" charset="utf-8"></script>
