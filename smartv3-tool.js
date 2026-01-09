@@ -14,9 +14,10 @@ const IV = hexToBytes("95 A6 34 68 4A 46 A9 70 EE 90 76 49");
 const AAD = hexToBytes("4A 14 B3 A5 7B C9 F4 92 EB 46 87 94 62 EF B9 C6");
 const DEFAULT_PASSWORD = "SMART200_V3_PRJ_KEY";
 
-var passwordProtected = false;
-var projectFileValid = false;
-var downloadURL;
+let passwordProtected = false;
+let projectFileValid = false;
+let downloadURL;
+let passwordHash;
 
 // calculate the default password hash on startup
 window.addEventListener("load", documentLoaded);
@@ -37,7 +38,7 @@ function hexToBytes(str) {
 }
 
 async function strToSha256(str) {
-  var bytes = new TextEncoder().encode(str);
+  const bytes = new TextEncoder().encode(str);
   return new Uint8Array(await window.crypto.subtle.digest("SHA-256", bytes));
 }
 
@@ -159,8 +160,9 @@ function checkUploadedFile(bytes) {
 
 // accept an arrayBuffer containing the file data
 async function processProjectFile(bytes) {
+  let plaintext;
   try {
-    var plaintext = await decryptProjectData(bytes, passwordProtected);
+    plaintext = await decryptProjectData(bytes, passwordProtected);
   } catch (err) {
     console.log(err);
     if (passwordProtected) {
@@ -180,7 +182,7 @@ async function processProjectFile(bytes) {
   const zipReader = new zip.ZipReader(
     new zip.Uint8ArrayReader(new Uint8Array(plaintext))
   );
-  var zipEntries;
+  let zipEntries;
   try {
     const filenameEncoding = "cp437";
     zipEntries = await zipReader.getEntries({ filenameEncoding });
@@ -201,13 +203,13 @@ async function processProjectFile(bytes) {
   outputElem.appendChild(ul);
 
   // console.log("entries", zipEntries);
-  // var xmlFile = await zipEntries
+  // const xmlFile = await zipEntries
   //   .find((x) => x.filename.endsWith("m_mGlbVarTables.xml"))
   //   .arrayBuffer();
   // console.log(new TextDecoder().decode(new Uint8Array(xmlFile)));
 
   // decompress the files
-  var zipData = [];
+  const zipData = [];
   for (let i = 0; i < zipEntries.length; ++i) {
     if (zipEntries[i].directory) zipData.push(null);
     else zipData.push(await zipEntries[i].arrayBuffer());
@@ -239,25 +241,19 @@ async function processProjectFile(bytes) {
   );
 }
 
-async function decryptProjectData(bytes, passwordProtected) {
-  var keyBuf;
-  if (passwordProtected) {
-    var password = passwordElem.value;
-    if (password.length === 0) password = DEFAULT_PASSWORD;
-    keyBuf = await window.crypto.subtle.digest(
-      "SHA-256",
-      new TextEncoder().encode(password)
-    );
-  } else {
-    keyBuf = await window.crypto.subtle.digest(
-      "SHA-256",
-      new TextEncoder().encode(DEFAULT_PASSWORD)
-    );
-  }
+async function hashPassword(password) {
+  return await strToSha256(
+    passwordProtected && password.length > 0 ? password : DEFAULT_PASSWORD
+  );
+}
 
-  keyBuf = new Uint8Array(keyBuf);
+async function decryptProjectData(bytes, passwordProtected) {
+  const keyBuf = passwordProtected
+    ? passwordHash
+    : await strToSha256(DEFAULT_PASSWORD);
+
   // console.log(keyBuf);
-  var key = await window.crypto.subtle.importKey(
+  const key = await window.crypto.subtle.importKey(
     "raw",
     keyBuf,
     "AES-GCM",
@@ -267,9 +263,7 @@ async function decryptProjectData(bytes, passwordProtected) {
   // console.log(key);
   // console.log(await window.crypto.subtle.exportKey("raw", key));
 
-  var ciphertext = bytes.subarray(256);
-  // var ciphertext = new Uint8Array(bytes.subarray(256));
-  // console.log(ciphertext);
+  const ciphertext = bytes.subarray(256);
 
   return window.crypto.subtle.decrypt(
     { name: "AES-GCM", iv: IV, additionalData: AAD, tagLength: 128 },
@@ -293,11 +287,12 @@ async function documentLoaded() {
 }
 
 async function passwordUpdated() {
-  var password = passwordElem.value;
-  if (password.length === 0) password = DEFAULT_PASSWORD;
-  strToSha256(password).then((hashBuf) =>
-    setContent(hashElem, "code", bytesToHex(hashBuf))
-  );
+  const password =
+    passwordElem.value.length > 0 ? passwordElem.value : DEFAULT_PASSWORD;
+
+  passwordHash = await strToSha256(password);
+
+  setContent(hashElem, "code", null, bytesToHex(passwordHash));
 
   if (fileElem.files[0]) processFile(fileElem.files[0]);
 }
