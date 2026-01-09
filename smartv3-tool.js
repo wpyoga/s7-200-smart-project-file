@@ -16,6 +16,7 @@ const DEFAULT_PASSWORD = "SMART200_V3_PRJ_KEY";
 
 var passwordProtected = false;
 var projectFileValid = false;
+var downloadURL;
 
 // calculate the default password hash on startup
 window.addEventListener("load", documentLoaded);
@@ -40,8 +41,13 @@ async function strToSha256(str) {
   return new Uint8Array(await window.crypto.subtle.digest("SHA-256", bytes));
 }
 
-function minimalEscapePre(str) {
-  return "<pre>" + str.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</pre>";
+// supports the following attributes: href, download
+function setContent(parent, elemType, attr, str) {
+  const elem = document.createElement(elemType);
+  elem.textContent = str;
+  if (attr) ["href", "download"].forEach((s) => attr[s] && (elem[s] = attr[s]));
+  parent.textContent = "";
+  parent.appendChild(elem);
 }
 
 // convert bytes into xxd-like hexdump
@@ -135,16 +141,16 @@ function checkUploadedFile(bytes) {
     !checkNulls(bytes, 16, 104) ||
     !checkNulls(bytes, 122, 134)
   ) {
-    statusElem.innerHTML = "File does not look like a SMART V3 project file.";
-    outputElem.innerHTML = minimalEscapePre(hexDump(bytes, 1, 32));
+    statusElem.textContent = "File does not look like a SMART V3 project file.";
+    setContent(outputElem, "pre", null, hexDump(bytes, 1, 32));
     return false;
   }
 
   if (checkHex(bytes, 120, 2, "00 01")) passwordProtected = true;
   else if (checkHex(bytes, 120, 2, "00 02")) passwordProtected = false;
   else {
-    statusElem.innerHTML = "File does not look like a SMART V3 project file.";
-    outputElem.innerHTML = minimalEscapePre(hexDump(bytes, 1, 32));
+    statusElem.textContent = "File does not look like a SMART V3 project file.";
+    setContent(outputElem, "pre", null, hexDump(bytes, 1, 32));
     return false;
   }
 
@@ -158,20 +164,20 @@ async function processProjectFile(bytes) {
   } catch (err) {
     console.log(err);
     if (passwordProtected) {
-      statusElem.innerText = "Decryption failure, check your password.";
+      statusElem.textContent = "Decryption failure, check your password.";
     } else {
-      statusElem.innerText = "Decryption failure: " + err;
+      statusElem.textContent = "Decryption failure: " + err;
     }
-    outputElem.innerHTML = "";
+    outputElem.textContent = "";
     return;
   }
 
   // console.log("plaintext", plaintext);
   // console.log(new Uint8Array(plaintext));
-  statusElem.innerText = "File decrypted successfully.";
-  outputElem.innerHTML = minimalEscapePre(hexDump(plaintext, 1, 32));
+  statusElem.textContent = "File decrypted successfully.";
+  setContent(outputElem, "pre", null, hexDump(bytes, 1, 32));
 
-  var zipReader = new zip.ZipReader(
+  const zipReader = new zip.ZipReader(
     new zip.Uint8ArrayReader(new Uint8Array(plaintext))
   );
   var zipEntries;
@@ -182,21 +188,55 @@ async function processProjectFile(bytes) {
     console.log("err", err);
   }
 
-  statusElem.innerText =
+  statusElem.textContent =
     "Successfully decrypted and unzipped, files shown below.";
-  outputElem.innerHTML =
-    "<ul>" +
-    zipEntries.map((entry) => "<li>" + entry.filename + "</li>").join("") +
-    "</ul>";
+
+  outputElem.textContent = "";
+  const ul = document.createElement("ul");
+  zipEntries.forEach((entry) => {
+    const li = document.createElement("li");
+    li.textContent = entry.filename;
+    ul.appendChild(li);
+  });
+  outputElem.appendChild(ul);
 
   // console.log("entries", zipEntries);
-  var xmlFile = await zipEntries
-    .find((x) => x.filename.endsWith("m_mGlbVarTables.xml"))
-    .arrayBuffer();
+  // var xmlFile = await zipEntries
+  //   .find((x) => x.filename.endsWith("m_mGlbVarTables.xml"))
+  //   .arrayBuffer();
   // console.log(new TextDecoder().decode(new Uint8Array(xmlFile)));
+
+  // decompress the files
+  var zipData = [];
+  for (let i = 0; i < zipEntries.length; ++i) {
+    if (zipEntries[i].directory) zipData.push(null);
+    else zipData.push(await zipEntries[i].arrayBuffer());
+  }
 
   // don't forget to close the zip archive
   await zipReader.close();
+
+  const zipWriter = new zip.ZipWriter(new zip.Uint8ArrayWriter());
+  for (let i = 0; i < zipEntries.length; ++i) {
+    if (zipEntries[i].directory)
+      zipWriter.add(zipEntries[i].filename, null, { directory: true });
+    else
+      zipWriter.add(
+        zipEntries[i].filename,
+        new zip.Uint8ArrayReader(new Uint8Array(zipData[i]))
+      );
+  }
+  const newZipFile = await zipWriter.close();
+  const zipBlob = new Blob([newZipFile], { type: "application/zip" });
+  if (downloadURL) URL.revokeObjectURL(downloadURL);
+  downloadURL = URL.createObjectURL(zipBlob);
+  const newFilename = "new.zip";
+  setContent(
+    outputElem,
+    "a",
+    { href: downloadURL, download: newFilename },
+    `Download: ${newFilename}`
+  );
 }
 
 async function decryptProjectData(bytes, passwordProtected) {
@@ -255,10 +295,9 @@ async function documentLoaded() {
 async function passwordUpdated() {
   var password = passwordElem.value;
   if (password.length === 0) password = DEFAULT_PASSWORD;
-  strToSha256(password).then((hashBuf) => {
-    hashElem.innerHTML =
-      "<code>" + bytesToHex(Array.from(new Uint8Array(hashBuf))) + "</code>";
-  });
+  strToSha256(password).then((hashBuf) =>
+    setContent(hashElem, "code", bytesToHex(hashBuf))
+  );
 
   if (fileElem.files[0]) processFile(fileElem.files[0]);
 }
