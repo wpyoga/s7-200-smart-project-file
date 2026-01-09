@@ -18,6 +18,7 @@ let passwordProtected = false;
 let projectFileValid = false;
 let downloadURL;
 let passwordHash;
+let key;
 
 // calculate the default password hash on startup
 window.addEventListener("load", documentLoaded);
@@ -175,19 +176,17 @@ async function processProjectFile(bytes) {
   }
 
   // console.log("plaintext", plaintext);
-  // console.log(new Uint8Array(plaintext));
   statusElem.textContent = "File decrypted successfully.";
   setContent(outputElem, "pre", null, hexDump(bytes, 1, 32));
 
-  const zipReader = new zip.ZipReader(
-    new zip.Uint8ArrayReader(new Uint8Array(plaintext))
-  );
+  const zipReader = new zip.ZipReader(new zip.Uint8ArrayReader(plaintext));
   let zipEntries;
   try {
     const filenameEncoding = "cp437";
     zipEntries = await zipReader.getEntries({ filenameEncoding });
   } catch (err) {
     console.log("err", err);
+    return;
   }
 
   statusElem.textContent =
@@ -239,6 +238,27 @@ async function processProjectFile(bytes) {
     { href: downloadURL, download: newFilename },
     `Download: ${newFilename}`
   );
+
+  const newCiphertext = await encryptProjectData(newZipFile);
+
+  const newProjectFile = new Uint8Array([
+    ...bytes.subarray(0, 256),
+    ...newCiphertext,
+  ]);
+
+  const newProjectBlob = new Blob([newProjectFile], {
+    type: "application/smartv3",
+  });
+  if (downloadURL) URL.revokeObjectURL(downloadURL);
+  // console.log(newProjectFile);
+  downloadURL = URL.createObjectURL(newProjectBlob);
+  const newProjectFilename = "new.smartV3";
+  setContent(
+    outputElem,
+    "a",
+    { href: downloadURL, download: newProjectFilename },
+    "Download: " + newProjectFilename
+  );
 }
 
 async function hashPassword(password) {
@@ -253,22 +273,31 @@ async function decryptProjectData(bytes, passwordProtected) {
     : await strToSha256(DEFAULT_PASSWORD);
 
   // console.log(keyBuf);
-  const key = await window.crypto.subtle.importKey(
-    "raw",
-    keyBuf,
-    "AES-GCM",
-    true,
-    ["encrypt", "decrypt"]
-  );
+  key = await window.crypto.subtle.importKey("raw", keyBuf, "AES-GCM", true, [
+    "encrypt",
+    "decrypt",
+  ]);
   // console.log(key);
   // console.log(await window.crypto.subtle.exportKey("raw", key));
 
   const ciphertext = bytes.subarray(256);
 
-  return window.crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: IV, additionalData: AAD, tagLength: 128 },
-    key,
-    ciphertext
+  return new Uint8Array(
+    await window.crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: IV, additionalData: AAD, tagLength: 128 },
+      key,
+      ciphertext
+    )
+  );
+}
+
+async function encryptProjectData(bytes) {
+  return new Uint8Array(
+    await window.crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: IV, additionalData: AAD, tagLength: 128 },
+      key,
+      bytes
+    )
   );
 }
 
