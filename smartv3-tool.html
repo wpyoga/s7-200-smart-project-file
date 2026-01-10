@@ -3,20 +3,22 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    project password: <input id="password" autofocus />
-    <br />
-    hash: <output id="hashtext"></output>
-    <br />
-    <!-- https://issues.chromium.org/issues/376094901 -->
-    <!-- For now, we cannot use accept=".smartv3" since it filters out files with ".smartV3" extension -->
-    smartV3 file: <input id="projectfile" type="file" />
-    <br />
-    status: <output id="status"></output>
-    <br />
-    output: <output id="output"></output>
+    <p>
+      <!-- https://issues.chromium.org/issues/376094901 -->
+      <!-- For now, we cannot use accept=".smartv3" since it filters out files with ".smartV3" extension -->
+      smartV3 file: <input id="projectfile" type="file" />
+    </p>
+    <p>project password: <input id="password" autofocus /></p>
+    <p>hash: <output id="hashtext"></output></p>
+    <p>excel template: <output id="exceltemplate"></output></p>
+    <p>excel file: <input id="excelfile" type="file" /></p>
+    <p>status: <output id="status"></output></p>
+    <p>output: <output id="output"></output></p>
   </body>
   <!-- https://github.com/gildas-lormeau/zip.js/blob/v2.8.12/dist/zip.min.js -->
-  <script src="zip.min.js" charset="utf-8"></script>
+  <script src="zip.min.js"></script>
+  <!-- https://unpkg.com/@cj-tech-master/excelts@4.2.0/dist/iife/excelts.iife.min.js -->
+  <script src="excelts.iife.min.js"></script>
   <!-- main program -->
   <script src="smartv3-tool.js"></script>
 </html>

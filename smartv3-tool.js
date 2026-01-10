@@ -2,6 +2,8 @@
 
 // convention: "bytes" means Uint8Array
 
+const excelElem = document.getElementById("excelfile");
+const templateElem = document.getElementById("exceltemplate");
 const passwordElem = document.getElementById("password");
 const hashElem = document.getElementById("hashtext");
 const fileElem = document.getElementById("projectfile");
@@ -23,6 +25,7 @@ let key;
 // calculate the default password hash on startup
 window.addEventListener("load", documentLoaded);
 
+excelElem.addEventListener("change", excelUpdated);
 passwordElem.addEventListener("input", passwordUpdated);
 fileElem.addEventListener("change", fileUpdated);
 
@@ -311,8 +314,136 @@ async function processFile(file) {
   reader.readAsArrayBuffer(file);
 }
 
+async function processExcel(file) {
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const bytes = new Uint8Array(e.target.result);
+    const wb = new ExcelTS.Workbook();
+    wb.xlsx.load(bytes);
+
+    console.log(wb);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function generateExcelTemplate() {
+  const wb = new ExcelTS.Workbook();
+
+  const wsVT = wb.addWorksheet("Variable Table 1");
+
+  const wsCT = wb.addWorksheet("Constant Table 1");
+
+  wsVT.columns = [
+    { header: "Variable Name", key: "name", width: 24 },
+    { header: "Data Type", key: "type", width: 16 },
+    { header: "Initial Value", key: "value", width: 16 },
+    { header: "Retain", key: "retain", width: 8 },
+    { header: "Bind", key: "bind", width: 8 },
+    { header: "Address", key: "address", width: 16 },
+    { header: "Comment", key: "comment", width: 24 },
+  ];
+
+  wsCT.columns = [
+    { header: "Variable Name", key: "name", width: 24 },
+    { header: "Data Type", key: "type", width: 16 },
+    { header: "Value", key: "value", width: 16 },
+    { header: "Comment", key: "comment", width: 24 },
+  ];
+
+  wsVT.getRow(1).fill = {
+    type: "gradient",
+    gradient: "angle",
+    degree: 90,
+    stops: [
+      { position: 0, color: { argb: "FFEEEEEE" } },
+      { position: 1, color: { argb: "FFBBBBBB" } },
+    ],
+  };
+
+  // Variable Name
+  wsVT.getColumn("A").style = {
+    numFmt: "@",
+    alignment: { horizontal: "left" },
+  };
+
+  // Data Type
+  wsVT.getColumn("B").style = {
+    numFmt: "@",
+    alignment: { horizontal: "left" },
+  };
+
+  // Initial Value
+  wsVT.getColumn("C").style = {
+    numFmt: "@",
+    font: { color: { argb: "FF808000" } },
+    alignment: { horizontal: "left" },
+  };
+
+  // Retain
+  wsVT.getColumn("D").style = {
+    alignment: { horizontal: "center" },
+  };
+
+  // Bind
+  wsVT.getColumn("E").style = {
+    alignment: { horizontal: "center" },
+  };
+
+  // Address
+  wsVT.getColumn("F").style = {
+    numFmt: "@",
+    alignment: { horizontal: "left" },
+  };
+
+  // Comment
+  wsVT.getColumn("G").style = {
+    numFmt: "@",
+    font: { color: { argb: "FF008000" } },
+    alignment: { horizontal: "left" },
+  };
+
+  // Header is left-aligned
+  wsVT.getRow(1).style = {
+    alignment: { horizontal: "left" },
+  };
+
+  // Initial sample data
+  wsVT.getCell("D2").value = { checkbox: true };
+  wsVT.getCell("E2").value = { checkbox: false };
+  wsVT.getCell("D3").value = { checkbox: false };
+  wsVT.getCell("E3").value = { checkbox: true };
+  wsVT.getCell("D4").value = { checkbox: true };
+  wsVT.getCell("E4").value = { checkbox: true };
+  wsVT.getCell("D5").value = { checkbox: false };
+  wsVT.getCell("E5").value = { checkbox: false };
+
+  wsCT.getRow(1).fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFBBBBBB" },
+  };
+
+  const templateFile = await wb.xlsx.writeBuffer();
+  // console.log(templateFile);
+  const templateBlob = new Blob([templateFile], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const templateFilename = "template.xlsx";
+  setContent(
+    templateElem,
+    "a",
+    { href: URL.createObjectURL(templateBlob), download: templateFilename },
+    "Download: " + templateFilename
+  );
+}
+
 async function documentLoaded() {
   passwordUpdated();
+  generateExcelTemplate();
+}
+
+async function excelUpdated() {
+  if (excelElem.files[0]) processExcel(excelElem.files[0]);
 }
 
 async function passwordUpdated() {
