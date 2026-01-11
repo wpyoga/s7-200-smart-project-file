@@ -26,23 +26,26 @@
 ## Project Data
 
 Project data is a zip archive. For example, the default template project `template.smartv3` contains files in this order:
+
+## Binary files
+
 - `template\m_mNGMotionCamCfgMap.xml`
 - `template\m_mNGMotionAxisCfgMap.xml`
   - motion-control related
 - `template\Data Block\USER1.dbbin`
   - data block
   - header: `08 88 13 00`
-- `template\m_cSystemBlockData.bin`
+- `template\m_cSystemBlockData.bin` -> [System Block](System%20Block.md)
   - system block data
   - header: `13 06 00 00`
 - `template\m_mGlbVarTables.xml`
   - describes global symbol tables (global variable tables)
 - `template\m_aUdtTable.xml`
   - stores UDT tables
-- `template\Program Block\MAIN.poubin`
-- `template\Program Block\SBR_0.poubin`
-- `template\Program Block\INT_0.poubin`
-- `template\Program Block\FB_0.poubin`
+- `template\Program Block\MAIN.poubin` -> [Program Block](Program%20Block.md)
+- `template\Program Block\SBR_0.poubin` -> [Program Block](Program%20Block.md)
+- `template\Program Block\INT_0.poubin` -> [Program Block](Program%20Block.md)
+- `template\Program Block\FB_0.poubin` -> [Program Block](Program%20Block.md)
   - these are binary files with XML embedded
     - in v3.0, the XML is at the end
     - in v3.1, there is additional binary data after the XML
@@ -62,7 +65,7 @@ Project data is a zip archive. For example, the default template project `templa
   - describes status charts
 - `template\m_memAllocator.xml`
   - not sure what this would/should contain
-- `template\m_cUserData.bin`
+- `template\m_cUserData.bin` -> [User List](User%20List.md)
   - PLC user data, by default it contains only Admin
 - `template\template.devproj`
   - main project file
@@ -75,11 +78,12 @@ Project data is a zip archive. For example, the default template project `templa
   - top-level project XML file
 
 File types:
+
 - `*.xml`, `*.devproj`, and `*.smartprojs` files are XML files.
 - `*.dbbin` and `*.bin` files are pure binary files.
 - `*.poubin` files are binary files with extra XML data at the end.
 
-## devproj
+### devproj
 
 - xml parse instruction
 - device
@@ -111,7 +115,7 @@ File types:
     - DbTimeCreate: same as TimeCreatedCompared
     - DbTimeModify: same as TimeCreatedCompared
     - DeviceVer: V03.01.00_00.00.00.00 -> firmware version ?
-    - AllFeatureList: base64 string of CPU information block (724 bytes of binary data)
+    - AllFeatureList: base64 string of [CPU information](CPU%20Information.md) block (724 bytes of binary data)
     - PropertyGroup
       - children:
         - CompilerProperties
@@ -141,7 +145,7 @@ File types:
             - FooterJustify: 2
           - children:
             - DevMode: base64 string of null block (156 bytes)
-            - header: "%[PROJECT]  /  %[OBJECT]"
+            - header: "%[PROJECT] / %[OBJECT]"
             - footer: "%[PAGE]"
             - field11
             - field12
@@ -255,87 +259,7 @@ File types:
             - mw_id: 0-0-1-0-00000000-0000-0000-0000-000000000000
             - hashvalue: SHA-512 hash of file
 
-### AllFeatureList
-
-- 16 bytes string: "ST32"
-  - CPU type string
-  - no preceding length value
-  - end-padded with space characters
-  - no terminating null byte
-- 1 byte: "V"
-- 7 bytes? CPU firmware version
-  - 03 01 00 0D 00 00 00 for ST32 V3.01
-- 6 bytes unknown (1): 00 22 00 43 03 FC
-- 6 bytes unknown (2): 00 22 00 43 03 FC
-- 158 bytes unknown
-  - ...
-- 18 bytes unknown
-  - 1 byte number of cpu inputs
-  - 1 byte number of cpu outputs
-  - 2 bytes null
-  - 2 bytes
-    - C8 00 for ST32
-  - 6 bytes null
-  - 4 bytes
-    - 00 04 00 CB for ST32
-  - 2 bytes: 00 FA
-- 512 bytes unknown
-  - 38 bytes records, unknown
-  - 2 bytes marker? AA 55
-    - this is a common marker used for serial comms
-    - not sure if this is relevant here
-  - the rest is nulls
-
-
-
-## m_cSystemBlockData.bin
-
-Described in [System Block](System%20Block.md).
-
-## m_cUserData.bin
-
-- 1 byte: 01
-- 1 byte: total number of Admin + Maintainer users
-- 1 byte: PLC Access Control
-  - 00: Disable PLC Access Control
-  - 01: Enable PLC Protection (Legacy access control)
-  - 02: Enable User Management
-- n users (176 bytes each)
-  - Admins first, then Maintainers
-  - 20 bytes: fixed length user name
-  - 12 bytes null
-  - 64 bytes: SHA-512 of user password
-  - 64 bytes: fixed length user comments / description
-  - 1 byte: user category
-    - 00: Admin
-    - 01: Maintainer
-  - 1 byte permission: 07
-    - this is a bit field
-    - 01: STEP-7 Micro/WIN SMART
-    - 02: SMART LINE
-    - 04: Web Server
-  - 14 bytes null
-- 1 bytes: Allow visitor to write user data to PLC
-  - 00: do not allow
-  - 01: allow
-- 1 byte: unknown, sometimes 00, sometimes 01
-- 1 bytes: Allow the same user to access PLC from multiple terminals
-  - 00: do not allow
-  - 01: allow
-- 2 bytes: Alive time
-- 1 byte: Disallow upload
-  - 00: allow upload
-  - 01: disallow upload
-- 26 bytes null
-
-
-
-
-
-
-
-
-## m_mGlbVarTables.xml
+### m_mGlbVarTables.xml
 
 - xml parse instruction
 - tables
@@ -386,6 +310,7 @@ Described in [System Block](System%20Block.md).
         - mw_id: 3505-0-1-0-00000000-0000-0000-0000-000000000000 -> 3505d = 0x0db1 = b1 0d
 
 Member
+
 - attributes:
   - Name -> variable name
   - AccessName -> name used to access variable
@@ -395,29 +320,29 @@ Member
     - BOOL, BYTE, WORD, INT, DWORD, DINT, REAL, TIMER, COUNTER
     - STRING<n> for n-byte string, for example: STRING<10>
   - ExtendedDataType -> 32 bits, looks like bit field
-    - BOOL   : 1610612738d = 0x60000002 = 01100000 00000000 00000000 00000010b
+    - BOOL : 1610612738d = 0x60000002 = 01100000 00000000 00000000 00000010b
       - SMx.x is the same
       - Ix.x : 3758096386d = 0xE0000002 = 11100000 00000000 00000000 00000010b
         - Ix.x is BOOL but has different ExtendedDataType
       - Qx.x : 3758096386d = 0xE0000002
         - Qx.x is BOOL but has different ExtendedDataType
-    - BYTE   :     262148d = 0x00040004 = 00000000 00000100 00000000 00000100b
+    - BYTE : 262148d = 0x00040004 = 00000000 00000100 00000000 00000100b
       - SMBx is the same
-    - WORD   :         72d = 0x00000048 = 01001000b
+    - WORD : 72d = 0x00000048 = 01001000b
       - SMWx is the same
-    - INT    :         72d = 0x00000048 = 01001000b
-    - DWORD  :        144d = 0x00000090 = 10010000b
+    - INT : 72d = 0x00000048 = 01001000b
+    - DWORD : 144d = 0x00000090 = 10010000b
       - SMDx is the same
-    - DINT   :        144d = 0x00000090
-    - REAL   :       4096d = 0x00001000 = 00000000 00010000 00000000b
-    - STRING :    1048576d = 0x00100000 = 00010000 00000000 00000000b
-    - TIMER  : 1610612810d = 0x6000004A = 01100000 00000000 00000000 01001010b
+    - DINT : 144d = 0x00000090
+    - REAL : 4096d = 0x00001000 = 00000000 00010000 00000000b
+    - STRING : 1048576d = 0x00100000 = 00010000 00000000 00000000b
+    - TIMER : 1610612810d = 0x6000004A = 01100000 00000000 00000000 01001010b
     - COUNTER: 1610612810d = 0x6000004A
-    - UDT    :    2097152d = 0x00200000 = 00100000 00000000 00000000b
-    - SBR    :      32768d = 0x00008000 = 10000000 00000000b
-    - INT    :      65536d = 0x00010000 = 00000001 00000000 00000000b
-    - OB     :     131072d = 0x00020000 = 00000010 00000000 00000000b
-    - FB     :     524288d = 0x00080000 = 00001000 00000000 00000000b
+    - UDT : 2097152d = 0x00200000 = 00100000 00000000 00000000b
+    - SBR : 32768d = 0x00008000 = 10000000 00000000b
+    - INT : 65536d = 0x00010000 = 00000001 00000000 00000000b
+    - OB : 131072d = 0x00020000 = 00000010 00000000 00000000b
+    - FB : 524288d = 0x00080000 = 00001000 00000000 00000000b
   - IniVal -> initial value, defaults shown below
     - BOOL: OFF
     - BYTE, WORD, INT, DWORD, INT: 0
@@ -442,8 +367,8 @@ Member
     - 16448 = 4040 = 01000000 01000000
       - UDT, manually bound, invalid address (DB2.DBB4 manually typed into address)
         - badValue contains DB2.DB10, this is weird
-    -    48 = 0030 = 00000000 00110000
-        - UDT member variable, manually bound, empty address
+    - 48 = 0030 = 00000000 00110000
+    - UDT member variable, manually bound, empty address
     -     0 = 0000 = 00000000 00000000
       - BOOL, not manually bound, not assigned DB2
       - WORD, same
@@ -464,12 +389,14 @@ Member
     - contains the invalid initialization value
 
 Special features for UDT:
+
 - the UDT Member has Member elements as children, for each member variable
 - UDT member variables are not listed, unless
   - only UDT is retained
   - member variable has a comment
 
 Blank/empty line has these attributes only:
+
 - ExtendedDataType: 0
 - Retain: 0
 - Bind: 0
@@ -483,10 +410,6 @@ Blank/empty line has these attributes only:
 - this seems to line up with the UI -- blank/empty lines don't have Variable Name, Data Type, Initial Value, Address
 - ExtendedDataType, sFlags are not on the UI
 - Retain, Bind checkboxes are there even if the line is blank/empty
-
-
-
-
 
 ## Notes
 

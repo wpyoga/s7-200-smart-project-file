@@ -1,0 +1,222 @@
+# CPU Information
+
+In R02
+
+The CPU information block is stored in R03 in the `AllFeatureList` node inside `Project\Project.devproj`.
+Being a binary blob, it is encoded with base64. The following description refers to the binary data itself, before any transformation.
+
+## Description
+
+- 16 bytes: fixed length CPU type string
+  - "CPU SR20 "
+  - no preceding length value
+  - end-padded with space characters
+  - no terminating null byte
+- 1 byte: "V"
+- 7 bytes CPU firmware version
+  - 03 01 00 0d 00 00 00 for V03.01.00_13.00.00.00 ??? ST32 first release
+  - 02 08 02 00 00 00 00 for V02.08.02_00.00.00.00
+  - 02 08 00 00 00 00 00 for V02.08.00_00.00.00.00
+  - 02 07 00 00 01 00 00 for V02.07.00_00.00.00.00
+  - 02 05 01 00 01 00 00 for V02.05.01_00.00.01.00
+  - 02 05 00 00 07 00 00 for V02.05.00_00.00.07.00
+  - 02 04 01 00 03 00 00 for V02.04.01_00.00.03.00
+  - 02 01 00 00 03 00 00 for V02.01.00_00.00.03.00
+  - 01 00 02 00 00 00 00 for V01.00.02_00.00.00.00
+  - 01 00 00 00 01 00 00 for V01.00.00_00.00.01.00
+  - 01 00 00 00 00 00 00 for V01.00.00_00.00.00.00
+  - 01 00 00 08 37 00 00 for V01.00.00_08.37.00.00 ??? found in template
+- 6 bytes unknown: 00 22 00 43 03 FC
+- 6 bytes unknown
+  - 00 22 00 43 03 FC for ST SR
+    - same as previous 6 bytes
+  - 00 00 00 00 00 00 for CR..s
+- 2 bytes
+  - 28 00 for v2.8 v2.7 v2.6 v2.5 ST32
+  - 24 00 for v2.4
+  - 01 00 for v2.3 v2.2 v2.0 v1.x
+- 4 bytes
+  - 00 10 00 10 ST32
+  - 00 0E 00 0E SR60 CR60s CR40s CR30s or ST40 v1.x
+  - 00 0C 00 0C CR20s
+- 2 bytes
+  - 28 00 for v2.8 v2.7 v2.6 v2.5 ST32
+  - 24 00 for v2.4
+  - 01 00 for v2.3 v2.2 v2.1 v2.0 v1.x
+- 2 bytes unknown: 01 00
+  - maybe version? because V3 has value of 02 00
+- 2 bytes unknown
+  - 5d c0 for ST32
+  - 40 00 for v2.8 v2.7 v2.6 v2.5 v2.4 v2.3 v2.2 v2.1
+  - 30 00 for v2.0 v1.x
+- 2 bytes unknown: 01 00
+- 4 bytes
+  - c8 00 c8 00 for ST32
+  - 28 00 28 00 for SR60 v2.8
+  - 18 00 18 00 for v2.8
+  - 10 00 10 00 for v2.7 v2.6 v2.5 v2.4 v2.3 v2.2 v2.1 v2.0 v1.x
+  - 20 00 20 00 for ST40 v1.x found in template
+- 4 bytes
+  - 02 00 02 00 for ST32
+  - 01 00 01 00 for v2.8 v2.7 v2.6 v2.5 v2.2 v2.0 v1.x
+  - 00 00 00 00 for v2.4 v2.3
+- 8 bytes unknown
+  - 2x 4 bytes: 06 DB 00 01 for v2.x v1.x
+  - 2x 4 bytes: 06 DB 06 DB for ST32
+- 4 bytes unknown
+  - 06 DB 06 DB for v2.8 v2.7 v2.6 v2.5 v2.4 v2.3 ST32
+  - 00 00 00 00 for v2.2 v2.1 v2.0 v1.x
+  - 00 00 00 00 for CR..s v2.3
+- 4 bytes unknown
+  - 06 db 06 db for ST32
+  - 00 00 00 00 for v2.x v1.x
+- 4 bytes null
+- 4 bytes
+  - 01 0a 01 0a for ST32
+  - 00 38 00 38 for SR60 or ST40 v1.x found in template
+  - 00 00 00 00 for CR60s
+- 4 bytes:
+  - 02 00 09 00 for ST32
+  - 00 20 03 00 for v2.x v1.x
+- 2 bytes
+  - c8 00 for ST32
+  - 3C 00 for SR60
+  - 30 00 for ST40 v1.x
+  - 18 00 for CR60s
+- 4 bytes null
+- 4 bytes
+  - 00 c8 14 00 for ST32
+  - 00 C8 03 E8 for v2.x
+  - 00 64 01 F4 for v1.x
+- 6 bytes:
+  - 2 bytes: 00 01
+  - 2 bytes:
+    - 01 00 for ST32
+    - 00 80 for v2.x v1.x
+  - 2 bytes: 00 80
+- 6 bytes unknown (bitfield)
+  - ff ff ff ff f8 7f for ST32
+  - 3F FF FF FF 18 7B for SR60 SR40 v2.8 v2.7 v2.6 v2.5 v2.4 v2.3
+    - 18 7F for ST60 ST40
+  - 3F FF 1F FF 00 79 for v2.2 v2.1 v2.0 v1.x
+  - 3F FF 1F FF 00 7D for ST40 v1.x
+  - 3F FF 18 E7 00 01 for CR..s (v2.3 only)
+- 2 bytes unknown:
+  - ff ff for ST32
+  - 00 00 for v2.x v1.x
+- 2 bytes unknown: 04 00
+- 2 bytes unknown, related to model
+  - 00 02 for ST60 ST32
+  - 00 00 for SR60
+  - 00 01 for ST40 ST30 ST20
+  - 00 00 for SR40 SR30 SR20 and ST40v1.x
+  - 00 00 for CR..s
+- 2 bytes: 01 00
+- 2 bytes unknown, related to version
+  - 00 10 for v2.8 ST32
+  - 00 08 for v2.7 v2.6 v2.5 v2.4 v2.3 v2.2 v2.1 v2.0 v1.x
+- 1 byte null
+- 1 byte: number of expansion modules supported
+  - 10 for ST32 (16 expansion modules)
+  - should be 08 for v3 then
+  - 06 for ST SR v2.x
+  - 04 for ST SR v1.x
+  - 00 for CR60s
+- 4 bytes
+  - 00 00 00 04 for ST60 ST32
+  - 00 00 00 03 for SR60 ST40v1.x
+  - 00 00 00 00 for CR60s
+- 6 bytes unknown: ff 07 0f 07 07 00
+- 2 bytes
+  - 01 01 v2.8 v2.7 v2.6 v2.5 ST32
+  - 00 00 v2.4 v2.3 v2.2 v2.1 v2.0 v1.x
+- 2 bytes
+  - 07 00 for v2.8 v2.7 ST32
+  - 01 00 for v2.6
+  - 00 00 for v2.5 v2.4 v2.3 v2.2 v2.1 v2.0 v1.x
+- 2 bytes: 00 FB
+- 2 bytes some kind of bitfield related to expansion modules
+  - 77 0F for v2.x ST32
+  - 74 0F for v1.x
+- 2 bytes
+  - 00 02 for ST32
+  - 00 00 for v2.x v1.x
+- 2 bytes
+  - 80 28 for ST32
+  - 30 00 for ST SR v2.8
+  - 28 00 for ST SR v2.7 v2.6 v2.5 v2.4 v2.3
+  - 00 00 for ST SR v2.2 v2.1 v2.0 v1.x
+  - 08 00 for CR60s v2.3
+  - 00 00 for CR60 ST40v1.x
+- 2 bytes
+  - 00 00 for v2.x ST32
+  - 10 37 for v1.x
+- 18 bytes unknown (bitfield) seems related to CPU features
+  - 00 7f
+  - 3f ff ff ff
+  - ff ff ff ff
+  - ff 2f ff 7e
+  - ff ff 7c ff
+- 2 bytes
+  - FE F0 for v2.8 ST32
+  - FE 80 for v2.7 v2.6 v2.5 v2.4 v2.3 v2.2 v2.1 v2.0 v1.x
+  - FF 80 for ST40v1.x
+- 14 bytes unknown bitfield
+  - ff ff
+  - ff ef ff ff
+  - ff ff ff ff
+  - ff ff ff ff
+- 2 bytes
+  - 7B FF for CR..s
+  - FB FF for CR v2.x ST32
+  - 7B FF for CR v1.x ST40v1.x
+- 2 bytes
+  - 9F DC for ST SR v2.8 v2.7 v2.6 v2.5 v2.4 v2.3 ST32
+  - 9F CC for ST SR v2.2 v2.1 v2.0 v1.x
+  - 18 0C for CR..s
+  - 9F CC for CR v2.x
+  - 0F EC for CR v1.x ST40v1.x
+- 6 bytes
+  - ff ff ff ff ff ff for ST32
+  - FF FF FF FF 1F FF for v2.8
+  - 00 FF 00 00 00 00 for v2.7 v2.6 v2.5 v2.4
+  - 00 0F 00 00 00 00 for v2.3 v2.2
+  - 00 00 00 00 00 00 for v2.1 v2.0 v1.x
+  - 00 00 00 00 00 00 for CR60s
+  - 00 0F 00 00 00 00 for CR v2.2
+  - 00 00 00 00 00 00 for CR v2.1 ST40v1.x
+- 6 bytes bitfield
+  - ff ff ff ff 7f ff for ST32
+  - 00 00 00 00 00 00 for v2.x v1.x
+- 1 byte number of cpu inputs
+- 1 byte number of cpu outputs
+- 2 bytes null
+- 2 bytes
+  - c8 00 for ST32
+  - 3C 00 for SR60
+  - 18 00 for CR60s CR40s
+  - 30 00 for ST40v1.x
+- 6 bytes null
+- 4 bytes related to CPU
+  - 00 04 00 CB for SR60 ST32
+  - 00 00 00 00 for CR60s
+  - 00 04 00 CB for CR v2.x
+  - 00 00 00 00 for CR v1.x ST40v1.x
+- 2 bytes:
+  - 00 fa for ST32
+  - 00 C8 for v2.x v1.x
+- 512 bytes unknown, only for ST32 (or R03?)
+  - records
+    - 2 bytes length: 01 00
+    - 4 bytes data: 00 80 00 00
+    - 2 bytes null
+  - records
+    - 2 bytes length: 02 00
+    - 4 bytes data: 00 0f 00 05
+    - 4 bytes data: 00 10 00 02
+    - 2 bytes null
+  - 4 bytes unknown: 00 10 00 02
+  - 8 bytes null
+  - 4 bytes unknown: 00 08 00 00
+  - 4 bytes unknown: 00 04 aa 55
+  - the rest is null

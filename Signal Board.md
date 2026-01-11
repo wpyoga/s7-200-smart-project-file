@@ -3,35 +3,37 @@
 Signal boards are stored in a common (versioned) format.
 
 The first 8 bytes describe the signal board, and whether it is present / configured:
+
 - 4 bytes: signal board if configured, or garbage data otherwise
 - 4 bytes:
-    - 01 00 00 00 if configured
-    - 00 00 00 00 if not configured
+  - 01 00 00 00 if configured
+  - 00 00 00 00 if not configured
 
 Similar to expansion modules, the block version depends on the software version,
 while expansion module version depends on the signal board series.
 For example, 0AA0 and 0AA1 series signal boards will have different identifiers.
 However, the block version depends on the software version, so 0AA0 and 0AA1 signal boards
-can have the same block version on R03.
+can have the same block version on V3.x software.
 
 As a general rule:
-- R02 software supports 0AA0 signal boards
-  - because only 0AA0 signal boards are supported by v1.x and v2.x CPUs
-- R03 software supports 0AA0 and 0AA1 signal boards
-  - because v3.0 CPU supports 0AA0 signal boards while ST32 supports 0AA1 signal boards
 
+- V2.x software supports 0AA0 signal boards
+  - because only 0AA0 signal boards are supported by v1.x and v2.x CPUs
+- V3.x software supports 0AA0 and 0AA1 signal boards
+  - because v3.0 CPU supports 0AA0 signal boards while ST32 supports 0AA1 signal boards
 
 ## No signal board
 
 The data looks like this
+
 - 4 bytes null or garbage data:
-    - 82 a6 a3 54
-    - 82 a6 a3 66
-    - 82 a6 4b 54
-    - 82 a6 4b 66
-    - d0 05 d8 01
-    - 78 56 f9 04
-    - ...
+  - 82 a6 a3 54
+  - 82 a6 a3 66
+  - 82 a6 4b 54
+  - 82 a6 4b 66
+  - d0 05 d8 01
+  - 78 56 f9 04
+  - ...
 - 4 bytes null -> not configured
 
 ## SB DT04

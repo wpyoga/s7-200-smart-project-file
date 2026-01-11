@@ -1,0 +1,121 @@
+# Printer Information
+
+- 1 byte: 01
+- some data
+  - 156 zero bytes -> R02.04.00.00
+  - 148 bytes of data -> R01.00.00.00
+    - 32 bytes name of last connected printer, padded with nulls
+      - `\\99J192\HP 2000C Printer`
+    - then some 116 bytes of data
+- 16 bytes data
+  - 4x 4 bytes: 6e 04 00 00 -> R02.04.00.00
+    - MarginLeft: 6e 04 00 00 = 1134
+    - MarginTop: 6e 04 00 00 = 1134
+    - MarginRight: 6e 04 00 00 = 1134
+    - MarginBottom: 6e 04 00 00 = 1134
+  - 2x 8 bytes: 08 07 00 00 a0 05 00 00 -> R01.00.00.00
+- 10 bytes data
+  - zero bytes -> R02.04.00.00
+    - 2 or 4 bytes might be UseAnnotation = 0
+    - the rest is unknown
+  - d0 2f 00 00 e0 3d 00 00 00 00
+- 2x 2 bytes: 02 00
+  - HeaderJustify: 2
+  - FooterJustify: 2
+- 256 byte block
+  - R02.04.00.00: starts with 24-byte string, no length encoded: `%[PROJECT]  /  %[OBJECT]`
+    - double spaces in the middle
+  - R01.00.00.00: starts with 21 byte string `%[PROJECT], %[OBJECT]`: R01.00.00.00
+  - the rest of the bytes are all nulls
+- 256-byte block
+  - 7-byte string, no length encoded: `%[PAGE]`
+  - 249 trailing null bytes
+- 512 zero bytes
+  - deleting all subroutines, interrupt routines, and removable symbol tables don't change anything here
+- 2 bytes null
+- some kind of info table
+  - R02.04.00.00: 80 = 6x13+2 bytes print options
+    - record: 01 08 00 01 00 01 00 01 00 01 00 00 00
+      - LADPrintOptions in V3
+      - marker: 01
+      - col: 08 00
+      - props: 01 00
+      - vars: 01 00
+      - comments: 01 00
+      - syms: 01 00
+      - lines: 00 00
+    - record: 01 08 00 01 00 01 00 01 00 01 00 00 00
+      - FBDPrintOptions in V3
+      - marker: 01
+      - col: 08 00
+      - props: 01 00
+      - vars: 01 00
+      - comments: 01 00
+      - syms: 01 00
+      - lines: 00 00
+    - record: 01 00 00 01 00 01 00 00 00 00 00 01 00
+      - STLPrintOptions in V3
+      - marker: 01
+      - col: 00 00
+      - props: 01 00
+      - vars: 01 00
+      - comments: 00 00
+      - syms: 00 00
+      - lines: 01 00
+    - record: 01 00 00 01 00 00 00 00 00 00 00 00 00
+      - SYMPrintOptions in V3
+      - marker: 01
+      - col: 00 00
+      - props: 01 00
+      - vars: 00 00
+      - comments: 00 00
+      - syms: 00 00
+      - lines: 00 00
+    - record: 01 00 00 01 00 00 00 00 00 00 00 00 00
+      - CHTPrintOptions
+      - marker: 01
+      - col: 00 00
+      - props: 01 00
+      - vars: 00 00
+      - comments: 00 00
+      - syms: 00 00
+      - lines: 00 00
+    - record: 01 00 00 01 00 00 00 00 00 00 00 00 00
+      - DBPrintOptions
+      - marker: 01
+      - col: 00 00
+      - props: 01 00
+      - vars: 00 00
+      - comments: 00 00
+      - syms: 00 00
+      - lines: 00 00
+    - 2 bytes null -> meaning, no more records? or, independent null?
+  - R01.00.00.00: 88 bytes bit field of records
+    - record: 01 08 00 01 00 01 00 01 01 01 00 00 00
+      - LADPrintOptions in V3
+      - marker: 01
+      - col: 08 00
+      - props: 01 00
+      - vars: 01 00
+      - comments: 01 01
+      - syms: 01 00
+      - lines: 00 00
+    - record: 01 08 00 01 00 01 00 00 01 01 00 10 00
+      - FBDPrintOptions in V3
+      - marker: 01
+      - col: 08 00
+      - props: 01 00
+      - vars: 01 00
+      - comments: 00 01
+      - syms: 01 00
+      - lines: 01 00
+    - record: 01 08 00 01 00 01 00 00 01 01 00 10 00
+    - record: 00 00 01 00 01 00 00 00 01 01 00 00 00
+    - record: 00 00 00 00 00 00 00 00 01 00 00 01 00
+    - record: 00 00 00 00 00 00 00 00 01 00 00 01 00
+      - might correspond to these:
+      - STLPrintOptions
+      - SYMPrintOptions
+      - CHTPrintOptions
+      - DBPrintOptions
+    - 10 bytes null

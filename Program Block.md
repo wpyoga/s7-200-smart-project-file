@@ -1,0 +1,899 @@
+# Program Block
+
+## Format description
+
+- 1 byte: program block format version
+  - 08: R02.04.00.00
+  - 07: R01.00.00.00
+- 2 bytes type
+  - main block: E8 03 (1000)
+  - subroutine: E9 03 (1001)
+  - interrupt routine: EA 03 (1002)
+- 2 bytes null
+- 2 bytes program block index
+  - main: 00 00 (always OB1)
+  - subroutine: SBRx (0-based)
+  - interrupt: INTx (0-based)
+- 2 bytes type: 01 00
+- 18 bytes null
+- 4 bytes parameters
+  - only on R02.04.00.00
+  - missing on R01.00.00.00
+  - editor open: 01 00 00 00
+  - editor closed: 00 00 00 00
+  - main block is always open
+- 2 bytes version
+  - 0D 00: R02.04.00.00
+  - 0B 00: R01.00.00.00
+- program block name
+  - 2 bytes length
+  - n bytes string contents
+- 1 byte null
+- program block comment
+  - 2 bytes length
+  - n bytes string contents
+  - only on R01.00.00.00
+  - always zero length on R02.04.00.00
+- 1 byte null
+- program block info
+  - R02.04.00.00
+    - author name
+      - 2 bytes length
+      - n bytes string contents
+    - 42 bytes null
+    - 44 bytes
+      - option 1 (sometimes for MAIN)
+        - 30 bytes data
+        - 4 bytes null
+        - 10 bytes data
+      - option 2 (sometimes for MAIN)
+        - 44 bytes null
+      - option 3 (for SBR or INT)
+        - 6 bytes null
+        - 16 bytes data
+        - 4 bytes null
+        - 14 bytes data
+        - 4 bytes null
+    - 3 bytes null
+  - R01.00.00.00
+    - 27 bytes unknown (null?)
+- timestamp created time (localtime)
+- timestamp last modified time (updated whenever symbol table or program block is updated)
+- 1 byte null
+- array of networks
+  - 2 bytes number of networks
+  - n networks (repeated for each network)
+    - 2 bytes network index
+    - 4 bytes 02 01 04 00 \= 262402
+    - network title
+      - 2 bytes length
+        - always 0 on R02.04.00.00
+      - n bytes network title
+    - 1 byte null
+    - network comment
+      - 2 bytes length
+      - n bytes comment string
+    - xx bytes [network data](#network-content)
+- 1 byte null
+- symbol table for program block
+  - 2 bytes number of entries
+  - n [symbol table entries](Symbol%20Table.md#program-block-symbol-table)
+- 4 bytes null
+- 4 bytes: 01 00 00 00
+- 4 bytes: 64 00 00 00
+
+## network content
+
+- the ladder network is described in terms of elements / blocks
+- each network can have a maximum of 32 lines (rows) and 32 items per line (columns)
+- each element in each network has a line number & column number
+- even connecting lines are described as an element
+- dangling arrows are also described as an element
+- any element that can be visually added in the program editor is described as an element
+- ~~vertical connection is "owned" by the lower line~~
+- for connecting lines, an element describes
+  - horizontal line in the middle
+  - vertical line going up on the right side
+  - vertical line going down on the right side
+
+the basic format of a network description is as follows
+
+- 4 bytes 01 00 00 00
+- 2 bytes null
+- 4 bytes 02 00 00 00
+- 4 bytes
+  - 00 00 00 00: no bookmark
+  - 01 00 00 00: bookmark
+- 2 bytes 00 01
+- 2 bytes: number of elements in the network
+- element 0
+- element 1
+- ...
+- last element
+
+## network element
+
+the basic format of a network element is as follows
+
+- 1 byte null
+- 1 byte line number
+- 1 byte column number
+- 1 byte: 03
+- 4 bytes: type
+  - 01 00 00 00: dangling arrow, vertical line, final arrow
+  - 01 01 00 00: horizontal line
+  - 01 14 00 00: NO contact
+  - 01 15 00 00: NC contact
+  - 01 18 00 00: NOT
+  - 01 19 00 00: positive transition
+  - 01 1A 00 00: negative transition
+  - 01 1B 00 00: output coil
+  - 01 20 00 00: reset coil
+  - 01 23 00 00: NOP box
+  - 01 1D 00 00: set coil
+  - 01 4A 01 00: ADD_R box
+  - 01 49 01 00: LPF box
+  - 01 59 01 00: ADD_I box
+  - 01 A0 00 00: XMT box
+  - 01 A0 01 00: MOV_W
+  - 01 E9 03 00: subroutine \#0
+  - 01 E9 03 01: subroutine \#1
+- 4 bytes
+  - byte 0: type
+    - 07: final arrow
+    - 06: dangling arrow
+    - 05: horizontal line
+    - 03: contact
+    - 04: coil (output)
+    - 02: second half of box
+      - maybe: box or part of box, with call parameters
+    - 01: subroutine or box or top of box
+      - maybe: box or part of box, with lines coming in or out
+  - byte 1: lines on the right side
+    - 03: going up and going down
+    - 02: going down
+    - 01: going up
+    - 00: none
+  - byte 2:
+    - 00: usually, unknown, second half of box
+    - 05: NOP box
+    - 02: subroutine or top of box
+  - byte 3
+    - 00: usually, unknown, top half of box
+    - 09: NOP box, second half of LPF box, subroutine
+    - 06: second half of ADD_I ADD_R XMT box
+    - 03: second half of MOV_W box
+    - maybe: 03 means 1 row, 06 means 2 rows, 09 means 3 rows
+      - which means one row is divided into 3 columns
+  - examples
+    - 07 00 00 00: final arrow
+    - 06 00 00 00: dangling arrow
+    - 05 00 00 00: horizontal line only
+    - 00 03 00 00: vertical line going up and going down on the right side
+    - 05 02 00 00: horizontal line with vertical line going down on the right side
+    - 03 00 00 00: normal contact or coil?
+    - h04 00 00 00: output coil (set coil, reset coil)
+- 1 byte:
+  - number of data records following
+  - 03: usually, box, but subroutine with multiple inputs also 03
+    - 3x (null+24+2+24+2+null+24+2+24+2+null+24+2+24+2)
+    - 24 bytes of data is text padded with zeros
+      - max length is 23, so there is always a trailing null
+    - 2 bytes of data is status
+      - 01 00 data absent / empty
+      - 02 02 data present / filled
+    - for single row box or first row of box, the first record contains the box title, stored in the first 24, and the second 24 is empty
+      - the second part contains EN (always) and ENO (if not subroutine or NOP)
+    - for subsequent rows of box, the first record contains labels (parameters) from the first line (left and then right), and so on
+    - for contact with label (even NO contact has " " as label), it is stored on the second record, the first 24
+  - 00: final arrow, no data records
+- records (if number of data records is not 0)
+  - usually 03
+    - the only time it's not 03 seems to be in an empty network with a single end arrow
+  - 1 byte null
+  - 24 bytes: box label padded with nulls, or first row left side entry
+    - usually null
+    - ADD_I then null: ADD_I box top
+    - ADD_R then null: ADD_R box top
+    - XMT then null: XMT box top
+    - IN1 then null: ADD_I ADD_R box second half
+    - TBL then null: XMT box second half
+    - MOV_W then null: MOV_W box top
+    - IN then null: MOV_W LPF box second half
+    - LPF then null: LPF box top
+    - SBR_0: SBR_0 box
+    - SBR_1: SBR_1 box
+    - in0002: SBR_0 third part
+  - 2 bytes
+    - 01 00: usually, box top or subroutine
+    - 00 02: ADD_I ADD_R MOV_W LPF box second half, SBR_0 third part
+  - 24 bytes
+    - usually null, box half or subroutine
+    - OUT then null: ADD_I ADD_R MOV_W LPF box second half
+    - out001: SBR_0 third part
+  - 2 bytes
+    - 01 00 usually, box top half, subroutine, XMT box second half
+    - 02 02: ADD_I ADD_R MOV_W LPF box second half, SBR_0 third part
+  - 1 byte null
+  - 24 bytes: element data? or label? or second line of box?
+    - 00 00 00 00 ... unknown but this is the usual value, also MOV_W box second half
+    - ' ' 00 00 00 ... NO contact, output coil
+      - NO contact has a space in the middle
+    - '/' 00 00 00 ... NC contact
+      - NC contact has a space in the middle
+    - 'N' 00 00 00 ... negative transition
+    - 'P' 00 00 00 ... positive transition
+    - 'R' 00 00 00 ... reset coil
+    - 'S' 00 00 00 ... set coil
+    - 'N' 'O' 'T' 00 00 00 ... NOT
+    - 'N' 'O' 'P' 00 00 00 ... NOP box
+    - 'E' 'N' 00 00 00 ... ADD_I ADD_R XMT MOV_W LPF box top, subroutine \-\> EN input (second line, left side)
+    - 'I' 'N' '2' 00 00 00 ... ADD_I ADD_R box second half, second line, right side
+    - PORT then null: XMT box second half
+    - Coef then null: LPF box second half
+    - in0003: SBR_0 third part
+  - 2 bytes:
+    - 01 00: usually, MOV_W box second half
+    - 01 02: NOP box
+    - 00 02: ADD_I ADD_R XMT LPF box top half or second half, MOV_W box top half, subroutine, SBR_0 third part
+  - 24 bytes
+    - usually null, box second half, subroutine
+    - ENO then null: ADD_I ADD_R box top half
+      - subroutine doesn't have ENO output
+    - "out002": SBR_0 third part
+  - 2 bytes:
+    - 01 00: usually, box second half
+    - 02 02: box top half, SBR_0 third part
+  - 1 byte null
+  - 24 bytes
+    - null: usually, or subroutine
+    - 00 then N then null: LPF box second half
+    - in0004: SBR_0 third part
+  - 2 bytes
+    - 00 01: usually, subroutine
+    - 00 02: LPF box second half, SBR_0 third part
+  - 24 bytes
+    - null usually
+    - out003: SBR_0 third part
+  - 2 bytes?
+    - 01 00: usually
+    - 02 02: SBR_0 third part
+- 2 bytes: 01 01
+- array: values to give to the element, only found at the first part if a box
+  - 2 bytes: number of records
+  - n records
+    - example indexes for: ADD_I 12 \+ 25 \= VW15 (0c 19 0f)
+      - FF FF
+      - 01 00
+      - 02 00
+      - FF FF
+      - 04 00
+      - maybe: the first FF is for EN, the second FF is for ENO
+      - maybe FF means horizontal line in this case
+      - but look at XMT
+    - example indexes for: XMT IN \+ IN, no out
+      - FF FF
+      - 01 00
+      - 02 00
+      - maybe FF means start of section (IN, IN_OUT, OUT)
+    - example indexes for: MOV_W IN OUT
+      - FF FF
+      - 01 00
+      - FF FF
+      - 03 00
+    - example indexes for: SBR_0 EN in_bit in... in_out out...
+      - FF FF
+      - FF FF
+      - 02 00
+      - ...
+      - 10 00
+        - maybe FF means horizontal line
+        - SBR_0 has an initial bit input, thus FF FF
+        - subroutine doesn't have bit output, thus no third FF FF
+    - example: unfilled value (????)
+      - 2 bytes: index
+      - 01 03
+      - 01
+      - 02 00 00 00
+      - 01
+      - 00 00 00 00
+      - 02
+      - 00 04 10 \-\> box is expecting VW (00 08 10 for VD, 00 02 10 for VB)
+        - 00 00
+        - 00
+        - 00 00 00 00
+    - example: \&VB123
+      - 2 bytes: index
+      - ...
+      - 01 02 10 \-\> \&VB
+        - 2 bytes 00 00
+        - 1 byte nul
+        - 4 bytes offset: 7B 00 00 00
+    - example: VD16
+      - 2 bytes: index
+      - 2 bytes: 01 03
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 02
+      - 00 08 10 \-\> VD
+        - 2 bytes 00 00
+        - 1 byte null
+        - 4 bytes: 10 00 00 00
+    - example: VW15
+      - 2 bytes: index
+      - 2 bytes: 01 03
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 02
+      - 00 04 10 \-\> VW
+        - 2 bytes 00 00
+        - 1 byte null
+        - 4 bytes: 0F 00 00 00
+    - example: Always_On
+      - 2 bytes: index
+      - 2 bytes: 02 03
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 3 bytes: 00 01 00 \-\> string ??
+        - 1 byte length: 09
+        - n bytes content: Always_On
+        - maximum length seems to be 23 characters
+    - example: the number \-13
+      - 2 bytes: index
+      - 2 bytes: 00 03
+      - ...
+      - 3 bytes: 02 02 01 \-\> negative byte?
+        - 4 bytes: F3 FF FF FF
+        - 1 byte null
+    - example: the number 5
+      - 2 bytes: index
+      - 2 bytes: 00 03
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+        3 bytes: 01 02 01 \-\> byte
+        - 4 bytes: 05 00 00 00 \-\> the number 5
+        - 1 byte null
+    - example: the number 1
+      - 2 bytes: index
+      - 2 bytes: 00 03
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 4 bytes: 00 00 00 00
+      - 1 byte: 01
+      - 3 bytes: 01 01 01 \-\> bit (0 and 1 are treated as bit data)
+        - 4 bytes: 01 00 00 00 \-\> 1 bit
+        - 1 byte null
+
+## network element examples
+
+- 35 bytes is for empty network
+  - 4 bytes 01 00 00 00
+  - 2 bytes null
+  - 4 bytes 02 00 00 00
+  - 4 bytes null
+  - 2 bytes 00 01
+  - 2 bytes 01 00
+    - number of elements in the network
+  - element 0: dangling arrow
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte index: 00
+    - 1 byte 03
+    - 4 bytes 01 00 00 00 \-\> connection?
+    - 4 bytes 07 00 00 00 \-\> closed arrow?
+    - 3 bytes: 00 01 01
+    - 2 bytes null
+- 398 bytes: a single Always_On contact
+  - 4 bytes 01 00 00 00
+  - 2 bytes null
+  - 4 bytes 02 00 00 00
+  - 4 bytes null
+  - 2 bytes 00 01
+  - 4 bytes 02 00
+    - number of elements in the network
+  - element 0
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte index: 00
+    - 1 byte: 03
+    - 4 bytes
+      - 01 14 00 00: NO contact
+      - 01 15 00 00: NC contact
+    - 4 bytes: 03 00 00 00
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 20: NO contact
+      - 01 00 00 2F: NC contact
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 byte: 00 00 01 00
+    - 4 bytes: 01 01
+    - array
+      - 2 bytes number of elements: 01 00
+      - index: 00 00
+      - 2 bytes: 02 03
+      - 4 bytes: 01 00 00 00
+      - 4 bytes: 00 01 00 00
+      - 4 bytes: 00 00 01 00
+      - 2 bytes: 01 00 \-\> type??
+      - \---string
+      - \---1 byte length: 09
+      - \---n bytes content: Always_On
+  - element 1: dangling arrow
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte element index in line: 01
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> arrow?
+    - 4 bytes: 06 00 00 00 \-\> connection?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 01 01
+    - 2 bytes null
+- 32 lines with 32 columns on the first line
+  - 4 bytes 01 00 00 00
+  - 2 bytes null
+  - 4 bytes 02 00 00 00
+  - 4 bytes null
+  - 2 bytes 00 01
+  - 2 bytes 40 00
+    - number of elements in the network
+    - including dangling arrows
+  - element 0: NC contact with value 1
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte index: 00
+    - 1 byte: 03
+    - 4 bytes
+      - 01 14 00 00: NO contact
+      - 01 15 00 00: NC contact
+    - 4 bytes 03 00 00 00
+      - sometimes 03 02 00 00
+      - not sure what the meaning is
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 20: NO contact
+      - 01 00 00 2F: NC contact
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 01 00
+    - 2 bytes null
+    - 4 bytes: 00 03
+    - 3 bytes: 01 00 00 00
+    - 4 bytes: 00 01 00 00
+    - 4 bytes: 00 00 01 01
+    - 4 bytes: 01 01 01 00
+    - 3 bytes null
+  - element 1: horizontal line
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte index: 01
+    - 1 byte: 03
+    - 4 bytes: 01 01 00 00 \-\> line?
+    - 4 bytes: 05 00 00 00 \-\> line?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - element 2: horizontal line
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte element index: 02
+    - 1 byte: 03
+    - 4 bytes: 01 01 00 00 \-\> line?
+    - 4 bytes: 05 00 00 00 \-\> line?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - element 3
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte element index: 03
+    - 1 byte: 03
+    - 4 bytes: 01 01 00 00 \-\> line?
+    - 4 bytes: 05 00 00 00 \-\> line?
+      - 05 02 00 00 means there is a line going down
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - element 4: NC contact with value 2
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte index: 04
+    - 1 byte: 03
+    - 4 bytes
+      - 01 14 00 00: NO contact
+      - 01 15 00 00: NC contact
+    - 4 bytes: 03 00 00 00
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 20: NO contact
+      - 01 00 00 2F: NC contact
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 01 00
+    - 2 bytes null
+    - 4 bytes: 00 03
+    - 3 bytes: 01 00 00 00
+    - 4 bytes: 00 01 00 00
+    - 4 bytes: 00 00 01 01
+    - 4 bytes: 02 01 02 00
+    - 3 bytes null
+  - ...
+  - element 31: 123 R 456
+    - 1 byte null
+    - 1 byte line number: 00
+    - 1 byte index: 1F
+    - 1 byte: 03
+    - 4 bytes
+      - 01 20 00 00: reset coil
+      - 01 1D 00 00: set coil
+    - 4 bytes: 04 00 00 00 \-\> output coil?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 52: reset coil
+      - 01 00 00 53: set coil
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 2 bytes: 01 01
+    - array
+      - 2 bytes length: 02 00
+      - 2 x24 bytes
+        - 2 bytes index: 00 00
+        - 4 bytes: 00 03
+        - 3 bytes: 01 00 00 00
+        - 4 bytes: 00 01 00 00
+        - 4 bytes: 00 00 01 07
+          - 00 00 01 unknown
+          - 07 is real, 01 is whole number
+          - 6 bytes: 08 01 7B 00 00 00
+          - 02 is ...? byte? not bit? if 01 then bit, if 08 then 32-bit dword or real
+          - 01 unknown
+          - 7B 00 00 00 \= 123 is the number on top
+        - 1 byte null
+      - second element
+        - 2 byte index: 01 00
+        - 2 bytes 00 03
+        - 4 bytes: 01 00 00 00
+        - 4 bytes: 00 01 00 00
+        - 4 bytes: 00 00 01 01
+        - 6 bytes: 04 01 C8 01 00 00
+          - 04 is word? 08 is dword
+          - 01 unknown
+          - C8 01 00 00 \= 456 is the number at the bottom
+          - D1 2F 01 00 \= 77777
+        - 1 byte null
+  - element 32: vertical line on right side
+    - 1 byte null
+    - 1 byte line number: 01
+    - 1 byte element index: 00
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> vertical line?
+    - 4 bytes: 00 03 00 00 \-\> vertical line?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - element 33: vertical line on right side
+    - 1 byte null
+    - 1 byte line number: 02
+    - 1 byte element index: 00
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> vertical line?
+    - 4 bytes: 00 03 00 00 \-\> vertical line?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - element 34: vertical line on right side
+    - 1 byte null
+    - 1 byte line number: 03
+    - 1 byte element index: 00
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> vertical line?
+    - 4 bytes: 00 03 00 00 \-\> vertical line?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - element 35: NC contact with value 5
+    - 1 byte null
+    - 1 byte line number: 04
+    - 1 byte index: 00
+    - 1 byte: 03
+    - 4 bytes
+      - 01 14 00 00: NO contact
+      - 01 15 00 00: NC contact
+    - 4 bytes 03 03 00 00
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 20: NO contact
+      - 01 00 00 2F: NC contact
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 01 00
+    - 2 bytes null
+    - 4 bytes: 00 03
+    - 3 bytes: 01 00 00 00
+    - 4 bytes: 00 01 00 00
+    - 4 bytes: 00 00 01 01
+    - 4 bytes: 02 01 05 00
+    - 3 bytes null
+  - ...
+  - element 62: vertical line on right side
+    - 1 byte null
+    - 1 byte line number: 1f
+    - 1 byte element index: 00
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> vertical line?
+    - 4 bytes: 00 01 00 00 \-\> vertical line on right side but only halfway?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+  - last element 63: dangling arrow
+    - 1 byte null
+    - 1 byte line number: 1f
+    - 1 byte element index: 01
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> open arrow?
+    - 4 bytes: 06 00 00 00 \-\> connection?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 22 bytes null
+    - 4 bytes: 00 00 01 00
+    - 4 bytes: 01 01 00 00
+- 1 line with 5 contacts & 1 dangling arrow
+  - 4 bytes 01 00 00 00
+  - 2 bytes null
+  - 4 bytes 02 00 00 00
+  - 4 bytes null
+  - 2 bytes 00 01
+  - 4 bytes 06 00 00 00
+    - number of elements in the network
+    - including dangling arrows
+  - element 0
+    - 1 byte element index: 00
+    - 1 byte 03
+    - 4 bytes
+      - 01 14 00 00: NO contact
+      - 01 15 00 00: NC contact
+    - 4 bytes 03 00 00 00
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 20: NO contact
+      - 01 00 00 2F: NC contact
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 01 01
+    - 4 bytes: 01 00 00 00
+    - 4 bytes: 01 03 01 00
+    - 4 bytes: 00 00 00 01
+    - 4 bytes null
+    - 3 bytes: 02 00 01
+    - 4 byes: 10 00 00 00
+    - 4 bytes: 0A 00 00 00
+      - variable offset
+    - 2 bytes null
+  - element 1
+    - 1 byte element index: 01
+    - 1 byte 03
+    - 4 bytes
+      - 01 14 00 00: NO contact
+      - 01 15 00 00: NC contact
+    - 4 bytes 03 00 00 00
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes
+      - 01 00 00 20: NO contact
+      - 01 00 00 2F: NC contact
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 01 01
+    - 4 bytes: 01 00 00 00
+    - 4 bytes: 01 03 01 00
+    - 4 bytes: 00 00 00 01
+    - 4 bytes null
+    - 3 bytes: 02 00 01
+    - 4 byes: 10 00 00 00
+    - 4 bytes: 13 00 00 00
+      - variable offset
+    - 2 bytes null
+  - ...
+  - last element: dangling arrow
+    - 1 byte element index: 05
+    - 1 byte: 03
+    - 4 bytes: 01 00 00 00 \-\> open arrow?
+    - 4 bytes: 06 00 00 00 \-\> connection?
+    - 4 bytes: 03 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 00 01 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 00 00
+    - 22 bytes null
+    - 4 bytes: 01 00 01 01
+    - 2 bytes null
+
+## Notes
+
+network:
+
+- max 32 columns
+- max 32 rows per network
+- values are stored as-is
+  - invalid values are stored as-is
+  - symbols, like Always_On for SM0.0 or First_Scan_On for SM0.1, are stored as the string itself (not substituted for its memory address)
+  - numeric values are stored as-is
+- labels are stored in the network data
+  - this includes contact labels like NC ('/'), coil labels like reset ('R') and box labels like NOP ('NOP')
+- box and subroutine call signature is encoded in the network data
+  - this includes input and output parameters
+  - including EN and ENO
+  - labels are also stored, as above

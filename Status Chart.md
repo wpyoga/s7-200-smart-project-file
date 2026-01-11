@@ -1,0 +1,28 @@
+# Status Chart
+
+- 1 byte identifier: 03
+- 4 bytes: 01 00 00 00
+- 2 bytes number of status charts: 05 00
+- 1 byte version
+  - 08: R02.04.00.00
+  - 07: R01.00.00.00
+- 2 bytes: A0 0F (4000)
+- 2 bytes null
+- status chart
+  - 2 bytes status chart index (0-based)
+  - 2 bytes type: 01 00
+  - null bytes
+    - 22 bytes null: R02.04.00.00
+    - 18 bytes null: R01.00.00.00
+  - 2 bytes: 02 00
+  - status chart name
+    - 2 bytes length
+    - n bytes string contents
+  - 8 bytes null
+  - 2 bytes number of entries
+  - status chart entry
+    - status chart entry index (0-based)
+    - 4 bytes: 01 02 03 01
+    - 2 bytes: 02 00
+    - 2 bytes null
+    - ...

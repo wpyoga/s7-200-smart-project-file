@@ -1,0 +1,325 @@
+# Symbol Table
+
+## symbol table
+
+- 1 byte version
+  - 08: R02.04.00.00
+  - 07: R01.00.00.00
+- 2 bytes
+  - symbol table: B8 0B (3000)
+  - POU Symbols: B9 0B (3001)
+- 2 bytes zero bytes
+- 2 bytes symbol table index (0-based)
+  - restart from 0 for POU Symbols
+  - it's like POU Symbols have its own list
+  - but the lists are merged in the editor
+- 2 bytes: type
+  - symbol table: 01 00
+  - POU Symbols
+    - 80 00: R02.04.00.00
+    - 08 00: R01.00.00.00
+- null bytes
+  - 22 bytes null: R02.04.00.00
+  - 18 bytes null: R01.00.00.00
+- 2 bytes: 02 00
+- symbol table name
+  - 2 bytes length
+  - n bytes symbol table name
+- 18 bytes zero bytes
+- 4 bytes FF FF FF FF
+- 2 bytes number of entries
+- n symbol table entries, see below
+
+## symbol table entries
+
+### program block symbol table
+
+symbol table entry (program block)
+
+- 2 bytes: 02 00
+- symbol name
+  - 2 bytes length
+  - n bytes string
+- 4 bytes: 00 01 02 00
+  - if incomplete: 00 03 00 00
+- 2 bytes type
+  - EN: 00 00
+  - bool: 01 00
+  - byte: 02 00
+  - word: 04 00
+  - int: 04 00
+  - dword: 08 00
+  - dint: 08 00
+  - real: 08 00
+  - string: 08 00
+  - none if entry incomplete
+- 1 byte type
+  - EN: 00
+  - in/in_out/out/temp: 20
+  - none if entry incomplete
+- 2 bytes null
+- 2 bytes offset
+  - bool: number of bits
+  - other: number of bytes
+  - present but ignored if entry is invalid
+  - none if entry incomplete
+- 6 bytes null
+  - none if entry incomplete
+- 4 bytes type
+  - EN: 02 00 00 80
+    - any consecutive bool at the top also has this type
+  - bool: 02 00 00 00
+  - byte: 04 00 04 00
+  - word: 48 00 00 00
+  - int: 48 00 00 00
+  - dword: 90 00 00 00
+    - sometimes 10 00 00 00
+  - dint: 90 00 00 00
+  - real: 00 10 00 00
+  - string: 00 00 10 00
+  - no type: 00 00 00 00
+- 1 byte null
+- comment string
+  - 2 bytes length
+  - n bytes string
+- 1 byte: 02
+- 1 byte direction/type
+  - in: 00
+  - in_out: 01
+  - out: 02
+  - temp: 03
+- 2 bytes: bitfield?
+  - in
+    - EN: F3 2E
+    - bool: F3 2E
+    - byte: 33 7E
+    - word: F7 7E
+    - int: F7 7E
+    - dword: F3 FF
+    - dint: F3 FF
+    - real: F3 7F
+    - string: 10 60
+  - in_out
+    - bool: F3 2E
+    - byte: 33 7E
+    - word/int/dword/dint/real: F3 7E
+  - out
+    - bool: F3 2E
+    - byte: 33 7E
+    - word/int: FB 7E
+    - dword/dint/real: F3 7E
+    -
+  - temp
+    - bool: F3 2E
+    - byte: 33 7E
+    - word/int/dword/dint/real: F3 7E
+  - incomplete: 00 00
+- 2 bytes
+  - if input and non-bool: 01 00
+  - otherwise 00 00
+- 1 byte
+  - bool: 03
+  - byte/word/dword: 01
+  - int/dint: 00
+  - real: 04
+  - string: 06
+    - only IN can be string
+  - type missing: 09
+- 1 byte (bitfield?)
+  - EN: 00
+  - variable: 01
+  - maybe 00 means read-only
+  - invalid: 11
+    - invalid due to local variable memory not enough
+    - can also be due to number of leads not enough (too many local variables)
+  - incomplete:
+    - no name & no type: 2B
+    - name only: 23
+    - type only: 29
+- 1 byte null
+
+### independent symbol table
+
+symbol entries (index is 0-based in file, 1-based in microwin) (independent)
+
+- 2 byte symbol entry index (0-based)
+- 2 bytes: 02 00
+- symbol name
+  - 2 bytes string length
+  - n bytes symbol name
+  - symbol name can be empty, length will be 00 00
+- 4 bytes:
+  - looks like a bit field
+  - first byte: 00
+  - second byte
+    - 00 constant
+    - 01 memory address
+    - 03 incomplete
+  - third byte
+    - 01 constant
+    - 02 memory address
+  - fourth byte (looks like enum)
+    - 00 memory address
+    - 01 positive constant
+    - 02 negative constant
+    - 03 invalid memory address
+    - 04 hexadecimal constant
+    - 05 binary constant
+    - 06 ascii constant
+    - 07 real constant
+    - 08 string constant
+  - examples
+    - no addr: 00 03 00 00
+    - name only: 00 03 00 00
+    - comment only: 00 03 00 00
+- 2 bytes
+  - first byte ( data type/size)
+    - 01 \= 1 bit / timer / C counter
+    - 02 \= 1 byte / AC accumulator
+    - 04 \= 2 bytes
+    - 08 \= 4 bytes / HC counter / POU / ASCII string
+    - 10 \= string
+    - 40 \= invalid memory address
+  - second byte
+    - 00 SM memory / POU / incomplete / invalid memory address / HC counter / AC accumulator / S sequence control relay
+    - 01 constant value / I memory
+    - 02 Q memory
+    - 04 AI memory
+    - 08 AQ memory
+    - 10 V memory
+    - 20 M memory
+    - 40 T memory
+    - 80 C memory
+  - examples
+    - MAIN(POU): 08 00
+    - Ix.x: 01 01
+    - no addr: 00 00
+    - name only: 00 00
+    - comment only: 00 00
+- 2 bytes if memory location:
+  - C: 00 00
+  - AI: 00 00
+  - AQ: 00 00
+  - V: 00 00
+  - M: 00 00
+  - I: 00 00
+  - VD: 00 00
+  - invalid memory address: 00 00
+  - no addr: 00 00
+  - HC: 01 00
+  - SM: 02 00
+  - S: 04 00
+  - AC: 10 00
+  - MAIN(POU): 00 08
+  - byte/int/dint/real const: none
+  - name only: none
+  - comment only: none
+  - string const: none
+- 1 byte zero byte if memory location
+  - byte/int/dint/real const: none
+  - name only: none
+  - comment only: none
+  - string const: none
+  - invalid memory address: none
+- 4 bytes data
+  - if memory location, then offset
+    - number of bits from AA0.0 if bits
+    - number of bytes from AA0 if byte / word / dword
+    - MAIN(POU): 00 00
+  - if const, then value
+    - byte const: 4 bytes int value
+    - real const: 4 bytes const value
+    - dint const: 4 byes const value
+    - int const: 4 bytes const value
+  - offset is saved even if it's invalid like VD75999
+  - name only: none
+  - comment only: none
+  - string constant: zero bytes
+  - invalid memory address: zero bytes
+- string constant data
+  - 1 byte length (can be 00)
+  - n bytes string constant
+- 4 bytes zero bytes
+- memory area descriptor
+  - 2 bytes
+    - looks like an enum or bitfield
+    - if offset:
+      - MAIN(POU): 00 00
+      - bit: 02 00
+      - byte: 04 00
+      - word: 48 00
+      - dword: 90 10
+      - timer: 4A 00
+    - if const:
+      - string const: 00 00
+      - negative dint const: 80 00
+      - negative int const: C0 00
+      - negative byte const: C0 00
+      - bit const: DE 00
+      - byte const: DC 00
+      - small int const: D8 00
+      - bin byte const: DC 00
+      - hex int const: D8 10
+      - int const: 98 00
+      - small dint const: 90 00
+      - dint const: 10 00
+      - 1 byte ascii: 04 00
+      - 2 byte ascii: 48 00
+      - 4 byte ascii: 90 00
+    - name only: none
+  - 2 bytes
+    - also looks like a bitfield
+    - if memory address:
+      - bit or timer: 00 60
+      - byte: 14 00 or 04 00
+      - word: 00 00
+      - dword: 00 00
+      - MAIN(POU): 02 00
+    - if const:
+      - negative dint const: 00 00
+      - negative int const: 00 00
+      - negative byte const: 04 00
+      - bit const: 14 or sometimes 04 00
+      - byte const: 14 00
+      - bin byte const: 04 00
+      - hex int const: 00 00
+      - small int const: 00 00
+      - int const: 00 00
+      - small dint const: 00 00
+      - dint const: 00 00
+      - real const: 10 00
+      - string const: 10 00
+    - name only: none
+- 1 byte zero byte
+- comment string
+  - 2 bytes string length (can be 0)
+  - n bytes comment
+- 2 bytes: 02 00
+- string: string entered in address column if invalid
+  - 2 bytes length (usually zero)
+  - n bytes data
+  - usually this column is empty
+    - but sometimes the invalid value is not removed
+    - resulting in junk data stored here
+    - junk data can be inserted here by entering an invalid value as the "address"
+    - junk data can be removed by deleting the "address" and entering a valid value
+    - simply overwriting the invalid value with a valid value doesn't work \-- we have to clear the field, then enter a valid value \-- seems like an editor quirk
+- 2 bytes
+  - standard / const / no problem: zero bytes
+    - even if memory address is out of range, this value is still zero bytes
+  - no name: 08 00 (also for const without name)
+  - name only: 20 00
+  - comment only: 2A 00
+  - invalid or duplicate entry but valid value: 10 00
+    - invalid entries can be created by pressing enter on a previous const entry \-- seems like an editor quirk
+    - duplicate entries also result in this flag being 10 00
+  - invalid const entry with invalid value: 30 00
+  - first byte might be a bit field
+    - bit 7
+    - bit 6
+    - bit 5: missing or invalid value entered in address column
+    - bit 4: problem related to address column
+    - bit 3: symbol name missing (what about invalid name?)
+    - bit 2
+    - bit 1
+    - bit 0

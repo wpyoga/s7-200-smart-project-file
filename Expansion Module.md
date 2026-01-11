@@ -13,9 +13,9 @@ For example, 0AA0 and 0AA1 series modules will have different identifiers. Howev
 depends on the software version.
 
 As a general rule:
-- R02 software supports 0AA0 modules
+- V2.x software supports 0AA0 modules
   - because only 0AA0 modules are supported by v1.x and v2.x CPUs
-- R03 software supports 0AA0 and 0AA1 modules
+- V3.x software supports 0AA0 and 0AA1 modules
   - because v3.0 CPU supports 0AA0 modules while ST32 supports 0AA1 modules
 
 ## No expansion module

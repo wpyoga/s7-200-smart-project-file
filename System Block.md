@@ -12,7 +12,7 @@ this block is similar across R01 R02 R03 versions
   - 35 bytes null: R01.00.00.00
 - 2 bytes: 00 01
 - 1 byte: 02
-- 1 byte: Modbus station number for Port0
+- 1 byte: Modbus slave number for Port0
 - 3 bytes null
 - 1 byte: baud rate
   - 01: 9600
@@ -108,8 +108,8 @@ this block is similar across R01 R02 R03 versions
     - 1 byte
       - 00 for ST
       - 01 for SR
-      - 81 for CR..s
       - 20 for ST32
+      - 81 for CR..s
     - 1 bytes
       - 02 for xx20
       - 03 for xx30 & ST32
@@ -204,7 +204,7 @@ this block is similar across R01 R02 R03 versions
       - 00 00 00 01: output ON in stop mode
       - 00 00 00 00: output OFF in stop mode
   - 2 bytes null
-- signal board
+- signal board info
   - [Signal Board](Signal%20Board.md) described here
   - version 06:
     - 4 bytes: number of signal boards
@@ -213,7 +213,7 @@ this block is similar across R01 R02 R03 versions
     - signal board 2
   - version 05:
     - signal board
-- expansion modules
+- expansion modules info
   - [Expansion Module](Expansion%20Module.md) described here
   - 4 bytes: number of expansion modules supported
     - 10 00 00 00 for ST32
@@ -230,7 +230,7 @@ this block is similar across R01 R02 R03 versions
     - 2 bytes length: 03 00
     - 3x 8 bytes (null?)
     - 2 bytes null
-- additional settings on R03.01.00.00
+- additional settings, only on R03.01.00.00
   - 14 bytes unknown
     - 1 byte bit field
       - 01 unknown
