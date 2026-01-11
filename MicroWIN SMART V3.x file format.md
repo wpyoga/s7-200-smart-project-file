@@ -514,7 +514,7 @@ this block is similar across R01 R02 R03 versions
         - note that v3.x supports 8 expansion modules
     - 2 bytes null
     - n records of 8 bytes each
-      - \[each expansion module is described here\]
+      - [Expansion Modules](Expansion%20Modules.md)
   - some records
     - R02.04.00.00 & R03.01.00.00
       - 2 bytes length: 04 00
