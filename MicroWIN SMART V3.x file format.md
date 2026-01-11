@@ -79,6 +79,667 @@ File types:
 - `*.dbbin` and `*.bin` files are pure binary files.
 - `*.poubin` files are binary files with extra XML data at the end.
 
+## devproj
+
+- xml parse instruction
+- device
+  - attributes
+    - version: 31 = 3.1
+    - name: Project4 -> project name
+    - MajorVersion: 301 -> 3.01 firmware version? or MWSmartV3.exe version? this is 301.0.0.3
+    - MinorVersion: 0 -> 0.0 ? or MWSmartV3.exe minor version 301.0.0.3
+    - BuildNumber: 0 ? maybe MWSmartV3.exe build version 301.0.0.3
+    - InstallNumber: 3 ? maybe last digit in MWSmartV3.exe version 301.0.0.3
+    - BaudRate: 1 -> 9600 ?
+    - DeviceType: CPU ST32
+  - children
+    - guid: {00000000-0000-0000-0000-000000000000}
+    - editor: 0
+    - creation: V03.01.00.00_00.00.00.03 -> software version ?
+    - DefaultName: 0
+    - AddressMode: 0
+    - StatMode: 0
+    - ProjectType: 0
+    - AllUnknownParms: (empty)
+    - TimeCreatedCompared: 2026-01-06 08:49:57.085 -> timestamp of creation time
+    - TimeLastModifiedCompared: -> looks like modified time or file save time
+    - ComparedWith22X: 1
+    - TimeOBCompiled: -> 1-2 seconds earlier than TimeLastModifiedCompared
+    - TimeDBCompiled: -> time of DB compilation and unbound variable assignment ? same as TimeCreatedCompared
+    - TimeCreated: -> same as TimeCreatedCompared
+    - TimeModify: -> same as TimeLastModifiedCompared
+    - DbTimeCreate: same as TimeCreatedCompared
+    - DbTimeModify: same as TimeCreatedCompared
+    - DeviceVer: V03.01.00_00.00.00.00 -> firmware version ?
+    - AllFeatureList: base64 string of CPU information block (724 bytes of binary data)
+    - PropertyGroup
+      - children:
+        - CompilerProperties
+          - attributes:
+            - CompilerSwitch: 0
+            - LibVisibleName: ""
+            - VersionTag: 1.0
+            - Protected: 0
+            - Password: ""
+            - IsDefaultName: 1
+          - children:
+            - LibPersistentPath
+            - guid: {4C6B43B4-1732-48FB-9DCF-583232A62B69}
+            - EXLibPOU_elements
+        - PRJNetInfo
+          - attributes:
+            - profibus: 2
+            - ip: ""
+        - PrintProperties
+          - attributes:
+            - MarginLeft: 1134
+            - MarginTop: 1134
+            - MarginRight: 1134
+            - MarginBottom: 1134
+            - UseAnnotation: 0
+            - HeaderJustify: 2
+            - FooterJustify: 2
+          - children:
+            - DevMode: base64 string of null block (156 bytes)
+            - header: "%[PROJECT]  /  %[OBJECT]"
+            - footer: "%[PAGE]"
+            - field11
+            - field12
+            - field13
+            - field14
+            - field2
+            - field3
+            - field41
+            - field42
+            - field43
+        - LADPrintOptions
+          - attributes:
+            - col: 8
+            - props: 1
+            - vars: 1
+            - comments: 1
+            - syms: 1
+            - lines: 0
+        - FBDPrintOptions
+          - attributes:
+            - col: 8
+            - props: 1
+            - vars: 1
+            - comments: 1
+            - syms: 1
+            - lines: 0
+        - STLPrintOptions
+          - attributes:
+            - col: 0
+            - props: 1
+            - vars: 1
+            - comments: 0
+            - syms: 0
+            - lines: 1
+        - SYMPrintOptions
+          - attributes:
+            - col: 0
+            - props: 1
+            - vars: 0
+            - comments: 0
+            - syms: 0
+            - lines: 0
+        - CHTPrintOptions
+          - attributes:
+            - col: 0
+            - props: 1
+            - vars: 0
+            - comments: 0
+            - syms: 0
+            - lines: 0
+        - DBPrintOptions
+          - attributes:
+            - col: 0
+            - props: 1
+            - vars: 0
+            - comments: 0
+            - syms: 0
+            - lines: 0
+        - RetainFlag: 0
+    - UIGroup
+      - children:
+        - OpenedUdts -> list of UDTs currently viewed?
+    - files
+      - children:
+        - file:
+          - attributes:
+            - name: Page_1
+            - filename: Data Block\Page_1.dbbin
+            - mw_id: 5000-0-1-0-00000000-0000-0000-0000-000000000000 -> note 5000d = 0x1388 = 88 13
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: UdtTables
+            - filename: m_aUdtTable.xml
+            - mw_id: 0-0-1-0-00000000-0000-0000-0000-000000000000
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: MAIN
+            - filename: Program Block\MAIN.poubin
+            - mw_id: 1000-0-1-0-00000000-0000-0000-0000-000000000000 -> note 1000d = 0x03e8 = e8 03
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: SBR_0
+            - filename: Program Block\SBR_0.poubin
+            - mw_id: 1001-0-1-0-00000000-0000-0000-0000-000000000000 -> note 1001d = 0x03e9 = e9 03
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: INT_0
+            - filename: Program Block\INT_0.poubin
+            - mw_id: 1002-0-1-0-00000000-0000-0000-0000-000000000000 -> note 1002d = 0x03ea = ea 03
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: FB_0
+            - filename: Program Block\FB_0.poubin
+            - mw_id: 1003-0-1-0-00000000-0000-0000-0000-000000000000 -> note 1003d = 0x03eb = eb 03
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: VarTables
+            - filename: m_mGlbVarTables.xml
+            - mw_id: 0-0-1-0-00000000-0000-0000-0000-000000000000
+            - hashvalue: SHA-512 hash of file
+        - file:
+          - attributes:
+            - name: snapshot
+            - filename: m_memAllocator.xml
+            - mw_id: 0-0-1-0-00000000-0000-0000-0000-000000000000
+            - hashvalue: SHA-512 hash of file
+
+### AllFeatureList
+
+- 16 bytes string: "ST32"
+  - CPU type string
+  - no preceding length value
+  - end-padded with space characters
+  - no terminating null byte
+- 1 byte: "V"
+- 7 bytes? CPU firmware version
+  - 03 01 00 0D 00 00 00 for ST32 V3.01
+- 6 bytes unknown (1): 00 22 00 43 03 FC
+- 6 bytes unknown (2): 00 22 00 43 03 FC
+- 158 bytes unknown
+  - ...
+- 18 bytes unknown
+  - 1 byte number of cpu inputs
+  - 1 byte number of cpu outputs
+  - 2 bytes null
+  - 2 bytes
+    - C8 00 for ST32
+  - 6 bytes null
+  - 4 bytes
+    - 00 04 00 CB for ST32
+  - 2 bytes: 00 FA
+- 512 bytes unknown
+  - 38 bytes records, unknown
+  - 2 bytes marker? AA 55
+    - this is a common marker used for serial comms
+    - not sure if this is relevant here
+  - the rest is nulls
+
+
+
+## m_cSystemBlockData.bin
+
+this block is similar across R01 R02 R03 versions
+
+- system block
+  - 2 bytes:
+    - 13 06: R03.01.00.00
+    - 0F 06: R02.04.00.00
+    - 0F 03: R01.00.00.00
+  - null block
+    - 44 bytes null: R03.01.00.00
+    - 44 bytes null: R02.04.00.00
+    - 35 bytes null: R01.00.00.00
+  - 2 bytes: 00 01
+  - 1 byte: 02
+  - 1 byte: Modbus station number for Port0
+  - 3 bytes null
+  - 1 byte: baud rate
+    - 01: 9600
+    - 02: 19200
+    - 04: 187500
+  - 8 bytes null
+  - 4 bytes unknown: 00 00 00 01
+  - 120 bytes: retentive ranges (from 0 to 5, 24 bytes each)
+    - 4 bytes null
+    - 4 bytes data width
+      - 02 00 00 00: xB
+      - 04 00 00 00: xW T
+      - 08 00 00 00: xD C
+    - 4 bytes memory location
+      - 10 00 00 00 Vx
+      - 20 00 00 00 Mx
+      - 40 00 00 00 T
+      - 80 00 00 00 C
+    - 4 bytes offset
+    - 4 bytes number of elements
+  - 1 byte version:
+    - 06: R03.01.00.00
+    - 05: R02.04.00.00
+    - 03: R01.00.00.00
+  - 4 byte: CPU privileges
+    - 01 00 00 00 full
+    - 02 00 00 00 read
+    - 03 00 00 00 minimum
+    - 04 00 00 00 disallow upload
+  - 4 bytes: serial port security
+    - allow cpu mode change without password
+    - allow time of day reads and writes without password
+    - 01 00 00 00: allow
+    - 00 00 00 00: no allow
+  - hashed password or unknown data
+    - 34 bytes: seems like hashed & salted password -> R03.01.00.00
+      - 2 bytes: salt
+      - SHA-256 of $password + $salt
+    - 22 bytes: hashed & salted password -> R02.04.00.00
+      - MD5 is 16 bytes
+      - SHA1 is 20 bytes
+      - maybe the salt is 2 bytes, with 20 bytes SHA1
+    - 4 bytes: unknown -> R01.00.00.00
+      - need V1.0 version software to test
+      - might be a simple checksum
+  - 1 bytes: 01
+  - 1 byte: percentage of communications background time
+    - default is 10% = 0a
+  - 3 bytes null
+  - 5 bytes
+    - 1 byte:
+      - 01: R03.01.00.00
+      - 01: R02.04.00.00
+    - 1 byte:
+      - 00: R03.01.00.00
+      - 01: R02.04.00.00
+      - 00: R01.00.00.00
+    - 3 bytes
+      - startup mode ??? R03.01.00.00
+      - startup mode: R02.04.00.00
+        - 01 00 00: startup in RUN mode
+        - 00 00 00: startup in STOP mode
+        - 02 00 00: startup in LAST mode
+      - unknown: R01.00.00.00
+        - 00 00 00: unknown
+  - 4 bytes: allow missing hardware
+    - 01 00 00 00 allow
+    - 00 00 00 00 no allow
+  - 4 bytes: allow hardware configuration errors
+    - 01 00 00 00 allow
+    - 00 00 00 00 no allow
+  - 1 byte: 03
+  - 80 bytes IP address information
+    - little endian
+    - 4 bytes IP address status
+      - fixed: 01 00 00 00
+      - non fixed: 00 00 00 00
+    - 4 bytes: 32-bit IP address -> 01 02 a8 c0 = 1 2 168 192 -> 192.168.2.1
+    - 4 bytes: 32-bit netmask
+    - 4 bytes: 32-bit gateway
+    - 64 bytes: station name including trailing null
+  - 16 bytes null
+  - CPU configuration
+    - only on R02.04.00.00 & R03.01.00.00
+      - 1 byte null
+      - 12 bytes
+        - 4 bytes restrict communication writes
+          - 01 00 00 00 restrict
+          - 00 00 00 00 no restrict
+        - 4 bytes allowed range V memory offset
+        - 4 bytes number of bytes
+    - 2 bytes CPU type
+      - 1 byte
+        - 00 for ST
+        - 01 for SR
+        - 81 for CR..s
+        - 20 for ST32
+      - 1 bytes
+        - 02 for xx20
+        - 03 for xx30 & ST32
+        - 04 for xx40
+        - 06 for xx60
+    - 1 byte null
+    - 4 bytes:
+      - 80 07 01 00: R03.01.00.00
+      - 80 06 01 00: R02.04.00.00
+    - 30 bytes null
+    - 2 bytes PLC type
+      - 1 byte plc type
+        - 00 for ST
+        - 01 for SR
+        - 20 for ST32
+        - 81: for CR..s
+      - 1 byte
+        - 02 for xx20
+        - 03 for xx30 and ST32
+        - 04 for xx40
+        - 06 for xx60
+    - 1 byte null
+    - 3 bytes: 80 01 00
+    - 6 bytes null
+    - PLC version string
+      - only on R02.04.00.00 & R03.01.00.00
+      - missing on R01.00.00.00
+      - 1 byte length
+      - PLC firmware version? V02.05.01_00.00.01.00 / V03.01.00_00.00.00.00
+        - sometimes there is a null byte following
+        - if there is a null byte following, the previous length becomes 16 (24 dec)
+    - 24 bytes unknown, only on R03.01.00.00
+      - 8 bytes x 2 unknown: 00 00 00 00 0a 00 00 00
+      - 8 bytes null
+    - 6 bytes: 01 01 00 00 00 00
+  - some data
+    - only on R01.00.00.00
+    - 1 byte null
+    - 8 bytes unknown (null?)
+    - 4 bytes: 64 00 00 00
+    - 4 bytes null
+    - 4 bytes: 03 00 00 00
+    - 32 bytes null
+    - 2 bytes: 00 01
+  - cpu digital input config
+    - only on R02.04.00.00 & R03.01.00.00
+    - missing on R01.00.00.00
+    - 1 byte type: 02
+    - 2 bytes length
+      - length = number of entries = number of inputs
+      - SR20 = 12 = 0c 00
+      - SR30 = 18 = 12 00
+      - SR40 = 24 = 18 00
+      - SR60 = 36 = 24 00
+      - ST32 = 16 = 10 00
+    - 2 bytes null
+    - n x2 bytes CPU digital input configuration
+      - starting from I0.0
+      - 1 byte null
+      - 1 byte bitfield
+        - bit 7 = filter ms or us
+          - 0 = ms
+          - 1 = us
+        - bit 6 = pulse catch
+        - bits 5-0 = digital input filter
+          - e (hex) = None
+          - 9 = 12.8 ms or us
+          - 7 = 6.4 ms or us
+          - 6 = 3.2 ms or us
+          - 5 = 1.6 ms or us
+          - 4 = 0.8 ms or us
+          - 3 = 0.4 ms or us
+          - 2 = 0.2 ms or us
+  - cpu digital output config
+    - only on R02.04.00.00 & R03.01.00.00
+    - missing on R01.00.00.00
+    - 1 byte: 01
+    - 1 byte: freeze outputs in last state
+      - 01: freeze
+      - 00: no freeze
+    - 3 bytes null
+    - 1 byte type: 01
+    - subrecord: CPU output status in STOP mode
+      - 2 bytes length
+        - 08 00: xx20 with 8 outputs -> 8 records
+        - 0C 00: xx30 with 12 outputs -> 16 records (4 unused)
+        - 10 00: xx40 or ST32 with 16 outputs -> 16 records
+        - 18 00: xx60 with 24 outputs -> 24 records
+      - n x4 bytes records
+        - starting from Q0.0
+        - if freeze outputs in last state is enabled, all data here is null
+        - 00 00 00 01: output ON in stop mode
+        - 00 00 00 00: output OFF in stop mode
+    - 2 bytes null
+  - signal board
+    - version 06:
+      - 4 bytes: number of signal boards
+        - 02 00 00 00 for ST32
+      - signal board 1
+      - signal board 2
+    - version 05:
+      - 8 bytes
+      - \[signal board is described here\]
+  - expansion modules
+    - 2 bytes: length
+      - 10 00 for ST32
+      - 08 00 for V3.0 ??? -> TODO: verify
+      - 06 00 for v2.x
+      - 04 00 for v1.x
+        - maybe v1.x can only support 4 expansion modules
+        - note that v3.x supports 8 expansion modules
+    - 2 bytes null
+    - n records of 8 bytes each
+      - \[each expansion module is described here\]
+  - some records
+    - R02.04.00.00 & R03.01.00.00
+      - 2 bytes length: 04 00
+      - 4x 8 bytes
+      - 2 bytes null
+    - R01.00.00.00
+      - 2 bytes length: 03 00
+      - 3x 8 bytes (null?)
+      - 2 bytes null
+  - additional settings on R03.01.00.00
+    - 14 bytes unknown
+      - 1 byte bit field
+        - 01 unknown
+        - 02 HMI secure communication
+      - 4 bytes null
+      - 1 byte: enable PUT/GET service
+        - 00: disable
+        - 01: enable
+      - 3 bytes null
+      - 1 byte unknown: 01
+      - 3 bytes null
+      - 1 byte 1e
+    - n x 4 bytes: variable records
+      - 2 bytes length, sometimes 00 00 or 02 00
+      - n x 4 bytes data (usually null)
+      - 2 bytes null
+
+
+
+## m_cUserData.bin
+
+- 1 byte: 01
+- 1 byte: total number of Admin + Maintainer users
+- 1 byte: PLC Access Control
+  - 00: Disable PLC Access Control
+  - 01: Enable PLC Protection (Legacy access control)
+  - 02: Enable User Management
+- n users (176 bytes each)
+  - Admins first, then Maintainers
+  - 20 bytes: fixed length user name
+  - 12 bytes null
+  - 64 bytes: SHA-512 of user password
+  - 64 bytes: fixed length user comments / description
+  - 1 byte: user category
+    - 00: Admin
+    - 01: Maintainer
+  - 1 byte permission: 07
+    - this is a bit field
+    - 01: STEP-7 Micro/WIN SMART
+    - 02: SMART LINE
+    - 04: Web Server
+  - 14 bytes null
+- 1 bytes: Allow visitor to write user data to PLC
+  - 00: do not allow
+  - 01: allow
+- 1 byte: unknown, sometimes 00, sometimes 01
+- 1 bytes: Allow the same user to access PLC from multiple terminals
+  - 00: do not allow
+  - 01: allow
+- 2 bytes: Alive time
+- 1 byte: Disallow upload
+  - 00: allow upload
+  - 01: disallow upload
+- 26 bytes null
+
+
+
+
+
+
+
+
+## m_mGlbVarTables.xml
+
+- xml parse instruction
+- tables
+  - children
+    - VarTable
+      - attributes:
+        - TableType: VT
+        - TableName: Variable Table 1
+        - Version: 1.0
+        - LibOffset: -1
+        - mw_id: 3500-0-1-0-00000000-0000-0000-0000-000000000000 -> 3500d = 0x0dac = ac 0d
+      - children:
+        - Member
+    - VarTable
+      - attributes:
+        - TableType: CONSTVT
+        - TableName: Constant Table 1
+        - Version: 0.0
+        - LibOffset: -1
+        - mw_id: 3501-0-1-0-00000000-0000-0000-0000-000000000000 -> 3501d = 0x0dad = ad 0d
+    - VarTable
+      - attributes:
+        - TableType: IOS
+        - TableName: I/O Variable
+        - Version: 0.0
+        - LibOffset: -1
+        - mw_id: 3502-0-128-0-00000000-0000-0000-0000-000000000000 -> 3502d = 0x0dae = ae 0d, 128d = 0x80 = 80
+    - VarTable
+      - attributes:
+        - TableType: POUVT
+        - TableName: POU Variables
+        - Version: 0.0
+        - LibOffset: -1
+        - mw_id: 3503-0-128-0-00000000-0000-0000-0000-000000000000 -> 3503d = 0x0daf = af 0d, 128d = 0x80 = 80
+    - VarTable
+      - attributes:
+        - TableType: SDVT
+        - TableName: System Variable Table
+        - Version: 0.0
+        - LibOffset: -1
+        - mw_id: 3503-1-128-0-00000000-0000-0000-0000-000000000000 -> 3503d = 0x0daf = af 0d, 128d = 0x80 = 80
+    - VarTable
+      - attributes:
+        - TableType: FB
+        - TableName: FB Instance Table
+        - Version: 0.0
+        - LibOffset: -1
+        - mw_id: 3505-0-1-0-00000000-0000-0000-0000-000000000000 -> 3505d = 0x0db1 = b1 0d
+
+Member
+- attributes:
+  - Name -> variable name
+  - AccessName -> name used to access variable
+    - this is different from Name, in case of UDT member variable
+    - for example, Name: Vel, AccessName: udt3.Vel
+  - DataType:
+    - BOOL, BYTE, WORD, INT, DWORD, DINT, REAL, TIMER, COUNTER
+    - STRING<n> for n-byte string, for example: STRING<10>
+  - ExtendedDataType -> 32 bits, looks like bit field
+    - BOOL   : 1610612738d = 0x60000002 = 01100000 00000000 00000000 00000010b
+      - SMx.x is the same
+      - Ix.x : 3758096386d = 0xE0000002 = 11100000 00000000 00000000 00000010b
+        - Ix.x is BOOL but has different ExtendedDataType
+      - Qx.x : 3758096386d = 0xE0000002
+        - Qx.x is BOOL but has different ExtendedDataType
+    - BYTE   :     262148d = 0x00040004 = 00000000 00000100 00000000 00000100b
+      - SMBx is the same
+    - WORD   :         72d = 0x00000048 = 01001000b
+      - SMWx is the same
+    - INT    :         72d = 0x00000048 = 01001000b
+    - DWORD  :        144d = 0x00000090 = 10010000b
+      - SMDx is the same
+    - DINT   :        144d = 0x00000090
+    - REAL   :       4096d = 0x00001000 = 00000000 00010000 00000000b
+    - STRING :    1048576d = 0x00100000 = 00010000 00000000 00000000b
+    - TIMER  : 1610612810d = 0x6000004A = 01100000 00000000 00000000 01001010b
+    - COUNTER: 1610612810d = 0x6000004A
+    - UDT    :    2097152d = 0x00200000 = 00100000 00000000 00000000b
+    - SBR    :      32768d = 0x00008000 = 10000000 00000000b
+    - INT    :      65536d = 0x00010000 = 00000001 00000000 00000000b
+    - OB     :     131072d = 0x00020000 = 00000010 00000000 00000000b
+    - FB     :     524288d = 0x00080000 = 00001000 00000000 00000000b
+  - IniVal -> initial value, defaults shown below
+    - BOOL: OFF
+    - BYTE, WORD, INT, DWORD, INT: 0
+    - REAL: 0.0
+    - STRING: empty string value with quotes
+    - not present for TIMER, COUNTER
+  - Retain -> 1 bit, flag to show if variable is saved by memory retention
+  - Bind -> 1 bit, flag to show if variable is manually bound to memory address
+  - Commt -> comment
+  - sFlags -> 16 bits
+    - 16384 = 4000 = 01000000 00000000
+      - BOOL, not manually bound, assigned DB2 by compile
+      - BYTE, manually bound or assigned DB2
+    - 16640 = 4100 = 01000001 00000000
+      - BOOL, manually bound, invalid initial value (integer instead of ON/OFF)
+    - 16896 = 4200 = 01000010 00000000
+      - BOOL, not manually bound, invalid initial value (string instead of ON/OFF)
+    - 16432 = 4030 = 01000000 00110000
+      - BOOL, manually bound, empty address
+      - TIMER, manually bound, empty address
+      - COUNTER, manually bound, empty address
+    - 16448 = 4040 = 01000000 01000000
+      - UDT, manually bound, invalid address (DB2.DBB4 manually typed into address)
+        - badValue contains DB2.DB10, this is weird
+    -    48 = 0030 = 00000000 00110000
+        - UDT member variable, manually bound, empty address
+    -     0 = 0000 = 00000000 00000000
+      - BOOL, not manually bound, not assigned DB2
+      - WORD, same
+      - INT, same ...
+      - DWORD ...
+      - DINT
+      - REAL
+      - STRING
+      - TIMER
+      - COUNTER
+      - UDT
+      - I/O Variables manually bound to Ix.x and Qx.x
+      - POU Variables manually bound to their respective POUs
+      - System Variables manually bound to SMx
+    - overlapping addresses don't seem to be checked or flagged
+  - Addr
+  - badInit -> only present if initial value is invalid, on BOOL type
+    - contains the invalid initialization value
+
+Special features for UDT:
+- the UDT Member has Member elements as children, for each member variable
+- UDT member variables are not listed, unless
+  - only UDT is retained
+  - member variable has a comment
+
+Blank/empty line has these attributes only:
+- ExtendedDataType: 0
+- Retain: 0
+- Bind: 0
+- sFlags: 8 = 0008 = 00000000 00000010
+- missing:
+  - Name
+  - AccessName
+  - DataType
+  - IniVal
+  - Addr
+- this seems to line up with the UI -- blank/empty lines don't have Variable Name, Data Type, Initial Value, Address
+- ExtendedDataType, sFlags are not on the UI
+- Retain, Bind checkboxes are there even if the line is blank/empty
+
+
+
+
+
 ## Notes
 
 - Protection flags `00 03`, `00 04`, ... don't produce any error when the file is opened, but will revert to `00 02` when the file is saved.
@@ -107,3 +768,9 @@ File types:
   - V3.0 writes R03.00.00.00
   - V3.1 writes R03.01.00.00
   - V2.7 and V2.8 writes R02.04.00.00
+- XML
+  - XML files all strictly follow XML quotes
+  - all attributes are in quotes
+  - all attribute values are escaped: &lt; &gt; &quot;
+  - seems to be some kind of dump of project variables from memory
+    - some parts are still binary, might be rectified in later versions
