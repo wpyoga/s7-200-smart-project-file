@@ -1,0 +1,461 @@
+# Unknown Data
+
+This block of data is found at the end of the project data blob. Only applies to V1.x and V2.x.
+
+Notes:
+
+- these look like library subroutines, or built-in tables, or maybe wizard data
+- PID 0...15 are mentioned
+- configured HSC are known by their renamed HSCs
+- EXTERN_RESET, DIR_CHANGE, COUNT_EQ are mentioned, seems related to HSC
+
+## What we know so far
+
+- 1 byte: 01
+- 4 bytes null
+- variable block of data
+  - 9 bytes: v2.x
+    - 1 byte: 03
+    - 8 bytes: 10 00 00 00 00 00 00 00
+  - 1 byte: v1.x template
+    - 1 byte: 01
+- some memory block
+  - 4 bytes: number of records
+    - 04 00 00 00: v2.x
+      - 715 bytes
+    - 03 00 00 00: v1.x template
+      - 562 bytes
+  - each record:
+    - 2 bytes:
+      - 04 01: v2.x
+      - 01 01: v1.x template
+    - 8 bytes null
+    - 1 byte:
+      - 02 for v2.x
+      - 01 for v1.x template
+    - 4 bytes null
+    - 2 bytes: 02 00
+    - 4 bytes: 63 6d 88 13
+    - null bytes
+      - 8 bytes null for v2.x
+      - 4 bytes null for v1.x
+    - 2 bytes
+      - f0 3f for v2.x
+      - 80 3f for v1.x
+    - variable records
+      - 6x 25 repeated bytes: v2.x
+        - 1 byte: 02
+        - 4 bytes null
+        - 4 bytes: 01 00 00 00
+        - 16 bytes null
+      - 5x 21 repeated bytes: v1.x
+        - 1 byte: 01
+        - 4 bytes null
+        - 4 bytes: 01 00 00 00
+        - 12 bytes null
+    - variable record
+      - 25 bytes: v2.x
+        - 1 byte: 01
+        - 4 bytes null
+        - 4 bytes 04 00 00 00
+        - 16 bytes
+          - 2 bytes: 01 00
+          - 6 bytes null
+          - 2 bytes: 00 02
+          - 6 bytes null
+      - 21 bytes: v1.x
+        - 1 byte: 01
+        - 4 bytes null
+        - 4 bytes 04 00 00 00
+        - 12 bytes
+          - 1 byte: 01
+          - 4 bytes null
+          - 4 bytes: 06 00 00 00
+          - 1 byte: 01
+          - 2 bytes null
+    - variable block
+      - 10 bytes: v2.x
+        - 34 40 00 00
+        - 00 e0
+        - 4d 62 70 3f
+      - 6 bytes: v1.x template
+        - a0 41
+        - 6f 12 83 3b
+    - variable block
+      - 21 bytes: v2.x
+        - 8 bytes: 00 00 00 a0 99 99 c9 3f
+        - 1 byte: 02
+        - 8 bytes: 00 00 00 a0 99 99 c9 3f
+        - 4 bytes null
+      - 9 bytes: v1.x template
+        - 4 bytes: cd cc 4c 3e
+        - 1 byte: 01
+        - 4 bytes: cd cc 4c 3e
+    - 2 bytes null
+    - 3 bytes:
+      - f0 3f 01: v2.x
+      - 80 3f 01: v1.x
+    - 2x 4 bytes: e8 03 00 00
+    - variable block
+      - v2.x 28 bytes unknown, a bit repetitive, might be flags
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 02
+        - 8 bytes null
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 02
+        - 7 bytes null
+        - 1 byte: 40
+      - v1.x template
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 01
+        - 4 byte null
+        - 1 byte: 01
+        - 3 bytes null
+        - 1 byte: 40
+    - variable block
+      - v2.x
+        - 3 bytes null
+        - 4 bytes: a0 99 99 c9
+        - 2 bytes: 3f 01
+        - 34 bytes unknown data
+          - sparse
+          - looks like flags
+        - 14x 4 bytes: 01 00 00 00 -> flag?
+        - 4 bytes null
+        - 4 bytes: 01 00 00 00
+        - 4 bytes null
+        - 2 bytes: 02 00
+      - v1.x template
+        - 4 bytes: cd cc 4c 3e
+        - 33 bytes unknown data
+          - sparse
+          - looks like flags
+    - 16 bytes null
+    - 28x 11 bytes
+      - 3 bytes: 02 03 40
+      - 7 bytes null
+- pid wizard data
+  - 1 byte: 01
+  - 4 bytes number of PID:
+    - v2.x 10 00 00 00 = 16
+    - v1.x 08 00 00 00 = 8
+  - 16x 274 bytes PID block
+    - 1 byte 03
+    - 14x 11 bytes
+      - 3 bytes: 02 03 40
+      - 8 bytes null
+    - 1 byte: 01
+    - 2 bytes null
+    - 2x 4 bytes: 80 3f 00 00
+    - 2 bytes: 20 41
+    - 4 bytes null
+    - 2 bytes: 01 00
+    - 4 bytes null
+    - 1 byte: 6c
+    - 8 bytes null
+    - 2 bytes: c8 42
+    - 8 bytes null
+    - 2 bytes: 01 00
+    - 8 bytes null
+    - 1 byte: 6c
+    - 6 bytes null
+    - 4 bytes: cd cc cc 3d
+    - 1 byte: 01
+    - 12 bytes null
+    - 4 bytes: cd cc cc 3d
+    - 4 bytes: 66 66 66 3f
+    - 1 byte: 02
+    - PID name string
+      - 2 bytes length: 09 00
+      - string: PID0_CTRL, PID1_CTRL, ...
+    - 4 bytes null
+    - 1 byte 01
+    - PID index
+      - 2x 8 bytes
+        - 1 byte index: 00, 01, 02 ...
+        - 7 bytes null
+    - 2 bytes null
+  - string:
+    - 2 bytes length: 07 00
+    - string: PID_EXE
+  - 42 bytes unknown
+    - 3x 2 bytes: 02 00
+    - 1 byte null
+    - 4 bytes: 22 00 00 00
+    - 1 byte: 08
+    - 6 bytes null
+    - 2 bytes: 01 00
+    - 22 bytes null
+- HSC wizard block
+  - 1 byte: 04
+  - 4 bytes: 04 00 00 00
+  - 4 bytes number of HSC: 06 00 00 00
+  - 6x 120+ bytes HSC data
+    - 2 bytes: 04 01
+    - 4 bytes null
+    - 1 byte: 01
+    - string: name of HSC0 init subroutine
+      - 2 bytes length, is 0 if wizard not configured
+      - string: PG1_INIT for example
+    - 2 bytes null
+    - 4 bytes: 01 02 08 01
+    - nulls
+      - 1 byte length: 0a = 10
+      - 10 bytes null
+    - 4 bytes: 01 02 08 01
+    - 24 bytes null
+    - 2 bytes: 00 01
+    - 4 bytes null
+    - string
+      - 2 bytes length: 0d 00 = 13
+      - 13 bytes: EXTERN_RESET0, EXTERN_RESET1, ...
+      - sometimes 12 bytes with no number suffix
+    - 4 bytes null
+    - string
+      - 2 bytes length: 0b 00 = 11
+      - 11 bytes: DIR_CHANGE0, DIR_CHANGE1, ...
+    - 4 bytes null
+    - string
+      - 2 bytes length: 09 00 = 9
+      - 9 bytes: COUNT_EQ0, COUNT_EQ1, ...
+      - sometimes 8 bytes with no number suffix
+    - 4 bytes null
+    - 4 bytes flag: 01 00 00 00 if HSC configured or renamed?
+    - 4 bytes HSC index: 00 00 00 00, 01 00 00 00, ...
+    - string: HSC renamed
+      - 1 byte length: 03 for example, can be 00 which means HSC is not renamed
+      - string: PG1 for example
+- unknown block
+  - 1 byte: 01
+  - 4 bytes number of records: 04 00 00 00
+  - 4x 59 byte records
+    - 1 byte: 01
+    - 4 bytes null
+    - 2 bytes index: 00 00, 01 00, ...
+    - 4 bytes null
+    - 4 bytes: 01 00 00 00
+    - 4x 11 bytes
+      - 3 bytes: 02 03 40
+      - 8 bytes null
+- unknown block
+  - 1 byte: 02
+  - 4 bytes number of records: 05 00 00 00
+  - 5x 106 byte records
+    - 2 bytes: 03 01
+    - 32 bytes: 8 uint32 flags? only 0 and 1 here, but stored as 32 bits
+      - 4 bytes: 01 00 00 00
+      - 4 bytes null
+      - 4x 4 bytes: 01 00 00 00
+      - 4 bytes null
+      - 4 bytes: 01 00 00 00
+    - 1 byte: 01
+    - string
+      - 2 bytes length: 07 00
+      - string: Chinese
+    - 1 byte: 06
+    - 4 bytes null
+    - 1 byte: 01
+    - 18 bytes null
+    - 2 bytes index: 00 00, 01 00, 02 00, ...
+    - 2 bytes null
+    - 2 bytes: 05 00
+    - 20 bytes null
+    - 2 bytes: 02 00
+    - 6 bytes null
+    - 4 bytes: 01 00 00 00
+- 4 bytes null
+- unknown block
+  - 1 byte: 04
+  - 4 bytes: 08 00 00 00
+  - 4 bytes null
+  - string: NET_EXE
+    - 2 bytes length: 07 00
+    - n bytes string
+  - 2 bytes: 02 00
+  - 2 bytes: 02 10
+  - 6 bytes null
+  - 6 bytes: 00 02 00 01 00 04
+  - 6 bytes null
+- unknown block
+  - 1 byte: 01
+  - 4 bytes: 83 00 00 00
+  - 4 bytes number of records: 04 00 00 00
+  - 4 records of 36 bytes each
+    - 1 byte: 03
+    - 4 bytes null
+    - 2 bytes index: 00 00, 01 00, ...
+    - 8 bytes null
+    - 4 bytes: 01 01 00 00
+    - 2 bytes: 00 01
+    - 7 bytes null
+    - 2 bytes: e8 03
+    - 6 bytes null
+- profinet wizard
+  - 1 byte: 01
+  - 1 byte: 01
+  - 2 bytes: start up time (ms)
+    - 10 27 = 10000
+  - 2 bytes null
+  - 2 bytes: profinet device configuration bit flag
+    - not configured: 00 00
+    - controller: 02 00
+    - i-device: 04 00
+  - 2 bytes null
+  - 4 bytes: parameter assignment of profinet interface by higher-level IO controller
+    - 01 00 00 00: not enabled
+    - 00 00 00 00: enabled
+  - 1 byte: 01
+  - 4 bytes: send clock (ms)
+    - 00 00 80 3f = 1.000 (floating point)
+  - profinet configuration
+    - not configured
+      - 22 bytes null
+      - 1 byte: 01
+      - 22 bytes null
+      - 4x 5 bytes
+        - 1 byte: 01
+        - 4 bytes null
+    - configured example
+      - string: station name
+        - 2 bytes length: 0c 00
+        - string: station-name
+      - 4 bytes ip address (little endian)
+      - 4 bytes netmark (little endian)
+      - 4 bytes default gateway (little endian)
+      - 1 byte: ???
+        - 02 -> controller?
+        - 03 -> i-device?
+      - 4 bytes null
+      - 1 byte: number of transfer areas
+      - transfer areas
+        - 1 byte null
+        - 4 bytes: subslot
+        - 4 bytes: length
+        - transfer area name
+          - 2 bytes length
+          - string
+        - comment
+          - 2 bytes length
+          - string
+        - 3 bytes: 02 03 02
+        - 4 bytes: input/output ???
+          - 02 00 00 00: output
+          - 01 00 00 00: input
+        - 4 bytes: address offset
+      - export GSDML file information
+        - designation
+          - 2 bytes length
+          - string
+        - description
+          - 2 bytes length
+          - string
+      - 6 bytes null
+      - 4 bytes length of following block ???
+      - block
+        - not sure how to decode
+        - if block length is 0x74, first byte is 0x20
+        - if block length is 0x54, first byte is 0x08
+      - 368 bytes unknown --> looks like profinet config that can be exported to GSDML
+        - 145 bytes unknown
+        - number of transfer areas x 24 bytes (BIG ENDIAN)
+          - 2 bytes subslot
+          - 2 bytes null
+          - 1 byte input/output
+            - 10 00: input
+            - 20 00: output
+          - 2 bytes: number of bytes in transfer area
+          - 4 bytes: input/output
+            - 81 00 00 00: output
+            - 82 00 00 00: input
+          - 1 byte: input/output
+            - 10: output
+            - 00: input
+          - 2 bytes: number of bytes in transfer area
+          - 4 bytes: 00 01 00 01
+          - 4 bytes null
+        - 103 bytes unknown
+      - 1 byte: number of following records (related to transfer area)
+      - transfer area config / records (all in BIG ENDIAN)
+        - 2 bytes subslot
+        - 4 bytes input offset
+          - ff ff ff ff -> not input transfer area
+          - 00 00 24 00 -> 1152
+        - 4 bytes output offset
+          - ff ff ff ff -> not input transfer area
+          - 00 00 24 00 -> 1152
+          - 00 00 24 40 -> 1160
+          - 00 00 24 48 -> 1161
+          - 00 00 24 50 -> 1162
+        - 4 bytes null
+        - 1 byte: 01
+        - 22 bytes null
+        - 4x 5 bytes
+          - 1 byte: 01
+          - 4 bytes null
+- unknown block
+  - 1 byte: 04
+  - 2 byte number of records: 02
+  - 2 records of 278 bytes
+    - 4 bytes null
+    - 4 bytes index: 00 00 00 00, 01 00 00 00
+    - 4 bytes null
+    - 4 bytes: 03 00 00 00
+    - 4 bytes: 02 00 00 00
+    - 1 byte null
+    - 2 bytes: 02 00
+    - 4 bytes: 63 6d 88 13
+    - 8 bytes null
+    - 1 byte: f0 = 240, the size of the rest of the structure? but it is 242
+    - 4 bytes: 3f 00 00 00
+    - 12 bytes null
+    - 4 bytes index: 00 00 00 00, 01 00 00 00
+    - 1 byte number of records: 06
+    - 6x 4 byte records: 01 00 00 00
+    - 197 null bytes
+  - 4 bytes: 00 00 00 1b
+- unknown block
+  - 1 byte: 02
+  - 16 bytes null
+  - 2 bytes: 1b 00
+- possibly another PID block
+  - 1 byte: 02
+  - 4 bytes number of PID: 10 00 00 00 = 16
+  - 1 byte: 04
+  - 1 byte: 02
+  - 10 bytes null
+  - 16x 347 bytes PID info
+    - 2 bytes: 80 bf
+    - 6 bytes null
+    - 2 bytes: 20 41
+    - 10 bytes null
+    - 2x 4 bytes: c8 42 00 00
+    - 82 bytes null
+    - 2x 8 bytes
+      - 7 bytes null
+      - 1 byte 40
+    - 2 bytes: 01 00
+    - 8 bytes null
+    - 1 byte: 6c
+    - 6 bytes null
+    - 4 bytes: cd cc cc 3d
+    - 8x 11 bytes
+      - 3 bytes: 02 03 40
+      - bytes null
+    - 100 bytes null
+- 88 bytes null
+- another HSC wizard block at the very end
+  - 1 byte: 04
+  - 4 bytes: 04 00 00 00
+  - 4 bytes number of HSC: 06 00 00 00
+  - 6x 128+ bytes HSC block
+    - first 120+ bytes same as the first block
+    - 4 bytes flag: 01 00 00 00 if HSC configured or renamed?
+    - 4 bytes:
+      - null if HSC configured
+      - ff ff ff ff if not configured
+- 16 bytes null

@@ -10,11 +10,6 @@
 
 ## Data Page
 
-Notes:
-
-- when data pages are added, some timestamps are updated
-- each individual data page seems to have its own timestamps (created time and last modified time)
-
 Format description:
 
 - 1 byte version

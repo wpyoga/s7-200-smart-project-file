@@ -1,6 +1,14 @@
 # Program Block
 
-## Format description
+- 1 byte identifier: 02
+- 2 bytes number of entries: 04 00
+- order of items
+  - main program block (OB1)
+  - subroutines (SBRx)
+  - interrupt routines (INTx)
+- [program block](#program-organizational-unit-pou)
+
+## Program Organizational Unit (POU)
 
 - 1 byte: program block format version
   - 08: R02.04.00.00 & R03.01.00.00

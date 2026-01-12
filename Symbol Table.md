@@ -1,5 +1,11 @@
 # Symbol Table
 
+- 1 byte version
+  - 06: R02.04.00.00
+  - 05: R01.00.00.00
+- 2 bytes number of entries: 04 00
+- n [symbol tables](#symbol-table)
+
 ## symbol table
 
 - 1 byte version
@@ -31,112 +37,6 @@
 - n symbol table entries, see below
 
 ## symbol table entries
-
-### program block symbol table
-
-symbol table entry (program block)
-
-- 2 bytes: 02 00
-- symbol name
-  - 2 bytes length
-  - n bytes string
-- 4 bytes: 00 01 02 00
-  - if incomplete: 00 03 00 00
-- 2 bytes type
-  - EN: 00 00
-  - bool: 01 00
-  - byte: 02 00
-  - word: 04 00
-  - int: 04 00
-  - dword: 08 00
-  - dint: 08 00
-  - real: 08 00
-  - string: 08 00
-  - none if entry incomplete
-- 1 byte type
-  - EN: 00
-  - in/in_out/out/temp: 20
-  - none if entry incomplete
-- 2 bytes null
-- 2 bytes offset
-  - bool: number of bits
-  - other: number of bytes
-  - present but ignored if entry is invalid
-  - none if entry incomplete
-- 6 bytes null
-  - none if entry incomplete
-- 4 bytes type
-  - EN: 02 00 00 80
-    - any consecutive bool at the top also has this type
-  - bool: 02 00 00 00
-  - byte: 04 00 04 00
-  - word: 48 00 00 00
-  - int: 48 00 00 00
-  - dword: 90 00 00 00
-    - sometimes 10 00 00 00
-  - dint: 90 00 00 00
-  - real: 00 10 00 00
-  - string: 00 00 10 00
-  - no type: 00 00 00 00
-- 1 byte null
-- comment string
-  - 2 bytes length
-  - n bytes string
-- 1 byte: 02
-- 1 byte direction/type
-  - in: 00
-  - in_out: 01
-  - out: 02
-  - temp: 03
-- 2 bytes: bitfield?
-  - in
-    - EN: F3 2E
-    - bool: F3 2E
-    - byte: 33 7E
-    - word: F7 7E
-    - int: F7 7E
-    - dword: F3 FF
-    - dint: F3 FF
-    - real: F3 7F
-    - string: 10 60
-  - in_out
-    - bool: F3 2E
-    - byte: 33 7E
-    - word/int/dword/dint/real: F3 7E
-  - out
-    - bool: F3 2E
-    - byte: 33 7E
-    - word/int: FB 7E
-    - dword/dint/real: F3 7E
-    -
-  - temp
-    - bool: F3 2E
-    - byte: 33 7E
-    - word/int/dword/dint/real: F3 7E
-  - incomplete: 00 00
-- 2 bytes
-  - if input and non-bool: 01 00
-  - otherwise 00 00
-- 1 byte
-  - bool: 03
-  - byte/word/dword: 01
-  - int/dint: 00
-  - real: 04
-  - string: 06
-    - only IN can be string
-  - type missing: 09
-- 1 byte (bitfield?)
-  - EN: 00
-  - variable: 01
-  - maybe 00 means read-only
-  - invalid: 11
-    - invalid due to local variable memory not enough
-    - can also be due to number of leads not enough (too many local variables)
-  - incomplete:
-    - no name & no type: 2B
-    - name only: 23
-    - type only: 29
-- 1 byte null
 
 ### independent symbol table
 
@@ -323,3 +223,109 @@ symbol entries (index is 0-based in file, 1-based in microwin) (independent)
     - bit 2
     - bit 1
     - bit 0
+
+### POU symbol table
+
+symbol table entry (program block)
+
+- 2 bytes: 02 00
+- symbol name
+  - 2 bytes length
+  - n bytes string
+- 4 bytes: 00 01 02 00
+  - if incomplete: 00 03 00 00
+- 2 bytes type
+  - EN: 00 00
+  - bool: 01 00
+  - byte: 02 00
+  - word: 04 00
+  - int: 04 00
+  - dword: 08 00
+  - dint: 08 00
+  - real: 08 00
+  - string: 08 00
+  - none if entry incomplete
+- 1 byte type
+  - EN: 00
+  - in/in_out/out/temp: 20
+  - none if entry incomplete
+- 2 bytes null
+- 2 bytes offset
+  - bool: number of bits
+  - other: number of bytes
+  - present but ignored if entry is invalid
+  - none if entry incomplete
+- 6 bytes null
+  - none if entry incomplete
+- 4 bytes type
+  - EN: 02 00 00 80
+    - any consecutive bool at the top also has this type
+  - bool: 02 00 00 00
+  - byte: 04 00 04 00
+  - word: 48 00 00 00
+  - int: 48 00 00 00
+  - dword: 90 00 00 00
+    - sometimes 10 00 00 00
+  - dint: 90 00 00 00
+  - real: 00 10 00 00
+  - string: 00 00 10 00
+  - no type: 00 00 00 00
+- 1 byte null
+- comment string
+  - 2 bytes length
+  - n bytes string
+- 1 byte: 02
+- 1 byte direction/type
+  - in: 00
+  - in_out: 01
+  - out: 02
+  - temp: 03
+- 2 bytes: bitfield?
+  - in
+    - EN: F3 2E
+    - bool: F3 2E
+    - byte: 33 7E
+    - word: F7 7E
+    - int: F7 7E
+    - dword: F3 FF
+    - dint: F3 FF
+    - real: F3 7F
+    - string: 10 60
+  - in_out
+    - bool: F3 2E
+    - byte: 33 7E
+    - word/int/dword/dint/real: F3 7E
+  - out
+    - bool: F3 2E
+    - byte: 33 7E
+    - word/int: FB 7E
+    - dword/dint/real: F3 7E
+    -
+  - temp
+    - bool: F3 2E
+    - byte: 33 7E
+    - word/int/dword/dint/real: F3 7E
+  - incomplete: 00 00
+- 2 bytes
+  - if input and non-bool: 01 00
+  - otherwise 00 00
+- 1 byte
+  - bool: 03
+  - byte/word/dword: 01
+  - int/dint: 00
+  - real: 04
+  - string: 06
+    - only IN can be string
+  - type missing: 09
+- 1 byte (bitfield?)
+  - EN: 00
+  - variable: 01
+  - maybe 00 means read-only
+  - invalid: 11
+    - invalid due to local variable memory not enough
+    - can also be due to number of leads not enough (too many local variables)
+  - incomplete:
+    - no name & no type: 2B
+    - name only: 23
+    - type only: 29
+- 1 byte null

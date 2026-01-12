@@ -1,11 +1,19 @@
 # CPU Information
 
-In R02
+- CPU type string
+  - 2 bytes length: 08 00
+  - n bytes string contents "CPU SR20" or some other string
+- 1 byte null
+- CPU version string
+  - 2 bytes length: 15 00
+  - n bytes string contents
+- 2 bytes length of CPU feature list: D4 00
+- [CPU feature list](#cpu-feature-list)
 
-The CPU information block is stored in R03 in the `AllFeatureList` node inside `Project\Project.devproj`.
+## CPU Feature List
+
+In V3.x, the CPU feature list is stored in the `AllFeatureList` node inside `Project\Project.devproj`.
 Being a binary blob, it is encoded with base64. The following description refers to the binary data itself, before any transformation.
-
-## Description
 
 - 16 bytes: fixed length CPU type string
   - "CPU SR20 "
