@@ -2,130 +2,148 @@
 
 - 1 byte identifier: 02
 - 2 bytes number of data pages
-- data page
-  - when data pages are added, some timestamps are updated
-  - each individual data page has its own timestamps (created time and last modified time), find them
-  - 1 byte version
-    - 08: R02.04.00.00
-    - 07: R01.00.00.00
-  - 2 bytes: 88 13 (5000)
-  - 2 bytes null
-  - 2 bytes data page index (0-based)
-  - 2 bytes type: 01 00
-  - null bytes
-    - 22 bytes null: R02.04.00.00
-    - 18 bytes null: R01.00.00.00
-  - 2 bytes version
-    - 05 00: R02.04.00.00
-    - 03 00: R01.00.00.00
-  - data page name
-    - 2 bytes length
-    - n bytes string contents
+- [data page](#data-page) 1
+- data page 2
+- ...
+- data page n
+- 2 bytes null
+
+## Data Page
+
+Notes:
+
+- when data pages are added, some timestamps are updated
+- each individual data page seems to have its own timestamps (created time and last modified time)
+
+Format description:
+
+- 1 byte version
+  - 08: R02.04.00.00 & R03.01.00.00
+  - 07: R01.00.00.00
+- 2 bytes: 88 13 (5000)
+- 2 bytes null
+- 2 bytes data page index (0-based)
+- 2 bytes type: 01 00
+- null bytes
+  - 22 bytes null: R02.04.00.00 & R03.01.00.00
+  - 18 bytes null: R01.00.00.00
+- 2 bytes version
+  - 05 00: R02.04.00.00
+  - 03 00: R01.00.00.00
+- data page name
+  - 2 bytes length
+  - n bytes string contents
+- 4 bytes null
+- data page author
+  - 2 bytes length
+  - n bytes string
+  - can be zero length
+- data page protection
+  - R02.04.00.00 & R03.01.00.00
+    - 2 bytes salt
+    - 20 bytes null
+    - 64 bytes SHA-512 of password+salt
+      - if not password protected, then null
+  - R01.00.00.00
+    - 22 bytes unknown
+- 2 bytes number of data page entries
+- data page entries
+  - 2 bytes data page entry index
+  - 2 bytes:
+    - empty: 02 00
+    - normal assignment: 02 01
+    - assignment for undefined memory type: 02 02
   - 4 bytes null
-  - data page author
+    - invalid string: D4 0A 00 A0 for "1/world"
+  - 4 bytes: 01 00 00 00
+  - 1 byte null
+  - 4 bytes null
+  - 2 bytes: 01 01
+  - 2 bytes number of items/elements on the line
+  - variable (only if number of items is not zero)
+    - 2 bytes index: 00
+      - index always 0 for variable
+    - 1 byte 01
+    - 4 bytes: 03 01 00 00
+    - 2 bytes null
+    - 1 byte: 01
+    - 4 bytes: 00 00 00 00 \-\> string offset from start of line
+    - 4 bytes: 02 00 02 10 \-\> data type of value
+      - 02: VB
+      - 04: VW
+      - 08: VD
+      - 40: Vx undefined memory type
+    - 3 bytes null
+    - 4 bytes: 02 00 00 00 \-\> variable offset
+      - it was 4D 01 00 00 when an entry is invalid
+  - values (only if number of items is not zero)
+    - 2 bytes index (starts from 1)
+      - because variable is at 0th index
+    - 1 byte: 00
+      - got 02 for invalid line like "1/world"
+    - 4 bytes: 03 01 00 00
+      - got "03 01 01 00" for "1/world"
+    - 2 bytes null
+    - 1 byte 01
+    - 4 bytes: 0C 00 00 00 \-\> value string offset from start of line, but not reliable
+    - 4 bytes: 01 01 02 01 \-\> data type of value
+      - 01 01 02 01: byte
+      - 01 01 04 01: word
+      - 01 01 08 01: dword or dint
+      - 01 04 02 01: hex 2 chars
+      - 01 04 04 01: hex 4 chars
+      - 01 05 02 01: binary 2 bits
+      - 01 06 10 01: ascii
+      - 01 07 08 01: real
+      - 01 08 10 01: string
+      - 01 00 01 00: for invalid line "1/world" for items 2 & 3
+    - 4 bytes: FB 00 00 00 \-\> value
+      - if ascii string, this value is null
+      - if invalid, this value is missing
+    - ascii string or regular string
+      - 1 byte length \-\> can be zero
+      - n bytes ascii string
+- 1 byte version
+  - 02: R03.01.00.00
+  - 00: R01.00.00.00 & R02.04.00.00
+- 2 bytes: number of data page entries
+- data page entries (aux data, comment only)
+  - 4 bytes null: only on R03.01.00.00
+  - 2 bytes data page line index (0-based)
+  - 2 bytes:
+    - comment only: 02 01
+    - normal / empty: 02 07
+    - normal with comment: 02 02
+    - space is the same as normal
+    - invalid is the same as normal
+  - 2 bytes: unknown
+    - sometimes null
+    - sometimes F0 43
+    - sometimes B0 1B
+    - sometimes 00 44
+    - sometimes 3B 63
+    - sometimes 03 00
+    - sometimes 05 00
+    - sometimes 08 00
+    - sometimes 09 00
+    - sometimes 10 00
+    - sometimes 23 00
+    - sometimes 0A 00
+    - if there is data, then this is line length (length of data)
+      - length includes textual representation including comments, if any
+      - if there is a comment, this number is incremented by 1
+      - sometimes line length minus 1
+      - this might be something else
+  - 2 bytes unknown
+    - sometimes null
+    - sometimes 99 02
+    - sometimes 21 73
+    - sometimes 1F 73
+    - sometimes B2 6B
+  - 1 byte null
+  - line comment
     - 2 bytes length
     - n bytes string
-    - can be zero length
-  -
-  - 42 bytes null
-  - 44 bytes unknown
-  - 2 bytes number of data page entries
-  - data page entries
-    - 2 bytes data page entry index
-    - 2 bytes:
-      - empty: 02 00
-      - normal assignment: 02 01
-      - assignment for undefined memory type: 02 02
-    - 4 bytes null
-      - invalid string: D4 0A 00 A0 for "1/world"
-    - 4 bytes: 01 00 00 00
-    - 4 bytes null
-    - 1 byte null
-    - 2 bytes: 01 01
-    - 2 bytes number of items/elements on the line
-    - variable (only if number of items is not zero)
-      - 2 bytes index: 00
-        - index always 0 for variable
-      - 1 byte 01
-      - 4 bytes: 03 01 00 00
-      - 2 bytes null
-      - 1 byte: 01
-      - 4 bytes: 00 00 00 00 \-\> string offset from start of line
-      - 4 bytes: 02 00 02 10 \-\> data type of value
-        - 02: VB
-        - 04: VW
-        - 08: VD
-        - 40: Vx undefined memory type
-      - 3 bytes null
-      - 4 bytes: 02 00 00 00 \-\> variable offset
-        - it was 4D 01 00 00 when an entry is invalid
-    - values (only if number of items is not zero)
-      - 2 bytes index (starts from 1)
-        - because variable is at 0th index
-      - 1 byte: 00
-        - got 02 for invalid line like "1/world"
-      - 4 bytes: 03 01 00 00
-        - got "03 01 01 00" for "1/world"
-      - 2 bytes null
-      - 1 byte 01
-      - 4 bytes: 0C 00 00 00 \-\> value string offset from start of line, but not reliable
-      - 4 bytes: 01 01 02 01 \-\> data type of value
-        - 01 01 02 01: byte
-        - 01 01 04 01: word
-        - 01 01 08 01: dword or dint
-        - 01 04 02 01: hex 2 chars
-        - 01 04 04 01: hex 4 chars
-        - 01 05 02 01: binary 2 bits
-        - 01 06 10 01: ascii
-        - 01 07 08 01: real
-        - 01 08 10 01: string
-        - 01 00 01 00: for invalid line "1/world" for items 2 & 3
-      - 4 bytes: FB 00 00 00 \-\> value
-        - if ascii string, this value is null
-        - if invalid, this value is missing
-      - ascii string or regular string
-        - 1 byte length \-\> can be zero
-        - n bytes ascii string
-  - 1 byte null
-  - 2 bytes: number of data page entries
-  - data page entries (aux data)
-    - 2 bytes data page line index (0-based)
-    - 2 bytes:
-      - comment only: 02 01
-      - normal: 02 07
-      - normal with comment: 02 02
-      - empty is the same as normal
-      - space is the same as normal
-      - invalid is the same as normal
-    - 2 bytes: unknown
-      - sometimes null
-      - sometimes F0 43
-      - sometimes B0 1B
-      - sometimes 00 44
-      - sometimes 3B 63
-      - sometimes 03 00
-      - sometimes 05 00
-      - sometimes 08 00
-      - sometimes 09 00
-      - sometimes 10 00
-      - sometimes 23 00
-      - sometimes 0A 00
-      - if there is data, then this is line length (length of data)
-        - length includes textual representation including comments, if any
-        - if there is a comment, this number is incremented by 1
-        - sometimes line length minus 1
-        - this might be something else
-    - 2 bytes unknown
-      - sometimes null
-      - sometimes 99 02
-      - sometimes 21 73
-      - sometimes 1F 73
-      - sometimes B2 6B
-    - 1 byte null
-    - line comment
-      - 2 bytes length
-      - n bytes string
-      - trailing spaces are encoded as-is
-      - trailing null is not present
-      - can be zero-length
-  - 2 bytes null
+    - trailing spaces are encoded as-is
+    - trailing null is not present
+    - can be zero-length

@@ -3,18 +3,19 @@
 ## Format description
 
 - 1 byte: program block format version
-  - 08: R02.04.00.00
+  - 08: R02.04.00.00 & R03.01.00.00
   - 07: R01.00.00.00
 - 2 bytes type
   - main block: E8 03 (1000)
   - subroutine: E9 03 (1001)
   - interrupt routine: EA 03 (1002)
+  - function block: EB 03 (1003)
 - 2 bytes null
 - 2 bytes program block index
   - main: 00 00 (always OB1)
   - subroutine: SBRx (0-based)
   - interrupt: INTx (0-based)
-- 2 bytes type: 01 00
+- 2 bytes: 01 00
 - 18 bytes null
 - 4 bytes parameters
   - only on R02.04.00.00
@@ -23,6 +24,7 @@
   - editor closed: 00 00 00 00
   - main block is always open
 - 2 bytes version
+  - 83 00: R03.01.00.00
   - 0D 00: R02.04.00.00
   - 0B 00: R01.00.00.00
 - program block name
@@ -34,12 +36,34 @@
   - n bytes string contents
   - only on R01.00.00.00
   - always zero length on R02.04.00.00
+  - this is used again on R03.01.00.00
 - 1 byte null
-- program block info
+- author name
+  - 2 bytes length
+  - n bytes string contents
+- program block protection
+  - R03.01.00.00
+    - 2 bytes random number -> salt
+    - 20 bytes null
+    - 64 bytes SHA-512 of password+salt
+      - if not password protected, then null
+    - variable length hash ???
+      - 4 bytes length: 1c = 28
+      - 28 bytes hash
+      - related to password, but not related to salt
+      - not an actual hash function, for example Changeme_123 and Changeme_456
+        generate data with the same first half but different second half
+      - while Changeme_123 and 1+two=THREE generate vastly different results,
+        but with 1 less byte for the shorter password
+    - variable length hash ???
+      - 4 bytes length: 69 = 105
+      - 105 bytes hash
+      - note: MAIN hash length is 94 = 148
+      - related to password but not related to salt
+      - best guess right now: this is related to network contents
+        because MAIN contains 25 networks and others only 10
+    - 3 bytes null
   - R02.04.00.00
-    - author name
-      - 2 bytes length
-      - n bytes string contents
     - 42 bytes null
     - 44 bytes
       - option 1 (sometimes for MAIN)
@@ -56,31 +80,53 @@
         - 4 bytes null
     - 3 bytes null
   - R01.00.00.00
-    - 27 bytes unknown (null?)
+    - 25 bytes unknown (null?)
 - timestamp created time (localtime)
 - timestamp last modified time (updated whenever symbol table or program block is updated)
 - 1 byte null
-- array of networks
-  - 2 bytes number of networks
-  - n networks (repeated for each network)
-    - 2 bytes network index
-    - 4 bytes 02 01 04 00 \= 262402
-    - network title
-      - 2 bytes length
-        - always 0 on R02.04.00.00
-      - n bytes network title
-    - 1 byte null
-    - network comment
-      - 2 bytes length
-      - n bytes comment string
-    - xx bytes [network data](#network-content)
-- 1 byte null
+- 2 bytes number of networks
+- n networks (repeated for each network)
+  - 2 bytes network index
+  - 2 bytes 02 01
+  - 2 bytes version:
+    - 07 00 -> R03.01.00.00
+    - 04 00 -> R02.04.00.00 & R01.00.00.00
+  - network title
+    - 2 bytes length
+      - always 0 on R02.04.00.00 & R03.01.00.00
+    - n bytes network title
+  - 1 byte null
+  - network comment
+    - 2 bytes length
+    - n bytes comment string
+  - xx bytes [network data](#network-content)
 - symbol table for program block
+  - not present on R03.01.00.00
+  - 1 byte null
   - 2 bytes number of entries
   - n [symbol table entries](Symbol%20Table.md#program-block-symbol-table)
 - 4 bytes null
 - 4 bytes: 01 00 00 00
 - 4 bytes: 64 00 00 00
+- 31 bytes unknown
+  - only on R03.01.00.00
+  - 1 byte: 08
+  - 6 bytes null
+  - 1 byte: 01
+  - 23 bytes null
+- local variable table info
+  - only on R03.01.00.00
+  - 4 bytes xml length
+  - [local variable table (xml)](#local-variable-table-v3x-only)
+- unknown block
+  - only on R03.01.00.00
+  - 2 bytes: 01 01
+  - 4 bytes number of networks: 19 00 00 00 = 25
+  - n x 10 bytes:
+    - 2 bytes: 02 01
+    - 3 bytes null
+    - 1 byte 04
+    - 4 bytes null
 
 ## network content
 
@@ -98,13 +144,21 @@
 
 the basic format of a network description is as follows
 
-- 4 bytes 01 00 00 00
-- 2 bytes null
+- 1 byte version
+  - 02: R03.01.00.00
+  - 01: R02.04.00.00 & R01.00.00.00
+- some data
+  - 5 bytes: R03.01.00.00
+    - 4 bytes null
+    - 1 byte: 02
+  - 1 byte null: R02.04.00.00 & R01.00.00.00
+- 4 bytes null
 - 4 bytes 02 00 00 00
-- 4 bytes
-  - 00 00 00 00: no bookmark
-  - 01 00 00 00: bookmark
-- 2 bytes 00 01
+- 1 byte
+  - 00: no bookmark
+  - 01: bookmark
+- 4 bytes null
+- 1 byte 01
 - 2 bytes: number of elements in the network
 - element 0
 - element 1
@@ -173,8 +227,7 @@ the basic format of a network element is as follows
     - 05 02 00 00: horizontal line with vertical line going down on the right side
     - 03 00 00 00: normal contact or coil?
     - h04 00 00 00: output coil (set coil, reset coil)
-- 1 byte:
-  - number of data records following
+- 1 byte: number of data records following
   - 03: usually, box, but subroutine with multiple inputs also 03
     - 3x (null+24+2+24+2+null+24+2+24+2+null+24+2+24+2)
     - 24 bytes of data is text padded with zeros
@@ -187,7 +240,7 @@ the basic format of a network element is as follows
     - for subsequent rows of box, the first record contains labels (parameters) from the first line (left and then right), and so on
     - for contact with label (even NO contact has " " as label), it is stored on the second record, the first 24
   - 00: final arrow, no data records
-- records (if number of data records is not 0)
+- n records (if number of data records is not 0)
   - usually 03
     - the only time it's not 03 seems to be in an empty network with a single end arrow
   - 1 byte null
@@ -262,7 +315,7 @@ the basic format of a network element is as follows
 - array: values to give to the element, only found at the first part if a box
   - 2 bytes: number of records
   - n records
-    - example indexes for: ADD_I 12 \+ 25 \= VW15 (0c 19 0f)
+    - example indexes for: ADD_I 12 + 25 = VW15 (0c 19 0f)
       - FF FF
       - 01 00
       - 02 00
@@ -271,7 +324,7 @@ the basic format of a network element is as follows
       - maybe: the first FF is for EN, the second FF is for ENO
       - maybe FF means horizontal line in this case
       - but look at XMT
-    - example indexes for: XMT IN \+ IN, no out
+    - example indexes for: XMT IN + IN, no out
       - FF FF
       - 01 00
       - 02 00
@@ -637,7 +690,7 @@ the basic format of a network element is as follows
           - 6 bytes: 08 01 7B 00 00 00
           - 02 is ...? byte? not bit? if 01 then bit, if 08 then 32-bit dword or real
           - 01 unknown
-          - 7B 00 00 00 \= 123 is the number on top
+          - 7B 00 00 00 = 123 is the number on top
         - 1 byte null
       - second element
         - 2 byte index: 01 00
@@ -648,8 +701,8 @@ the basic format of a network element is as follows
         - 6 bytes: 04 01 C8 01 00 00
           - 04 is word? 08 is dword
           - 01 unknown
-          - C8 01 00 00 \= 456 is the number at the bottom
-          - D1 2F 01 00 \= 77777
+          - C8 01 00 00 = 456 is the number at the bottom
+          - D1 2F 01 00 = 77777
         - 1 byte null
   - element 32: vertical line on right side
     - 1 byte null
@@ -880,6 +933,32 @@ the basic format of a network element is as follows
     - 22 bytes null
     - 4 bytes: 01 00 01 01
     - 2 bytes null
+
+## local variable table (V3.x only)
+
+- xml declaration
+- LocVarTable
+  - children
+    - Member
+      - attributes:
+        - ExtendedDataType
+        - Retain
+        - Bind
+        - sFlags -> 171 when empty
+        - varType -> 3 when empty
+        - dtMask
+        - memarea
+        - statFormat -> 9 when empty
+        - isPointer
+        - useDefaultValue -> -1
+        - bRetainInInstance
+      - children:
+        - Address
+          - attributes:
+            - AddrMode
+            - AddrSize -> 2
+            - AddrArea -> 1048576 = 00 10 00 00
+            - AddrOffset -> 4294967295 = ff ff ff ff
 
 ## Notes
 

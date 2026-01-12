@@ -85,7 +85,7 @@ File types:
 
 ### devproj
 
-- xml parse instruction
+- xml declaration
 - device
   - attributes
     - version: 31 = 3.1
@@ -261,7 +261,7 @@ File types:
 
 ### m_mGlbVarTables.xml
 
-- xml parse instruction
+- xml declaration
 - tables
   - children
     - VarTable
