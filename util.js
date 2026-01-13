@@ -240,14 +240,14 @@ function encodeSheetName(str) {
   // %  *  ?  :  \  /  [  ]
   // 25 2A 3F 3A 5C 2F 5B 5D
   return str
-    .replace("%", "%25")
-    .replace("*", "%2A")
-    .replace("?", "%3F")
-    .replace(":", "%3A")
-    .replace("\\", "%5C")
-    .replace("/", "%2F")
-    .replace("[", "%5B")
-    .replace("]", "%5D");
+    .replaceAll("%", "%25")
+    .replaceAll("*", "%2A")
+    .replaceAll("?", "%3F")
+    .replaceAll(":", "%3A")
+    .replaceAll("\\", "%5C")
+    .replaceAll("/", "%2F")
+    .replaceAll("[", "%5B")
+    .replaceAll("]", "%5D");
 }
 
 function addEmptyIOS(wb, sheetName) {
