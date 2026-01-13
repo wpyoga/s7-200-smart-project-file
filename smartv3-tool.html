@@ -6,10 +6,11 @@
     <p>
       <!-- https://issues.chromium.org/issues/376094901 -->
       <!-- For now, we cannot use accept=".smartv3" since it filters out files with ".smartV3" extension -->
-      smartV3 file: <input id="projectfile" type="file" />
+      smartV3 file: <input id="projectfile" type="file" autofocus />
     </p>
-    <p>project password: <input id="password" autofocus /></p>
+    <p>project password: <input id="password" /></p>
     <p>hash: <output id="hashtext"></output></p>
+    <p>global variables: <output id="globalvartable"></output></p>
     <p>excel template: <output id="exceltemplate"></output></p>
     <p>excel file: <input id="excelfile" type="file" /></p>
     <p>status: <output id="status"></output></p>
@@ -19,6 +20,7 @@
   <script src="zip.min.js"></script>
   <!-- https://unpkg.com/@cj-tech-master/excelts@4.2.0/dist/iife/excelts.iife.min.js -->
   <script src="excelts.iife.min.js"></script>
-  <!-- main program -->
+  <!-- main program and utility functions -->
+  <script src="util.js"></script>
   <script src="smartv3-tool.js"></script>
 </html>

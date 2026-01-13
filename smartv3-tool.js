@@ -2,11 +2,12 @@
 
 // convention: "bytes" means Uint8Array
 
-const excelElem = document.getElementById("excelfile");
-const templateElem = document.getElementById("exceltemplate");
+const fileElem = document.getElementById("projectfile");
 const passwordElem = document.getElementById("password");
 const hashElem = document.getElementById("hashtext");
-const fileElem = document.getElementById("projectfile");
+const globalVTElem = document.getElementById("globalvartable");
+const excelElem = document.getElementById("excelfile");
+const templateElem = document.getElementById("exceltemplate");
 const statusElem = document.getElementById("status");
 const outputElem = document.getElementById("output");
 
@@ -21,122 +22,15 @@ let projectFileValid = false;
 let downloadURL;
 let passwordHash;
 let key;
+let projectFilename;
+let zipEntries;
 
 // calculate the default password hash on startup
 window.addEventListener("load", documentLoaded);
 
-excelElem.addEventListener("change", excelUpdated);
-passwordElem.addEventListener("input", passwordUpdated);
 fileElem.addEventListener("change", fileUpdated);
-
-// accepts a well-formatted hex string and returns an integer array
-// all whitespace is stripped from the hex string
-// results are undefined otherwise
-function hexToBytes(str) {
-  return new Uint8Array(
-    str
-      .replace(/\s+/g, "")
-      .match(/../g)
-      .map((x) => parseInt(x, 16))
-  );
-}
-
-async function strToSha256(str) {
-  const bytes = new TextEncoder().encode(str);
-  return new Uint8Array(await window.crypto.subtle.digest("SHA-256", bytes));
-}
-
-// supports the following attributes: href, download
-function setContent(parent, elemType, attr, str) {
-  const elem = document.createElement(elemType);
-  elem.textContent = str;
-  if (attr) ["href", "download"].forEach((s) => attr[s] && (elem[s] = attr[s]));
-  parent.textContent = "";
-  parent.appendChild(elem);
-}
-
-// convert bytes into xxd-like hexdump
-function hexDump(bytes, spaces = 1, cols = 16) {
-  const lines = [];
-  const printable = (b) =>
-    b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : ".";
-
-  for (let pos = 0; pos < bytes.length; pos += cols) {
-    const subarray = bytes.subarray(pos, pos + cols);
-    const offset = pos.toString(16).padStart(8, "0");
-    let hex = bytesToHex(subarray, spaces);
-    const ascii = Array.from(subarray, printable).join("");
-
-    // special treatment for the last line
-    if (pos + cols > bytes.length)
-      hex += " ".repeat((pos + cols - bytes.length) * (2 + spaces));
-
-    lines.push(offset + ": " + hex + "  " + ascii);
-  }
-
-  return lines.join("\n");
-}
-
-function bytesToHex(bytes, spaces = 0, cols = 0) {
-  const arr = Array.from(bytes);
-  if (cols !== 0) {
-    return arr
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("")
-      .match(new RegExp(".{1," + cols + "}", "g"))
-      .map((line) => line.match(/../g).join(" ".repeat(spaces)))
-      .join("\n");
-  } else {
-    return arr
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join(" ".repeat(spaces));
-  }
-}
-
-function bytesCompare(bytes1, bytes2) {
-  // console.log("compare");
-  // console.log(arr1);
-  // console.log(arr2);
-  return (
-    bytes1.length === bytes2.length &&
-    bytes1.every((val, idx) => {
-      // console.log("val, idx", val, idx, val === bytes2[idx]);
-      return val === bytes2[idx];
-    })
-  );
-}
-
-function checkNulls(bytes, start, len) {
-  if (bytes.length < start + len) return false;
-  return bytesCompare(
-    bytes.subarray(start, start + len),
-    new Uint8Array(len).fill(0)
-  );
-}
-
-function checkString(bytes, start, len, str) {
-  // console.log("checkString", bytes.subarray(start, start + len));
-  // console.log(new TextEncoder().encode(str));
-  if (bytes.length < start + len || len !== str.length) return false;
-  return bytesCompare(
-    bytes.subarray(start, start + len),
-    new TextEncoder().encode(str)
-  );
-}
-
-function oneOfStrings(bytes, start, len, strArray) {
-  return strArray.some((str) => checkString(bytes, start, len, str));
-}
-
-function checkHex(bytes, start, len, hexStr) {
-  // console.log(bytes);
-  // console.log(hexStr);
-  // console.log(hexStrToArray(hexStr));
-  return bytesCompare(
-    new Uint8Array(bytes).subarray(start, start + len),
-    hexToBytes(hexStr)
-  );
-}
+passwordElem.addEventListener("input", passwordUpdated);
+excelElem.addEventListener("change", excelUpdated);
 
 function checkUploadedFile(bytes) {
   // check the file contents
@@ -183,7 +77,6 @@ async function processProjectFile(bytes) {
   setContent(outputElem, "pre", null, hexDump(bytes, 1, 32));
 
   const zipReader = new zip.ZipReader(new zip.Uint8ArrayReader(plaintext));
-  let zipEntries;
   try {
     const filenameEncoding = "cp437";
     zipEntries = await zipReader.getEntries({ filenameEncoding });
@@ -239,7 +132,7 @@ async function processProjectFile(bytes) {
     outputElem,
     "a",
     { href: downloadURL, download: newFilename },
-    `Download: ${newFilename}`
+    newFilename
   );
 
   const newCiphertext = await encryptProjectData(newZipFile);
@@ -249,18 +142,273 @@ async function processProjectFile(bytes) {
     ...newCiphertext,
   ]);
 
+  statusElem.textContent = "Project file processed and ready to download.";
+
   const newProjectBlob = new Blob([newProjectFile], {
     type: "application/smartv3",
   });
   if (downloadURL) URL.revokeObjectURL(downloadURL);
   // console.log(newProjectFile);
   downloadURL = URL.createObjectURL(newProjectBlob);
-  const newProjectFilename = "new.smartV3";
+  // const newProjectFilename = "new.smartV3";
+  const newProjectFilename = projectFilename;
   setContent(
     outputElem,
     "a",
     { href: downloadURL, download: newProjectFilename },
-    "Download: " + newProjectFilename
+    newProjectFilename
+  );
+}
+
+async function getVTs() {
+  // console.log(zipData);
+  const xmlFile = await zipEntries
+    .find((x) => x.filename.endsWith("m_mGlbVarTables.xml"))
+    .arrayBuffer();
+  // console.log(xmlFile);
+  // console.log(new TextDecoder().decode(new Uint8Array(xmlFile)));
+  const xmlDoc = new DOMParser().parseFromString(
+    new TextDecoder().decode(new Uint8Array(xmlFile)),
+    "application/xml"
+  );
+  // console.log(xmlDoc);
+  // console.log(xmlDoc.getElementsByTagName("VarTable"));
+
+  const listVarTable = Array.from(xmlDoc.getElementsByTagName("VarTable"));
+  // console.log(listVT);
+
+  const wb = new ExcelTS.Workbook();
+
+  // Variable Table
+  // Retain configurable
+  // Bind configurable
+  listVarTable
+    .filter((x) => x.getAttribute("TableType") === "VT")
+    .forEach((vt) => {
+      const vtName = vt.getAttribute("TableName");
+      const ws = addEmptyVT(wb, vtName);
+
+      // recursively get all the members
+      const getMembers = (ws, node, depth) => {
+        Array.from(node.childNodes)
+          .filter((m) => m.tagName === "Member")
+          .forEach((m) => {
+            const name = m.getAttribute("Name");
+            const type = m.getAttribute("DataType");
+            const inival = m.getAttribute("IniVal");
+            const retain =
+              m.getAttribute("Retain") === "1"
+                ? { checkbox: true }
+                : { checkbox: false };
+            const bind =
+              m.getAttribute("Bind") === "1"
+                ? { checkbox: true }
+                : { checkbox: false };
+            const addr = m.getAttribute("Addr");
+            const comment = m.getAttribute("Commt");
+
+            ws.addRow([
+              "> ".repeat(depth) + (name ?? ""),
+              type,
+              inival,
+              retain,
+              bind,
+              addr,
+              comment,
+            ]);
+
+            getMembers(ws, m, depth + 1);
+          });
+      };
+      getMembers(ws, vt, 0);
+
+      // console.log(ws.lastRow);
+
+      const lastRowNum = ws.lastRow.number;
+      for (let i = lastRowNum + 1; i <= lastRowNum + 100; ++i) {
+        ws.getCell("D" + i).value = { checkbox: false };
+        ws.getCell("E" + i).value = { checkbox: false };
+      }
+      for (let i = 2; i <= lastRowNum + 100; ++i) {
+        ws.getCell("D" + i).dataValidation = {
+          type: "list",
+          allowBlank: true,
+          formulae: ['"TRUE,FALSE"'],
+        };
+        ws.getCell("E" + i).dataValidation = {
+          type: "list",
+          allowBlank: true,
+          formulae: ['"TRUE,FALSE"'],
+        };
+      }
+    });
+
+  // Constant Table
+  // Retain always 0
+  // Bind always 0
+  listVarTable
+    .filter((x) => x.getAttribute("TableType") === "CONSTVT")
+    .forEach((vt) => {
+      const vtName = vt.getAttribute("TableName");
+      const ws = addEmptyCONSTVT(wb, vtName);
+
+      // get all the members
+      const getMembers = (ws, node) => {
+        Array.from(node.childNodes)
+          .filter((m) => m.tagName === "Member")
+          .forEach((m) => {
+            const name = m.getAttribute("Name");
+            const type = m.getAttribute("DataType");
+            const inival = m.getAttribute("IniVal");
+            const comment = m.getAttribute("Commt");
+            ws.addRow([name, type, inival, comment]);
+          });
+      };
+      getMembers(ws, vt);
+    });
+
+  // IO Variable
+  // Retain always 0
+  // Bind always 1
+  // Addr is I/O point: Q2.3, I5.5, ...
+  listVarTable
+    .filter((x) => x.getAttribute("TableType") === "IOS")
+    .forEach((vt) => {
+      const vtName = vt.getAttribute("TableName");
+      const ws = addEmptyIOS(wb, vtName);
+
+      // get all the members
+      const getMembers = (ws, node) => {
+        Array.from(node.childNodes)
+          .filter((m) => m.tagName === "Member")
+          .forEach((m) => {
+            const name = m.getAttribute("Name");
+            const type = m.getAttribute("DataType");
+            const addr = m.getAttribute("Addr");
+            const comment = m.getAttribute("Commt");
+            ws.addRow([name, type, addr, comment]);
+          });
+      };
+      getMembers(ws, vt);
+    });
+
+  // POU Table
+  // Retain always 0
+  // Bind always 1
+  // Addr is POU identifier: OB1, SBR0, FB123, INT5, ...
+  listVarTable
+    .filter((x) => x.getAttribute("TableType") === "POUVT")
+    .forEach((vt) => {
+      const vtName = vt.getAttribute("TableName");
+      const ws = addEmptyPOUVT(wb, vtName);
+
+      // get all the members
+      const getMembers = (ws, node) => {
+        Array.from(node.childNodes)
+          .filter((m) => m.tagName === "Member")
+          .forEach((m) => {
+            const name = m.getAttribute("Name");
+            const type = m.getAttribute("DataType");
+            const addr = m.getAttribute("Addr");
+            const comment = m.getAttribute("Commt");
+            ws.addRow([name, type, addr, comment]);
+          });
+      };
+      getMembers(ws, vt);
+    });
+
+  // System Variable Table
+  // Retain always 0
+  // Bind always 1
+  // Addr is SM memory address
+  listVarTable
+    .filter((x) => x.getAttribute("TableType") === "SDVT")
+    .forEach((vt) => {
+      const vtName = vt.getAttribute("TableName");
+      const ws = addEmptySDVT(wb, vtName);
+
+      // get all the members
+      const getMembers = (ws, node) => {
+        Array.from(node.childNodes)
+          .filter((m) => m.tagName === "Member")
+          .forEach((m) => {
+            const name = m.getAttribute("Name");
+            const type = m.getAttribute("DataType");
+            const addr = m.getAttribute("Addr");
+            const comment = m.getAttribute("Commt");
+            ws.addRow([name, type, addr, comment]);
+          });
+      };
+      getMembers(ws, vt);
+    });
+
+  // FB Instance Table
+  // Retain configurable
+  // Bind always 0
+  listVarTable
+    .filter((x) => x.getAttribute("TableType") === "FB")
+    .forEach((vt) => {
+      const vtName = vt.getAttribute("TableName");
+      const ws = addEmptyFB(wb, vtName);
+
+      // recursively get all the members
+      const getMembers = (ws, node, depth) => {
+        Array.from(node.childNodes)
+          .filter((m) => m.tagName === "Member")
+          .forEach((m) => {
+            const name = m.getAttribute("Name");
+            const type = m.getAttribute("DataType");
+            const inival = m.getAttribute("IniVal");
+            const retain =
+              m.getAttribute("Retain") === "1"
+                ? { checkbox: true }
+                : { checkbox: false };
+            const addr = m.getAttribute("Addr");
+            const comment = m.getAttribute("Commt");
+
+            ws.addRow([
+              "> ".repeat(depth) + (name ?? ""),
+              type,
+              inival,
+              retain,
+              addr,
+              comment,
+            ]);
+
+            getMembers(ws, m, depth + 1);
+          });
+      };
+      getMembers(ws, vt, 0);
+
+      // console.log(ws.lastRow);
+
+      const lastRowNum = ws.lastRow.number;
+      for (let i = lastRowNum + 1; i <= lastRowNum + 100; ++i) {
+        ws.getCell("D" + i).value = { checkbox: false };
+      }
+      for (let i = 2; i <= lastRowNum + 100; ++i) {
+        ws.getCell("D" + i).dataValidation = {
+          type: "list",
+          allowBlank: true,
+          formulae: ['"TRUE,FALSE"'],
+        };
+      }
+    });
+
+  //
+  //
+  //
+  const vtFile = await wb.xlsx.writeBuffer();
+  // console.log(vtFile);
+  const vtBlob = new Blob([vtFile], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const vtFilename = projectFilename.replace(/\.smartV3$/i, "") + ".xlsx";
+  setContent(
+    globalVTElem,
+    "a",
+    { href: URL.createObjectURL(vtBlob), download: vtFilename },
+    vtFilename
   );
 }
 
@@ -309,7 +457,11 @@ async function processFile(file) {
   reader.onload = async (e) => {
     const bytes = new Uint8Array(e.target.result);
     projectFileValid = checkUploadedFile(bytes);
-    if (projectFileValid) processProjectFile(bytes);
+    // console.log(fileElem.value);
+    if (projectFileValid) projectFilename = fileElem.value.split(/[/\\]/).pop();
+    if (projectFileValid) await processProjectFile(bytes);
+    // TODO: check the result of processProjectFile() instead
+    if (projectFileValid) getVTs();
   };
   reader.readAsArrayBuffer(file);
 }
@@ -417,6 +569,40 @@ async function generateExcelTemplate() {
   wsVT.getCell("D5").value = { checkbox: false };
   wsVT.getCell("E5").value = { checkbox: false };
 
+  // wsVT.addFormCheckbox("J2:K3", {
+  //   checked: true,
+  //   link: "D6",
+  //   text: "hello",
+  // });
+  // wsVT.addFormCheckbox("J4:J4", {
+  //   checked: true,
+  //   link: "D7",
+  //   text: "world",
+  // });
+  // wsVT.addFormCheckbox("J5:J5", {
+  //   checked: true,
+  //   link: "D8",
+  //   text: "",
+  // });
+  // wsVT.addFormCheckbox("J6:J6", {
+  //   checked: true,
+  //   link: "D9",
+  // });
+  // wsVT.addFormCheckbox("J7", {
+  //   checked: true,
+  //   link: "D10",
+  //   text: "world",
+  // });
+  // wsVT.addFormCheckbox("J8", {
+  //   checked: true,
+  //   link: "D11",
+  //   text: "",
+  // });
+  // wsVT.addFormCheckbox("J9", {
+  //   checked: true,
+  //   link: "D12",
+  // });
+
   wsCT.getRow(1).fill = {
     type: "pattern",
     pattern: "solid",
@@ -433,17 +619,18 @@ async function generateExcelTemplate() {
     templateElem,
     "a",
     { href: URL.createObjectURL(templateBlob), download: templateFilename },
-    "Download: " + templateFilename
+    templateFilename
   );
 }
 
+// this is called on startup
 async function documentLoaded() {
   passwordUpdated();
   generateExcelTemplate();
 }
 
-async function excelUpdated() {
-  if (excelElem.files[0]) processExcel(excelElem.files[0]);
+async function fileUpdated() {
+  if (fileElem.files[0]) processFile(fileElem.files[0]);
 }
 
 async function passwordUpdated() {
@@ -457,6 +644,6 @@ async function passwordUpdated() {
   if (fileElem.files[0]) processFile(fileElem.files[0]);
 }
 
-async function fileUpdated() {
-  if (fileElem.files[0]) processFile(fileElem.files[0]);
+async function excelUpdated() {
+  if (excelElem.files[0]) processExcel(excelElem.files[0]);
 }
