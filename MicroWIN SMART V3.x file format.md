@@ -308,29 +308,31 @@ Member
     - BOOL, BYTE, WORD, INT, DWORD, DINT, REAL, TIMER, COUNTER
     - STRING<n> for n-byte string, for example: STRING<10>
   - ExtendedDataType -> 32 bits, looks like bit field
-    - BOOL : 1610612738d = 0x60000002 = 01100000 00000000 00000000 00000010b
+    - BOOL ..... : 1610612738d = 0x60000002 = 01100000 00000000 00000000 00000010b
       - SMx.x is the same
-      - Ix.x : 3758096386d = 0xE0000002 = 11100000 00000000 00000000 00000010b
+      - Ix.x ... : 3758096386d = 0xE0000002 = 11100000 00000000 00000000 00000010b
         - Ix.x is BOOL but has different ExtendedDataType
-      - Qx.x : 3758096386d = 0xE0000002
+      - Qx.x ... : 3758096386d = 0xE0000002 = 11100000 00000000 00000000 00000010b
         - Qx.x is BOOL but has different ExtendedDataType
-    - BYTE : 262148d = 0x00040004 = 00000000 00000100 00000000 00000100b
+    - BYTE ......... : 262148d = 0x00040004 = 00000000 00000100 00000000 00000100b
       - SMBx is the same
-    - WORD : 72d = 0x00000048 = 01001000b
+    - WORD ............. : 72d = 0x00000048 = 00000000 00000000 00000000 01001000b
       - SMWx is the same
-    - INT : 72d = 0x00000048 = 01001000b
-    - DWORD : 144d = 0x00000090 = 10010000b
+    - INT .............. : 72d = 0x00000048 = 00000000 00000000 00000000 01001000b
+    - DWORD ........... : 144d = 0x00000090 = 00000000 00000000 00000000 10010000b
       - SMDx is the same
-    - DINT : 144d = 0x00000090
-    - REAL : 4096d = 0x00001000 = 00000000 00010000 00000000b
-    - STRING : 1048576d = 0x00100000 = 00010000 00000000 00000000b
-    - TIMER : 1610612810d = 0x6000004A = 01100000 00000000 00000000 01001010b
-    - COUNTER: 1610612810d = 0x6000004A
-    - UDT : 2097152d = 0x00200000 = 00100000 00000000 00000000b
-    - SBR : 32768d = 0x00008000 = 10000000 00000000b
-    - INT : 65536d = 0x00010000 = 00000001 00000000 00000000b
-    - OB : 131072d = 0x00020000 = 00000010 00000000 00000000b
-    - FB : 524288d = 0x00080000 = 00001000 00000000 00000000b
+    - DINT ............ : 144d = 0x00000090 = 00000000 00000000 00000000 10010000b
+    - REAL ........... : 4096d = 0x00001000 = 00000000 00000000 00010000 00000000b
+    - STRING ...... : 1048576d = 0x00100000 = 00000000 00010000 00000000 00000000b
+    - ARRAY ....... : 4194304d = 0x00400000 = 00000000 01000000 00000000 00000000b
+    - TIMER .... : 1610612810d = 0x6000004A = 01100000 00000000 00000000 01001010b
+    - COUNTER .. : 1610612810d = 0x6000004A = 01100000 00000000 00000000 01001010b
+    - UDT ......... : 2097152d = 0x00200000 = 00000000 00100000 00000000 00000000b
+    - SBR ........... : 32768d = 0x00008000 = 00000000 00000000 10000000 00000000b
+    - INT ........... : 65536d = 0x00010000 = 00000000 00000001 00000000 00000000b
+    - OB ........... : 131072d = 0x00020000 = 00000000 00000010 00000000 00000000b
+    - FB ........... : 524288d = 0x00080000 = 00000000 00001000 00000000 00000000b
+    - FB instance . : 2097152d = 0x00200000 = 00000000 00100000 00000000 00000000b
   - IniVal -> initial value, defaults shown below
     - BOOL: OFF
     - BYTE, WORD, INT, DWORD, INT: 0
@@ -341,23 +343,48 @@ Member
   - Bind -> 1 bit, flag to show if variable is manually bound to memory address
   - Commt -> comment
   - sFlags -> 16 bits
+    - 16896 = 4200 = 01000010 00000000
+      - BOOL, not manually bound, invalid initial value (string without quote, instead of ON/OFF)
+    - 16640 = 4100 = 01000001 00000000
+      - BOOL, manually bound, invalid initial value (integer instead of ON/OFF)
+      - INT, not manually bound, not retained, invalid initial value (string "error"), has comment
+    - 16464 = 4050 = 01000000 01010000
+      - UDT, manually bound, empty address, was sFlags=16432
+    - 16448 = 4040 = 01000000 01000000
+      - UDT, manually bound, invalid address (DB2.DBB4 manually typed into address)
+      - badValue contains DB2.DB10, this is weird
+    - 16440 = 4038 = 01000000 00111000
+      - TIMER, manually bound, empty name, empty address, has comment
+    - 16432 = 4030 = 01000000 00110000
+      - BOOL, TIMER, COUNTER, UDT, manually bound, empty address
+    - 16392 = 4008 = 01000000 00001000
+      - seen in a CONSTVT line with only comment and nothing else
     - 16384 = 4000 = 01000000 00000000
       - BOOL, not manually bound, assigned DB2 by compile
       - BYTE, manually bound or assigned DB2
-    - 16640 = 4100 = 01000001 00000000
-      - BOOL, manually bound, invalid initial value (integer instead of ON/OFF)
-    - 16896 = 4200 = 01000010 00000000
-      - BOOL, not manually bound, invalid initial value (string instead of ON/OFF)
-    - 16432 = 4030 = 01000000 00110000
-      - BOOL, manually bound, empty address
-      - TIMER, manually bound, empty address
-      - COUNTER, manually bound, empty address
-    - 16448 = 4040 = 01000000 01000000
-      - UDT, manually bound, invalid address (DB2.DBB4 manually typed into address)
-        - badValue contains DB2.DB10, this is weird
-    - 48 = 0030 = 00000000 00110000
-    - UDT member variable, manually bound, empty address
-    -     0 = 0000 = 00000000 00000000
+      - UDT, not manually bound, not assigned
+    - .2048 = 0800 = 00001000 00000000
+      - UDT member with overlapping memory
+      - DWORD with overlapping memory
+    - ..512 = 0200 = 00000010 00000000
+      - STRING, invalid initial value (string lorem without quotes)
+    - ..256 = 0100 = 00000001 00000000
+      - INT, invalid initial value (string "error"), not manually bound
+      - STRING, length 5 but given string "something" which is too long
+    - ...64 = 0040 = 00000000 01000000
+      - UDT member variable, was sFlags=48
+    - ...48 = 0030 = 00000000 00110000
+      - UDT member variable, manually bound, empty address
+      - DINT, manually bound, string with quotes typed into address
+    - ...12 = 000c = 00000000 00001100
+      - this value has been seen on a blank line
+      - FB instance entry with no name
+      - invalid variable name with no data type
+      - invalid variable name with data type
+    - ....8 = 0008 = 00000000 00001000
+      - this value usually seen on blank lines
+      - also on CONSTVT with no variable name but filled in type and no comment
+    - ....0 = 0000 = 00000000 00000000
       - BOOL, not manually bound, not assigned DB2
       - WORD, same
       - INT, same ...
@@ -371,17 +398,57 @@ Member
       - I/O Variables manually bound to Ix.x and Qx.x
       - POU Variables manually bound to their respective POUs
       - System Variables manually bound to SMx
+      - FB instance
     - overlapping addresses don't seem to be checked or flagged
   - Addr
   - badInit -> only present if initial value is invalid, on BOOL type
     - contains the invalid initialization value
+  - badValue -> only present if address is invalid
+    - contains the invalid address
+
+sFlags
+
+```
+00000000 00000000
+^      ^ ^      ^
+b15   b8 b7     b0
+```
+
+- b14: comment modified
+  - either a user-defined variable with a comment
+  - or, a system-defined variable and the user has modified (or deleted) the original comment
+- b11: overlapping memory
+  - value cannot be initialized in symbol table
+  - overlapping can be with another variable, can be with an assignment in a data page
+  - strings are not considered at all when overlapping in a symbol table
+  - however, if a string assignment is made in a data page, it is considered overlapping
+  - the data page overrides the symbol table
+- b9: malformed input specified as initial value
+  - for example, a string without quotes
+- b8: recognized data type specified as invalid initial value
+  - for example, an integer specified for a BOOL value, or a string specified for an INT value
+  - can also be a string of length 10 specified for a STRING<5>, for example
+- b6: malformed address
+- b5: invalid value specified as address
+- b4: Bind=1 but address is empty
+- b3: variable name is empty
+- b2: variable name is invalid
 
 Special features for UDT:
 
+- UDT can be nested, and they are also nested in the XML
+  ```
+  <Member ...>
+    <Member ...>
+      <Member ...>
+      ...
+  ```
 - the UDT Member has Member elements as children, for each member variable
+- nesting depth is technically limited to 4 levels, but not enforced until compilation
 - UDT member variables are not listed, unless
   - only UDT is retained
   - member variable has a comment
+- UDT members inherit Retain and Bind flags from the top level
 
 Blank/empty line has these attributes only:
 
