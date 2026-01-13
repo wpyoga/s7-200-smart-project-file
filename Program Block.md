@@ -6,7 +6,7 @@
   - main program block (OB1)
   - subroutines (SBRx)
   - interrupt routines (INTx)
-- [program block](#program-organizational-unit-pou)
+- [POU data](#program-organizational-unit-pou)
 
 ## Program Organizational Unit (POU)
 
@@ -112,7 +112,7 @@
   - not present on R03.01.00.00
   - 1 byte null
   - 2 bytes number of entries
-  - n [symbol table entries](Symbol%20Table#program-block-symbol-table)
+  - n [symbol table entries](Symbol%20Table.md#program-block-symbol-table)
 - 4 bytes null
 - 4 bytes: 01 00 00 00
 - 4 bytes: 64 00 00 00

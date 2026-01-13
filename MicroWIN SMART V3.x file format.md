@@ -35,17 +35,17 @@ Project data is a zip archive. For example, the default template project `templa
 - `template\Data Block\USER1.dbbin`
   - data block
   - header: `08 88 13 00`
-- [`template\m_cSystemBlockData.bin`](System%20Block)
+- [`template\m_cSystemBlockData.bin`](System%20Block.md)
   - system block data
   - header: `13 06 00 00`
 - `template\m_mGlbVarTables.xml`
   - describes global symbol tables (global variable tables)
 - `template\m_aUdtTable.xml`
   - stores UDT tables
-- [`template\Program Block\MAIN.poubin`](Program%20Block#program-organizational-unit-pou)
-- [`template\Program Block\SBR_0.poubin`](Program%20Block#program-organizational-unit-pou)
-- [`template\Program Block\INT_0.poubin`](Program%20Block#program-organizational-unit-pou)
-- [`template\Program Block\FB_0.poubin`](Program%20Block#program-organizational-unit-pou)
+- [`template\Program Block\MAIN.poubin`](Program%20Block.md#program-organizational-unit-pou)
+- [`template\Program Block\SBR_0.poubin`](Program%20Block.md#program-organizational-unit-pou)
+- [`template\Program Block\INT_0.poubin`](Program%20Block.md#program-organizational-unit-pou)
+- [`template\Program Block\FB_0.poubin`](Program%20Block.md#program-organizational-unit-pou)
   - these are binary files with XML embedded
     - in v3.0, the XML is at the end
     - in v3.1, there is additional binary data after the XML
@@ -53,7 +53,7 @@ Project data is a zip archive. For example, the default template project `templa
   - describes status charts
 - `template\m_memAllocator.xml`
   - not sure what this would/should contain
-- [`template\m_cUserData.bin`](User%20List)
+- [`template\m_cUserData.bin`](User%20List.md)
   - PLC user data, by default it contains only Admin
 - `template\template.devproj`
   - main project file

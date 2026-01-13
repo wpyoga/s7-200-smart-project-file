@@ -125,14 +125,14 @@
   - 01: STL
   - 02: FBD
 - 3 bytes null
-- [printer information](Printer%20Information)
+- [printer information](Printer%20Information.md)
 - timestamps
   - 16 bytes timestamp (creation time?)
   - 16 bytes timestamp (last modified?) -> this is updated whenever a symbol table is updated
   - 1 byte: 01
   - 16 bytes timestamp -> this is also updated whenever a symbol table is updated
   - 16 bytes timestamp -> this is updated whenever a data page is updated or created
-- [system block](System%20Block)
+- [system block](System%20Block.md)
 - timestamps
   - 1 byte version
     - 01: R02.04.00.00
@@ -141,12 +141,12 @@
   - timestamp 2 -> this is updated whenever a symbol table or program block is updated
   - timestamp 3
   - timestamp 4 -> this is updated whenever a data page is updated or created (or symbol table is updated/added/removed)
-- [program block](Program%20Block)
-- [symbol tables](Symbol%20Table)
-- [status charts](Status%20Chart)
-- [data block](Data%20Block)
+- [program block](Program%20Block.md)
+- [symbol tables](Symbol%20Table.md)
+- [status charts](Status%20Chart.md)
+- [data block](Data%20Block.md)
 - 1 byte null
-- [CPU information](CPU%20Information)
+- [CPU information](CPU%20Information.md)
 - 2 bytes null
 - project name string
   - 2 bytes length (sometimes 00 00, then no name encoded)
@@ -157,7 +157,7 @@
 - 16 bytes hash
   - looks like MD5
   - not sure what to hash
-- [unknown data](Unknown%20Data)
+- [unknown data](Unknown%20Data.md)
 
 ## misc info & notes
 
