@@ -173,14 +173,11 @@ async function getVTs() {
   );
   // console.log(xmlDoc);
   // console.log(xmlDoc.getElementsByTagName("VarTable"));
-
-  // const listVarTable = Array.from(xmlDoc.getElementsByTagName("VarTable"));
-  const listVarTable = Array.from(xmlDoc.children)
-    .filter((c) => c.localName === "tables")
-    .map((t) =>
-      Array.from(t.children).filter((v) => v.localName === "VarTable")
-    )
-    .flat();
+  // console.log(xmlDoc.documentElement);
+  // console.log(xmlDoc.documentElement.childNodes);
+  const listVarTable = Array.from(xmlDoc.documentElement.childNodes).filter(
+    (c) => c.localName === "VarTable"
+  );
   // console.log(listVarTable);
 
   const wb = new ExcelTS.Workbook();
