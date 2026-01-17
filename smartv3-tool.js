@@ -218,7 +218,7 @@ async function getVTs() {
               bind,
               addr,
               comment,
-            ]);
+            ]).outlineLevel = depth;
 
             getMembers(ws, m, depth + 1);
           });
