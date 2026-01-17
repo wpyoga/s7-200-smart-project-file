@@ -8,7 +8,7 @@ function hexToBytes(str) {
     str
       .replace(/\s+/g, "")
       .match(/../g)
-      .map((x) => parseInt(x, 16))
+      .map((x) => parseInt(x, 16)),
   );
 }
 
@@ -81,7 +81,7 @@ function checkNulls(bytes, start, len) {
   if (bytes.length < start + len) return false;
   return bytesCompare(
     bytes.subarray(start, start + len),
-    new Uint8Array(len).fill(0)
+    new Uint8Array(len).fill(0),
   );
 }
 
@@ -91,7 +91,7 @@ function checkString(bytes, start, len, str) {
   if (bytes.length < start + len || len !== str.length) return false;
   return bytesCompare(
     bytes.subarray(start, start + len),
-    new TextEncoder().encode(str)
+    new TextEncoder().encode(str),
   );
 }
 
@@ -105,7 +105,7 @@ function checkHex(bytes, start, len, hexStr) {
   // console.log(hexStrToArray(hexStr));
   return bytesCompare(
     new Uint8Array(bytes).subarray(start, start + len),
-    hexToBytes(hexStr)
+    hexToBytes(hexStr),
   );
 }
 

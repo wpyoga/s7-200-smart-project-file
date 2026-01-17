@@ -120,7 +120,7 @@ async function processProjectFile(bytes) {
     else
       zipWriter.add(
         zipEntries[i].filename,
-        new zip.Uint8ArrayReader(new Uint8Array(zipData[i]))
+        new zip.Uint8ArrayReader(new Uint8Array(zipData[i])),
       );
   }
   const newZipFile = await zipWriter.close();
@@ -132,7 +132,7 @@ async function processProjectFile(bytes) {
     outputElem,
     "a",
     { href: downloadURL, download: newFilename },
-    newFilename
+    newFilename,
   );
 
   const newCiphertext = await encryptProjectData(newZipFile);
@@ -156,7 +156,7 @@ async function processProjectFile(bytes) {
     outputElem,
     "a",
     { href: downloadURL, download: newProjectFilename },
-    newProjectFilename
+    newProjectFilename,
   );
 }
 
@@ -169,14 +169,14 @@ async function getVTs() {
   // console.log(new TextDecoder().decode(new Uint8Array(xmlFile)));
   const xmlDoc = new DOMParser().parseFromString(
     new TextDecoder().decode(new Uint8Array(xmlFile)),
-    "application/xml"
+    "application/xml",
   );
   // console.log(xmlDoc);
   // console.log(xmlDoc.getElementsByTagName("VarTable"));
   // console.log(xmlDoc.documentElement);
   // console.log(xmlDoc.documentElement.childNodes);
   const listVarTable = Array.from(xmlDoc.documentElement.childNodes).filter(
-    (c) => c.localName === "VarTable"
+    (c) => c.localName === "VarTable",
   );
   // console.log(listVarTable);
 
@@ -411,13 +411,13 @@ async function getVTs() {
     globalVTElem,
     "a",
     { href: URL.createObjectURL(vtBlob), download: vtFilename },
-    vtFilename
+    vtFilename,
   );
 }
 
 async function hashPassword(password) {
   return await strToSha256(
-    passwordProtected && password.length > 0 ? password : DEFAULT_PASSWORD
+    passwordProtected && password.length > 0 ? password : DEFAULT_PASSWORD,
   );
 }
 
@@ -440,8 +440,8 @@ async function decryptProjectData(bytes, passwordProtected) {
     await window.crypto.subtle.decrypt(
       { name: "AES-GCM", iv: IV, additionalData: AAD, tagLength: 128 },
       key,
-      ciphertext
-    )
+      ciphertext,
+    ),
   );
 }
 
@@ -450,8 +450,8 @@ async function encryptProjectData(bytes) {
     await window.crypto.subtle.encrypt(
       { name: "AES-GCM", iv: IV, additionalData: AAD, tagLength: 128 },
       key,
-      bytes
-    )
+      bytes,
+    ),
   );
 }
 
@@ -622,7 +622,7 @@ async function generateExcelTemplate() {
     templateElem,
     "a",
     { href: URL.createObjectURL(templateBlob), download: templateFilename },
-    templateFilename
+    templateFilename,
   );
 }
 
