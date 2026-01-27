@@ -99,8 +99,7 @@
         - not sure how this version is encoded
 - 1 byte: 03
 - 8 bytes connection info
-  - 1 byte: Modbus slave number for Port0
-  - 3 bytes null
+  - 4 byte: Modbus station number for Port0
   - 4 bytes IP address
     - 4 IPv4 octets in normal order
     - not 32-bit encoded IP address

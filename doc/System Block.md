@@ -12,15 +12,14 @@ this block is similar across R01 R02 R03 versions
   - 35 bytes null: R01.00.00.00
 - 2 bytes: 00 01
 - 1 byte: 02
-- 1 byte: Modbus slave number for Port0
-- 3 bytes null
-- 1 byte: baud rate
-  - 01: 9600
-  - 02: 19200
-  - 04: 187500
+- 4 bytes: Modbus station number for Port0
+- 4 bytes: baud rate
+  - 01 00 00 00: 9600
+  - 02 00 00 00: 19200
+  - 04 00 00 00: 187500
 - 8 bytes null
-- 4 bytes unknown: 00 00 00 01
-- 120 bytes: retentive ranges (from 0 to 5, 24 bytes each)
+- 1 byte: 01
+- 120 bytes: retentive ranges (from 0 to 5, 20 bytes each)
   - 4 bytes null
   - 4 bytes data width
     - 02 00 00 00: xB
@@ -45,8 +44,8 @@ this block is similar across R01 R02 R03 versions
 - 4 bytes: serial port security
   - allow cpu mode change without password
   - allow time of day reads and writes without password
-  - 01 00 00 00: allow
-  - 00 00 00 00: no allow
+  - 01 00 00 00: no allow
+  - 00 00 00 00: allow
 - hashed password or unknown data
   - 34 bytes: seems like hashed & salted password -> R03.01.00.00
     - 2 bytes: salt
@@ -58,26 +57,21 @@ this block is similar across R01 R02 R03 versions
   - 4 bytes: unknown -> R01.00.00.00
     - need V1.0 version software to test
     - might be a simple checksum
-- 1 bytes: 01
-- 1 byte: percentage of communications background time
+- 1 byte: 01
+- 4 bytes: percentage of communications background time
   - default is 10% = 0a
-- 3 bytes null
-- 5 bytes
-  - 1 byte:
-    - 01: R03.01.00.00
-    - 01: R02.04.00.00
-  - 1 byte:
-    - 00: R03.01.00.00
-    - 01: R02.04.00.00
-    - 00: R01.00.00.00
-  - 3 bytes
-    - startup mode ??? R03.01.00.00
-    - startup mode: R02.04.00.00
-      - 01 00 00: startup in RUN mode
-      - 00 00 00: startup in STOP mode
-      - 02 00 00: startup in LAST mode
-    - unknown: R01.00.00.00
-      - 00 00 00: unknown
+- 1 byte: 01
+- 1 byte: unknown
+  - 00: R03.01.00.00
+  - 01: R02.04.00.00
+  - 00: R01.00.00.00
+- 1 byte
+  - startup mode ??? R03.01.00.00
+  - startup mode: R02.04.00.00
+    - 01: startup in RUN mode
+    - 00: startup in STOP mode
+    - 02: startup in LAST mode
+- 2 bytes null
 - 4 bytes: allow missing hardware
   - 01 00 00 00 allow
   - 00 00 00 00 no allow
@@ -97,13 +91,13 @@ this block is similar across R01 R02 R03 versions
 - 16 bytes null
 - CPU configuration
   - only on R02.04.00.00 & R03.01.00.00
-    - 1 byte null
-    - 12 bytes
-      - 4 bytes restrict communication writes
-        - 01 00 00 00 restrict
-        - 00 00 00 00 no restrict
-      - 4 bytes allowed range V memory offset
-      - 4 bytes number of bytes
+  - 1 byte null
+  - 12 bytes
+    - 4 bytes restrict communication writes
+      - 01 00 00 00 restrict
+      - 00 00 00 00 no restrict
+    - 4 bytes allowed range V memory offset
+    - 4 bytes number of bytes
   - 2 bytes CPU type
     - 1 byte
       - 00 for ST
@@ -115,10 +109,11 @@ this block is similar across R01 R02 R03 versions
       - 03 for xx30 & ST32
       - 04 for xx40
       - 06 for xx60
-  - 1 byte null
-  - 4 bytes:
-    - 80 07 01 00: R03.01.00.00
-    - 80 06 01 00: R02.04.00.00
+  - 2 bytes: 00 80
+  - 1 byte: version
+    - 07: R03.01.00.00
+    - 06: R02.04.00.00
+  - 2 bytes: 01 00
   - 30 bytes null
   - 2 bytes PLC type
     - 1 byte plc type
@@ -131,9 +126,9 @@ this block is similar across R01 R02 R03 versions
       - 03 for xx30 and ST32
       - 04 for xx40
       - 06 for xx60
-  - 1 byte null
-  - 3 bytes: 80 01 00
-  - 6 bytes null
+  - 2 bytes: 00 80
+  - 4 bytes: 01 00 00 00
+  - 4 bytes null
   - PLC version string
     - only on R02.04.00.00 & R03.01.00.00
     - missing on R01.00.00.00
@@ -141,7 +136,7 @@ this block is similar across R01 R02 R03 versions
     - PLC firmware version? V02.05.01_00.00.01.00 / V03.01.00_00.00.00.00
       - sometimes there is a null byte following
       - if there is a null byte following, the previous length becomes 16 (24 dec)
-  - 24 bytes unknown, only on R03.01.00.00
+  - 24 bytes unknown, only if version = 7 (used by ST32)
     - 8 bytes x 2 unknown: 00 00 00 00 0a 00 00 00
     - 8 bytes null
   - 6 bytes: 01 01 00 00 00 00
@@ -207,7 +202,7 @@ this block is similar across R01 R02 R03 versions
 - signal board info
   - [Signal Board](Signal%20Board.md) described here
   - version 06:
-    - 4 bytes: number of signal boards
+    - 4 bytes: number of signal boards supported
       - 02 00 00 00 for ST32
     - signal board 1
     - signal board 2

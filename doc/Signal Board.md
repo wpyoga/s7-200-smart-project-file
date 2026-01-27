@@ -42,14 +42,16 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: block version
   - 06: R02.04.00.00
-- 32 bytes unknown
-  - 4 bytes 01 00 00 00
+- 4 bytes 01 00 00 00
+- 24 bytes unknown
   - 4 bytes 07 00 00 00
     - input start offset?
   - 4 bytes 07 00 00 00
     - output start offset?
-  - 20 bytes null
-- 8 bytes: 00 20 00 80 02 00 00 00
+  - 16 bytes null
+- 4 bytes null
+- 4 bytes: 00 20 00 80
+- 4 bytes: 02 00 00 00
 - 4 bytes null
 - 1 byte null
 - 5 bytes: 02 01 00 00 00
@@ -81,12 +83,14 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: block version
   - 06: R02.04.00.00
-- 32 bytes unknown
-  - 4 bytes 01 00 00 00
+- 4 bytes 01 00 00 00
+- 24 bytes unknown
   - 4 bytes 0C 00 0E 00 (input start offset and type?)
   - 4 bytes 0C 00 0E 00 (output start offset and type? but nonexistent on this module)
-  - 20 bytes null
-- 8 bytes: 11 20 00 80 02 00 00 00
+  - 16 bytes null
+- 4 bytes null
+- 4 bytes: 11 20 00 80
+- 4 bytes: 02 00 00 00
 - 4 bytes null
 - 1 byte null
 - 5 bytes: 02 01 00 00 00
@@ -130,12 +134,14 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: block version
   - 06: R02.04.00.00
-- 32 bytes unknown
-  - 4 bytes 01 00 00 00
+- 4 bytes 01 00 00 00
+- 24 bytes unknown
   - 4 bytes 0C 00 0E 00 (input start offset and type?)
   - 4 bytes 0C 00 0E 00 (output start offset and type? but nonexistent on this module)
-  - 20 bytes null
-- 8 bytes: 10 20 00 80 02 00 00 00
+  - 16 bytes null
+- 4 bytes null
+- 4 bytes: 10 20 00 80
+- 4 bytes: 02 00 00 00
 - 4 bytes null
 - 1 byte null
 - 5 bytes: 02 01 00 00 00
@@ -175,31 +181,29 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: block version
   - 06: R02.04.00.00
-- 32 bytes unknown
-  - 4 bytes 01 00 00 00
+- 4 bytes 01 00 00 00
+- 24 bytes unknown
   - 4 bytes 07 00 00 00 (signal offset?)
   - 4 bytes 07 00 00 00 (signal offset?)
   - 12 bytes null
   - 4 bytes: 01 00 00 00
-  - 4 bytes null
-- 8 bytes: 1D 20 00 80 02 00 00 00
+- 4 bytes null
+- 4 bytes: 1D 20 00 80
+- 4 bytes: 02 00 00 00
 - 4 bytes null
 - 1 byte null
-- 5 bytes: 02 01 00 00 00
-  - freeze output: 02 01 01 00 00
-- 1 byte null
-- signal board info
-  - 1 byte 02
-  - 2 bytes length: 01 00
-  - 2 bytes null
-  - 8 bytes info for AQW12 (only one)
-    - 00 07
-    - 02 02
-    - 00 00
-    - 00 01
+- 2 bytes: 02 01
+- 4 bytes freeze_output
+  - 01 00 00 00: freeze
+  - 00 00 00 00: no freeze
+- 2 bytes: 02 01
+- 4 bytes null
+- 1 byte: 07
+- 2 bytes: 02 02
+- 4 bytes: 00 00 00 01
 - 2 bytes null
-- 8 bytes unknown: 02 02 00 00 00 01 00 00
-- 10 bytes null
+- 6 bytes unknown: 02 02 00 00 00 01
+- 12 bytes null
 - 4 bytes: alarm battery low
   - 01 00 00 00: enabled
   - 00 00 00 00: disabled
@@ -213,28 +217,35 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: block version
   - 06: R02.04.00.00
-- 32 bytes unknown
-  - 4 bytes 01 00 00 00
-  - 16 bytes null
+- 4 bytes 01 00 00 00
+- 24 bytes unknown
+  - 8 bytes null (slot 1) or unknown bytes (slot 2)
+    - 2x 4 bytes: 10 02 12 02
+  - 4 bytes null
+  - 4 bytes port number
+    - 00 00 00 00: port 1
+    - 01 00 00 00: port 2
   - 4 bytes: 01 00 00 00
-  - 8 bytes null
-- 8 bytes: 1E 20 00 80 02 00 00 00
-- 4 bytes null -> position maybe?
+  - 4 bytes null
+- 4 bytes null
+- 4 bytes: 1E 20 00 80
+- 4 bytes: 02 00 00 00
+- 4 bytes slot number
+  - 00 00 00 00: slot 1
+  - 01 00 00 00: slot 2
 - 1 byte null
-- 5 bytes: 02 02 02 00 00
-  - 2 bytes: 02 02
-  - 1 byte: Modbus station address
-  - 2 bytes: 00 00
-- 1 byte null
-- 1 byte: baud rate
-  - 01: 9600
-  - 02: 19200
-  - 04: 187500
-- 7 bytes null
+- 2 bytes: 02 02
+- 4 bytes: Modbus station address
+- 4 bytes: baud rate
+  - 01 00 00 00: 9600
+  - 02 00 00 00: 19200
+  - 04 00 00 00: 187500
+- 4 bytes null
 - 1 byte type
-  - 00: RS385
+  - 00: RS485
   - 01: RS232
-- 12 bytes null
+- 4 bytes null
+- 8 bytes unknown
 
 ## SB CM01 0AA1
 
@@ -242,37 +253,36 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: block version
   - 07: R03.01.00.00
-- 32 bytes unknown
-  - 4 bytes 01 00 00 00
+- 4 bytes 01 00 00 00
+- 24 bytes unknown
   - 8 bytes null (slot 1) or unknown bytes (slot 2)
     - 2x 4 bytes: 10 02 12 02
   - 4 bytes null
-  - 4 bytes position
-    - 00 00 00 00: slot 1
-    - 01 00 00 00: slot 2
+  - 4 bytes port number
+    - 00 00 00 00: port 1
+    - 01 00 00 00: port 2
   - 4 bytes: 01 00 00 00
-  - 8 bytes null
-- 8 bytes: 1F 20 00 80 02 00 00 00
-- 4 bytes position
+  - 4 bytes null
+- 4 bytes null
+- 4 bytes: 1F 20 00 80
+- 4 bytes: 02 00 00 00
+- 4 bytes slot number
   - 00 00 00 00: slot 1
   - 01 00 00 00: slot 2
 - 1 byte null
 - 24 bytes unknown, only in version 07
   - 2x 8 bytes: 0c 00 00 00 0e 00 00 00 (slot 1) or 10 02 00 00 12 02 00 00 (slot 2)
   - 2x 4 bytes: 07 00 00 00 (slot 1) or 48 00 00 00 (slot 2)
-- 5 bytes: 02 02 02 00 00
-  - 2 bytes: 02 02
-  - 1 byte: Modbus station address
-  - 2 bytes: 00 00
-- 1 byte null
-- 1 byte: baud rate
-  - 01: 9600
-  - 02: 19200
-  - 04: 187500
-- 7 bytes null
+- 2 bytes: 02 02
+- 4 bytes: Modbus station address
+- 4 bytes: baud rate
+  - 01 00 00 00: 9600
+  - 02 00 00 00: 19200
+  - 04 00 00 00: 187500
+- 4 bytes null
 - 1 byte type
   - 00: RS485
   - 01: RS232
-- 12 bytes unknown
-  - 4 bytes null
+- 4 bytes null
+- 8 bytes unknown
   - 2x 4 bytes: 01 00 00 00
