@@ -238,7 +238,7 @@ this block is similar across R01 R02 R03 versions
     - 1 byte unknown: 01
     - 3 bytes null
     - 1 byte 1e
-  - n x 4 bytes: variable records
-    - 2 bytes length, sometimes 00 00 or 02 00
-    - n x 4 bytes data (usually null)
-    - 2 bytes null
+- some records, only on R03.01.00.00
+  - 2 bytes length, sometimes 00 00 or 02 00
+  - n x 4 bytes data (usually null)
+  - 2 bytes null

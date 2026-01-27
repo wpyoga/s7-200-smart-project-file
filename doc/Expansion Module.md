@@ -32,8 +32,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> offset
-- 4 bytes: 08 00 00 \-\> offset
+- 4 bytes: 08 00 00 -> offset
+- 4 bytes: 08 00 00 -> offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -57,7 +57,7 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 2 bytes: 00 01
 
-# DE08
+## DE08
 
 39 bytes
 
@@ -65,8 +65,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> input image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> input image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -92,8 +92,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> input image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> input image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -119,8 +119,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -146,8 +146,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -173,8 +173,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -200,8 +200,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -227,8 +227,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -260,8 +260,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -293,8 +293,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -326,8 +326,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 08 00 00 \-\> input image offset
-- 4 bytes: 08 00 00 \-\> output image offset
+- 4 bytes: 08 00 00 -> input image offset
+- 4 bytes: 08 00 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -359,8 +359,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 30 00 3E 00 \-\> input image offset
-- 4 bytes: 30 00 3E 00 \-\> output image offset
+- 4 bytes: 30 00 3E 00 -> input image offset
+- 4 bytes: 30 00 3E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -387,8 +387,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 40 00 4E 00 \-\> input image offset
-- 4 bytes: 40 00 4E 00 \-\> output image offset
+- 4 bytes: 40 00 4E 00 -> input image offset
+- 4 bytes: 40 00 4E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -415,8 +415,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 50 00 5E 00 \-\> input image offset
-- 4 bytes: 50 00 5E 00 \-\> output image offset
+- 4 bytes: 50 00 5E 00 -> input image offset
+- 4 bytes: 50 00 5E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -444,8 +444,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 60 00 6E 00 \-\> input image offset
-- 4 bytes: 60 00 6E 00 \-\> output image offset
+- 4 bytes: 60 00 6E 00 -> input image offset
+- 4 bytes: 60 00 6E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -473,8 +473,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 10 00 1E 00 \-\> input image offset
-- 4 bytes: 10 00 1E 00 \-\> output image offset
+- 4 bytes: 10 00 1E 00 -> input image offset
+- 4 bytes: 10 00 1E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -489,7 +489,7 @@ The data looks like this
 - array
   - 2 bytes length: 02 00
   - 2 bytes null
-  - 2 x26 bytes: output config
+  - 2 x26 bytes: input config
     - user power alarm is encoded as a bit in each channel here
 - 4 bytes: 01 00 00 00
 - 2 bytes: 00 01
@@ -510,8 +510,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 20 00 2E 00 \-\> input image offset
-- 4 bytes: 20 00 2E 00 \-\> output image offset
+- 4 bytes: 20 00 2E 00 -> input image offset
+- 4 bytes: 20 00 2E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -526,7 +526,7 @@ The data looks like this
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
-  - 4 x26 bytes: output config
+  - 4 x26 bytes: input config
 - 4 bytes: 01 00 00 00
 - 2 bytes: 00 01
 - array
@@ -545,8 +545,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 50 00 5E 00 \-\> input image offset
-- 4 bytes: 50 00 5E 00 \-\> output image offset
+- 4 bytes: 50 00 5E 00 -> input image offset
+- 4 bytes: 50 00 5E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -561,7 +561,7 @@ The data looks like this
 - array
   - 2 bytes length: 02 00
   - 2 bytes null
-  - 2 x26 bytes: output config
+  - 2 x26 bytes: input config
 - 4 bytes: 01 00 00 00
 - 2 bytes: 00 01
 
@@ -573,8 +573,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 50 00 5E 00 \-\> input image offset
-- 4 bytes: 50 00 5E 00 \-\> output image offset
+- 4 bytes: 50 00 5E 00 -> input image offset
+- 4 bytes: 50 00 5E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -589,7 +589,7 @@ The data looks like this
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
-  - 2 x26 bytes: output config
+  - 2 x26 bytes: input config
 - 4 bytes: 01 00 00 00
 - 2 bytes: 00 01
 
@@ -601,8 +601,8 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 1 byte: 06
 - 4 bytes: 01 00 00 00
-- 4 bytes: 50 00 5E 00 \-\> input image offset
-- 4 bytes: 50 00 5E 00 \-\> output image offset
+- 4 bytes: 50 00 5E 00 -> input image offset
+- 4 bytes: 50 00 5E 00 -> output image offset
 - 4 bytes null
 - 4 bytes EM number
 - 8 bytes null
@@ -617,14 +617,10 @@ The data looks like this
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
-  - 2 x26 bytes: output config
+  - 2 x26 bytes: input config
 - 4 bytes: 01 00 00 00
 - 2 bytes: 00 01
-- if leftover data
-- 4 bytes: previous marker
-  - 01 40 00 80
-  - 00 30 00 80
-- 4 bytes: null
 
 ## AT08
 
+TODO
