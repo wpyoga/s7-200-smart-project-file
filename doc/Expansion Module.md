@@ -492,7 +492,8 @@ The data looks like this
   - 2 x26 bytes: input config
     - user power alarm is encoded as a bit in each channel here
 - 4 bytes: 01 00 00 00
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 01 00
   - 2 bytes null
@@ -528,7 +529,8 @@ The data looks like this
   - 2 bytes null
   - 4 x26 bytes: input config
 - 4 bytes: 01 00 00 00
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 02 00
   - 2 bytes null
