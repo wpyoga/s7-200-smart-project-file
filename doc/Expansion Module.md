@@ -370,8 +370,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
@@ -398,8 +398,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 08 00
   - 2 bytes null
@@ -426,8 +426,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 02 00
   - 2 bytes null
@@ -455,8 +455,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
@@ -484,8 +484,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 02 00
   - 2 bytes null
@@ -521,8 +521,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
@@ -556,8 +556,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 02 00
   - 2 bytes null
@@ -584,8 +584,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 01
+- 2 bytes null
+- 1 byte: 01
 - array
   - 2 bytes length: 04 00
   - 2 bytes null
@@ -612,8 +612,8 @@ The data looks like this
 - 4 bytes: EM number
 - 2 bytes: 00 03
 - 4 bytes: 01 00 00 00
-- 1 byte null
-- 2 bytes: 00 00
+- 2 bytes null
+- 1 byte: 00
 - array
   - 2 bytes length: 04 00
   - 2 bytes null

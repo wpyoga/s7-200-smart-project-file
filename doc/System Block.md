@@ -218,13 +218,11 @@ this block is similar across R01 R02 R03 versions
   - n records of expansion modules
 - some records
   - R02.04.00.00 & R03.01.00.00
-    - 2 bytes length: 04 00
+    - 4 bytes length: 04 00 00 00
     - 4x 8 bytes
-    - 2 bytes null
   - R01.00.00.00
-    - 2 bytes length: 03 00
+    - 4 bytes length: 03 00 00 00
     - 3x 8 bytes (null?)
-    - 2 bytes null
 - additional settings, only on R03.01.00.00
   - 14 bytes unknown
     - 1 byte bit field
@@ -239,6 +237,5 @@ this block is similar across R01 R02 R03 versions
     - 3 bytes null
     - 1 byte 1e
 - some records, only on R03.01.00.00
-  - 2 bytes length, sometimes 00 00 or 02 00
+  - 4 bytes length, sometimes 00 00 00 00 or 02 00 00 00
   - n x 4 bytes data (usually null)
-  - 2 bytes null
