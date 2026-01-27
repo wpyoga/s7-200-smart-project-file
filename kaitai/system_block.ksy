@@ -7,7 +7,7 @@ meta:
     - expansion_module
   
 seq:
-  # - size: 0x577
+  # - size: 0x0577
 
   - id: version
     size: 2
@@ -110,6 +110,7 @@ seq:
       cases:
         6: signal_boards
         5: signal_board_1
+        3: signal_board_1
 
   - id: expansion_module_info
     type: expansion_modules

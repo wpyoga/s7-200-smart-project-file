@@ -30,7 +30,8 @@ seq:
     type: system_block
 
   - type: u1
-    valid: 0x01
+    # this is 1 for R02.04.00.00 and R03.01.00.00
+    # this is 0 for R01.00.00.00
 
   - id: timestamp2a
     type: smart_types::timestamp
