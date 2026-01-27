@@ -4,8 +4,10 @@ meta:
   imports:
     - smart_types
     - signal_board
+    - expansion_module
   
 seq:
+  # - size: 0x577
 
   - id: version
     size: 2
@@ -87,19 +89,19 @@ seq:
   - type: smart_types::nulls(16)
 
   - id: legacy_extra
-    if: version == [0x0f,0x03]
+    if: sys_version == 3
     type: legacy_extra
 
   - id: cpu_config
-    if: version != [0x0f,0x03]
+    if: sys_version != 3
     type: cpu_config
 
   - id: cpu_di_config
-    if: version != [0x0f,0x03]
+    if: sys_version != 3
     type: cpu_di_config
 
   - id: cpu_do_config
-    if: version != [0x0f,0x03]
+    if: sys_version != 3
     type: cpu_do_config
 
   - id: signal_board_info
@@ -109,15 +111,18 @@ seq:
         6: signal_boards
         5: signal_board_1
 
-  # - id: expansion_modules
-  #   type: expansion_module_block
+  - id: expansion_module_info
+    type: expansion_modules
 
-  # - id: trailing_records
-  #   type: trailing_records
+  - id: unknown_data
+    type: smart_types::rec(4,8)
 
-  # - id: extra_settings
-  #   if: file_version == "R03.01.00.00"
-  #   type: extra_settings
+  - size: 14
+    if: sys_version == 6
+
+  - id: unknown_data2
+    type: smart_types::rec(4,4)
+    if: sys_version == 6
 
 
 types:
@@ -343,6 +348,16 @@ types:
         repeat: expr
         repeat-expr: num_signal_boards
 
+  expansion_modules:
+    seq:
+      - id: num_expansion_modules
+        type: u4
+      - id: expansion_modules
+        type: expansion_module
+        repeat: expr
+        repeat-expr: num_expansion_modules
+
+
 
 
 enums:
@@ -394,8 +409,6 @@ enums:
     
   cpu_io_g2:
     0x03: xx32
-
-
 
 
 

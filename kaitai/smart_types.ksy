@@ -110,21 +110,34 @@ types:
 
   rec:
     params:
-      - id: size
-        type: u1
+      - id: len_size
+        type: u4
+      - id: rec_size
+        type: u4
     seq:
       - id: len
-        type: u2
+        type:
+          switch-on: len_size
+          cases:
+            4: u4
+            2: u2
+            1: u1
       - id: data
-        size: size
+        size: rec_size
         repeat: expr
         repeat-expr: len
+
 
 
 enums:
   enable_disable:
     0x01: enable
     0x00: disable
+
+  baud_rate:
+    1: bps_9600
+    2: bps_19200
+    4: bps_187500
 
 
 

@@ -11,22 +11,38 @@ seq:
   - id: preamble
     type: preamble
 
-  - id: timestamp1
+  - id: timestamp1a
     type: smart_types::timestamp
 
-  - id: timestamp2
+  - id: timestamp1b
     type: smart_types::timestamp
 
   - type: u1
+    valid: 0x01
 
-  - id: timestamp3
+  - id: timestamp1c
     type: smart_types::timestamp
 
-  - id: timestamp4
+  - id: timestamp1d
     type: smart_types::timestamp
 
   - id: system_block
     type: system_block
+
+  - type: u1
+    valid: 0x01
+
+  - id: timestamp2a
+    type: smart_types::timestamp
+
+  - id: timestamp2b
+    type: smart_types::timestamp
+
+  - id: timestamp2c
+    type: smart_types::timestamp
+
+  - id: timestamp2d
+    type: smart_types::timestamp
 
   # - id: program_block
   #   type: program_block
@@ -39,6 +55,16 @@ types:
   placeholder:
     seq:
       - type: u4
+
+
+
+
+
+
+
+
+
+
 
 
 
