@@ -288,7 +288,7 @@ the basic format of a network element is as follows
     - 'S' 00 00 00 ... set coil
     - 'N' 'O' 'T' 00 00 00 ... NOT
     - 'N' 'O' 'P' 00 00 00 ... NOP box
-    - 'E' 'N' 00 00 00 ... ADD_I ADD_R XMT MOV_W LPF box top, subroutine \-\> EN input (second line, left side)
+    - 'E' 'N' 00 00 00 ... ADD_I ADD_R XMT MOV_W LPF box top, subroutine -> EN input (second line, left side)
     - 'I' 'N' '2' 00 00 00 ... ADD_I ADD_R box second half, second line, right side
     - PORT then null: XMT box second half
     - Coef then null: LPF box second half
@@ -359,14 +359,14 @@ the basic format of a network element is as follows
       - 01
       - 00 00 00 00
       - 02
-      - 00 04 10 \-\> box is expecting VW (00 08 10 for VD, 00 02 10 for VB)
+      - 00 04 10 -> box is expecting VW (00 08 10 for VD, 00 02 10 for VB)
         - 00 00
         - 00
         - 00 00 00 00
     - example: \&VB123
       - 2 bytes: index
       - ...
-      - 01 02 10 \-\> \&VB
+      - 01 02 10 -> \&VB
         - 2 bytes 00 00
         - 1 byte nul
         - 4 bytes offset: 7B 00 00 00
@@ -378,7 +378,7 @@ the basic format of a network element is as follows
       - 1 byte: 01
       - 4 bytes: 00 00 00 00
       - 1 byte: 02
-      - 00 08 10 \-\> VD
+      - 00 08 10 -> VD
         - 2 bytes 00 00
         - 1 byte null
         - 4 bytes: 10 00 00 00
@@ -390,7 +390,7 @@ the basic format of a network element is as follows
       - 1 byte: 01
       - 4 bytes: 00 00 00 00
       - 1 byte: 02
-      - 00 04 10 \-\> VW
+      - 00 04 10 -> VW
         - 2 bytes 00 00
         - 1 byte null
         - 4 bytes: 0F 00 00 00
@@ -402,15 +402,15 @@ the basic format of a network element is as follows
       - 1 byte: 01
       - 4 bytes: 00 00 00 00
       - 1 byte: 01
-      - 3 bytes: 00 01 00 \-\> string ??
+      - 3 bytes: 00 01 00 -> string ??
         - 1 byte length: 09
         - n bytes content: Always_On
         - maximum length seems to be 23 characters
-    - example: the number \-13
+    - example: the number -13
       - 2 bytes: index
       - 2 bytes: 00 03
       - ...
-      - 3 bytes: 02 02 01 \-\> negative byte?
+      - 3 bytes: 02 02 01 -> negative byte?
         - 4 bytes: F3 FF FF FF
         - 1 byte null
     - example: the number 5
@@ -421,8 +421,8 @@ the basic format of a network element is as follows
       - 1 byte: 01
       - 4 bytes: 00 00 00 00
       - 1 byte: 01
-        3 bytes: 01 02 01 \-\> byte
-        - 4 bytes: 05 00 00 00 \-\> the number 5
+        3 bytes: 01 02 01 -> byte
+        - 4 bytes: 05 00 00 00 -> the number 5
         - 1 byte null
     - example: the number 1
       - 2 bytes: index
@@ -432,8 +432,8 @@ the basic format of a network element is as follows
       - 1 byte: 01
       - 4 bytes: 00 00 00 00
       - 1 byte: 01
-      - 3 bytes: 01 01 01 \-\> bit (0 and 1 are treated as bit data)
-        - 4 bytes: 01 00 00 00 \-\> 1 bit
+      - 3 bytes: 01 01 01 -> bit (0 and 1 are treated as bit data)
+        - 4 bytes: 01 00 00 00 -> 1 bit
         - 1 byte null
 
 ## network element examples
@@ -451,8 +451,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 00
     - 1 byte index: 00
     - 1 byte 03
-    - 4 bytes 01 00 00 00 \-\> connection?
-    - 4 bytes 07 00 00 00 \-\> closed arrow?
+    - 4 bytes 01 00 00 00 -> connection?
+    - 4 bytes 07 00 00 00 -> closed arrow?
     - 3 bytes: 00 01 01
     - 2 bytes null
 - 398 bytes: a single Always_On contact
@@ -495,17 +495,17 @@ the basic format of a network element is as follows
       - 4 bytes: 01 00 00 00
       - 4 bytes: 00 01 00 00
       - 4 bytes: 00 00 01 00
-      - 2 bytes: 01 00 \-\> type??
-      - \---string
-      - \---1 byte length: 09
-      - \---n bytes content: Always_On
+      - 2 bytes: 01 00 -> type??
+      - ---string
+      - ---1 byte length: 09
+      - ---n bytes content: Always_On
   - element 1: dangling arrow
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte element index in line: 01
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> arrow?
-    - 4 bytes: 06 00 00 00 \-\> connection?
+    - 4 bytes: 01 00 00 00 -> arrow?
+    - 4 bytes: 06 00 00 00 -> connection?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -568,8 +568,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 00
     - 1 byte index: 01
     - 1 byte: 03
-    - 4 bytes: 01 01 00 00 \-\> line?
-    - 4 bytes: 05 00 00 00 \-\> line?
+    - 4 bytes: 01 01 00 00 -> line?
+    - 4 bytes: 05 00 00 00 -> line?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -589,8 +589,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 00
     - 1 byte element index: 02
     - 1 byte: 03
-    - 4 bytes: 01 01 00 00 \-\> line?
-    - 4 bytes: 05 00 00 00 \-\> line?
+    - 4 bytes: 01 01 00 00 -> line?
+    - 4 bytes: 05 00 00 00 -> line?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -610,8 +610,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 00
     - 1 byte element index: 03
     - 1 byte: 03
-    - 4 bytes: 01 01 00 00 \-\> line?
-    - 4 bytes: 05 00 00 00 \-\> line?
+    - 4 bytes: 01 01 00 00 -> line?
+    - 4 bytes: 05 00 00 00 -> line?
       - 05 02 00 00 means there is a line going down
     - 4 bytes: 03 00 00 00
     - 22 bytes null
@@ -668,7 +668,7 @@ the basic format of a network element is as follows
     - 4 bytes
       - 01 20 00 00: reset coil
       - 01 1D 00 00: set coil
-    - 4 bytes: 04 00 00 00 \-\> output coil?
+    - 4 bytes: 04 00 00 00 -> output coil?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -717,8 +717,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 01
     - 1 byte element index: 00
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> vertical line?
-    - 4 bytes: 00 03 00 00 \-\> vertical line?
+    - 4 bytes: 01 00 00 00 -> vertical line?
+    - 4 bytes: 00 03 00 00 -> vertical line?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -738,8 +738,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 02
     - 1 byte element index: 00
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> vertical line?
-    - 4 bytes: 00 03 00 00 \-\> vertical line?
+    - 4 bytes: 01 00 00 00 -> vertical line?
+    - 4 bytes: 00 03 00 00 -> vertical line?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -759,8 +759,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 03
     - 1 byte element index: 00
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> vertical line?
-    - 4 bytes: 00 03 00 00 \-\> vertical line?
+    - 4 bytes: 01 00 00 00 -> vertical line?
+    - 4 bytes: 00 03 00 00 -> vertical line?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -813,8 +813,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 1f
     - 1 byte element index: 00
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> vertical line?
-    - 4 bytes: 00 01 00 00 \-\> vertical line on right side but only halfway?
+    - 4 bytes: 01 00 00 00 -> vertical line?
+    - 4 bytes: 00 01 00 00 -> vertical line on right side but only halfway?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -834,8 +834,8 @@ the basic format of a network element is as follows
     - 1 byte line number: 1f
     - 1 byte element index: 01
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> open arrow?
-    - 4 bytes: 06 00 00 00 \-\> connection?
+    - 4 bytes: 01 00 00 00 -> open arrow?
+    - 4 bytes: 06 00 00 00 -> connection?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -925,8 +925,8 @@ the basic format of a network element is as follows
   - last element: dangling arrow
     - 1 byte element index: 05
     - 1 byte: 03
-    - 4 bytes: 01 00 00 00 \-\> open arrow?
-    - 4 bytes: 06 00 00 00 \-\> connection?
+    - 4 bytes: 01 00 00 00 -> open arrow?
+    - 4 bytes: 06 00 00 00 -> connection?
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
