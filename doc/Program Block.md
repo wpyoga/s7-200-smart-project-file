@@ -1,6 +1,6 @@
 # Program Block
 
-- 1 byte identifier: 02
+- 1 byte version: 02
 - 2 bytes number of entries: 04 00
 - order of items
   - main program block (OB1)
@@ -25,7 +25,7 @@
   - interrupt: INTx (0-based)
 - 2 bytes: 01 00
 - 18 bytes null
-- 4 bytes parameters
+- 4 bytes editor open status
   - only on R02.04.00.00
   - missing on R01.00.00.00
   - editor open: 01 00 00 00
@@ -93,21 +93,7 @@
 - timestamp last modified time (updated whenever symbol table or program block is updated)
 - 1 byte null
 - 2 bytes number of networks
-- n networks (repeated for each network)
-  - 2 bytes network index
-  - 2 bytes 02 01
-  - 2 bytes version:
-    - 07 00 -> R03.01.00.00
-    - 04 00 -> R02.04.00.00 & R01.00.00.00
-  - network title
-    - 2 bytes length
-      - always 0 on R02.04.00.00 & R03.01.00.00
-    - n bytes network title
-  - 1 byte null
-  - network comment
-    - 2 bytes length
-    - n bytes comment string
-  - xx bytes [network data](#network-content)
+- n [networks](#network-content) (repeated for each network)
 - symbol table for program block
   - not present on R03.01.00.00
   - 1 byte null
@@ -152,19 +138,31 @@
 
 the basic format of a network description is as follows
 
-- 1 byte version
-  - 02: R03.01.00.00
-  - 01: R02.04.00.00 & R01.00.00.00
-- some data
-  - 5 bytes: R03.01.00.00
-    - 4 bytes null
-    - 1 byte: 02
-  - 1 byte null: R02.04.00.00 & R01.00.00.00
-- 4 bytes null
-- 4 bytes 02 00 00 00
-- 1 byte
-  - 00: no bookmark
-  - 01: bookmark
+- 2 bytes network index
+- 2 bytes 02 01
+- 2 bytes version:
+  - 07 00 -> R03.01.00.00
+  - 04 00 -> R02.04.00.00 & R01.00.00.00
+- network title
+  - 2 bytes length
+    - always 0 on R02.04.00.00 & R03.01.00.00
+  - n bytes network title
+- 1 byte null
+- network comment
+  - 2 bytes length
+  - n bytes comment string
+- 2 byte version
+  - 02 00: R03.01.00.00
+  - 01 00: R02.04.00.00 & R01.00.00.00
+- 3 bytes null
+  - only if R03.01.00.00
+- 4 bytes
+  - 02 00 00 00: R03.01.00.00
+  - 00 00 00 00: R02.04.00.00 & R01.00.00.00
+- 1 byte: 02
+- 4 bytes
+  - 00 00 00 00: no bookmark
+  - 01 00 00 00: bookmark
 - 4 bytes null
 - 1 byte 01
 - 2 bytes: number of elements in the network
@@ -180,63 +178,70 @@ the basic format of a network element is as follows
 - 1 byte null
 - 1 byte line number
 - 1 byte column number
-- 1 byte: 03
-- 4 bytes: type
-  - 01 00 00 00: dangling arrow, vertical line, final arrow
-  - 01 01 00 00: horizontal line
-  - 01 14 00 00: NO contact
-  - 01 15 00 00: NC contact
-  - 01 18 00 00: NOT
-  - 01 19 00 00: positive transition
-  - 01 1A 00 00: negative transition
-  - 01 1B 00 00: output coil
-  - 01 20 00 00: reset coil
-  - 01 23 00 00: NOP box
-  - 01 1D 00 00: set coil
-  - 01 4A 01 00: ADD_R box
-  - 01 49 01 00: LPF box
-  - 01 59 01 00: ADD_I box
-  - 01 A0 00 00: XMT box
-  - 01 A0 01 00: MOV_W
-  - 01 E9 03 00: subroutine \#0
-  - 01 E9 03 01: subroutine \#1
-- 4 bytes
-  - byte 0: type
-    - 07: final arrow
-    - 06: dangling arrow
-    - 05: horizontal line
-    - 03: contact
-    - 04: coil (output)
-    - 02: second half of box
-      - maybe: box or part of box, with call parameters
-    - 01: subroutine or box or top of box
-      - maybe: box or part of box, with lines coming in or out
-  - byte 1: lines on the right side
-    - 03: going up and going down
-    - 02: going down
-    - 01: going up
-    - 00: none
-  - byte 2:
+- 2 bytes: 03 01
+- 2 bytes: type
+  - 00 00: dangling arrow, vertical line, final arrow
+  - 01 00: horizontal line
+  - 14 00: NO contact
+  - 15 00: NC contact
+  - 18 00: NOT
+  - 19 00: positive transition
+  - 1A 00: negative transition
+  - 1B 00: output coil
+  - 1D 00: set coil
+  - 20 00: reset coil
+  - 23 00: NOP box
+  - 4A 01: ADD_R box
+  - 49 01: LPF box
+  - 59 01: ADD_I box
+  - A0 00: XMT box
+  - A0 01: MOV_W
+  - E9 03: subroutine #0
+    - this is the same as the POU code for subroutine
+- 1 byte unknown
+  - usually 00, but sometimes 01
+- 1 byte: subtype
+  - 07: final arrow
+  - 06: dangling arrow
+  - 05: horizontal line
+  - 03: contact
+  - 04: coil (output)
+  - 02: second half of box
+    - maybe: box or part of box, with call parameters
+  - 01: subroutine or box or top of box
+    - maybe: box or part of box, with lines coming in or out
+  - 00: vertical line
+- 1 byte: vertical lines on the right side
+  - looks like bit field
+  - 03: going up and going down
+  - 02: going down
+  - 01: going up
+  - 00: none
+- 2 bytes unknown
+  - byte 0:
     - 00: usually, unknown, second half of box
     - 05: NOP box
     - 02: subroutine or top of box
-  - byte 3
+  - byte 1:
     - 00: usually, unknown, top half of box
     - 09: NOP box, second half of LPF box, subroutine
     - 06: second half of ADD_I ADD_R XMT box
     - 03: second half of MOV_W box
     - maybe: 03 means 1 row, 06 means 2 rows, 09 means 3 rows
       - which means one row is divided into 3 columns
-  - examples
-    - 07 00 00 00: final arrow
-    - 06 00 00 00: dangling arrow
-    - 05 00 00 00: horizontal line only
-    - 00 03 00 00: vertical line going up and going down on the right side
-    - 05 02 00 00: horizontal line with vertical line going down on the right side
-    - 03 00 00 00: normal contact or coil?
-    - h04 00 00 00: output coil (set coil, reset coil)
-- 1 byte: number of data records following
-  - 03: usually, box, but subroutine with multiple inputs also 03
+- examples
+  - 00 00 00 07 00 00 00: final arrow
+  - 00 00 00 06 00 00 00: dangling arrow
+  - 00 00 00 05 00 00 00: horizontal line only
+  - 00 00 00 03 00 00 00: vertical line going up and going down on the right side
+  - 00 00 00 05 02 00 00: horizontal line with vertical line going down on the right side
+  - 14 00 00 03 00 00 00: normal contact or coil?
+  - 1B 00 00 04 00 00 00: output coil
+  - 1D 00 00 04 00 00 00: set coil
+  - 20 00 00 04 00 00 00: reset coil
+- 2 bytes: number of data records following
+  - 03 00: usually, box, but subroutine with multiple inputs also 03
+    - the only time it's not 03 00 seems to be in an empty network with a single end arrow
     - 3x (null+24+2+24+2+null+24+2+24+2+null+24+2+24+2)
     - 24 bytes of data is text padded with zeros
       - max length is 23, so there is always a trailing null
@@ -247,11 +252,8 @@ the basic format of a network element is as follows
       - the second part contains EN (always) and ENO (if not subroutine or NOP)
     - for subsequent rows of box, the first record contains labels (parameters) from the first line (left and then right), and so on
     - for contact with label (even NO contact has " " as label), it is stored on the second record, the first 24
-  - 00: final arrow, no data records
+  - 00 00: final arrow, no data records
 - n records (if number of data records is not 0)
-  - usually 03
-    - the only time it's not 03 seems to be in an empty network with a single end arrow
-  - 1 byte null
   - 24 bytes: box label padded with nulls, or first row left side entry
     - usually null
     - ADD_I then null: ADD_I box top
@@ -438,6 +440,12 @@ the basic format of a network element is as follows
 
 ## network element examples
 
+starting from second version field:
+- 2 byte version
+  - 02 00: R03.01.00.00
+  - 01 00: R02.04.00.00 & R01.00.00.00
+
+
 - 35 bytes is for empty network
   - 4 bytes 01 00 00 00
   - 2 bytes null
@@ -456,11 +464,12 @@ the basic format of a network element is as follows
     - 3 bytes: 00 01 01
     - 2 bytes null
 - 398 bytes: a single Always_On contact
-  - 4 bytes 01 00 00 00
-  - 2 bytes null
-  - 4 bytes 02 00 00 00
+  - 2 bytes 01 00
   - 4 bytes null
-  - 2 bytes 00 01
+  - 4 bytes 02 00 00 00
+  - 1 byte bookmark
+  - 4 bytes null
+  - 1 byte 01
   - 4 bytes 02 00
     - number of elements in the network
   - element 0
@@ -521,11 +530,12 @@ the basic format of a network element is as follows
     - 4 bytes: 01 00 01 01
     - 2 bytes null
 - 32 lines with 32 columns on the first line
-  - 4 bytes 01 00 00 00
-  - 2 bytes null
-  - 4 bytes 02 00 00 00
+  - 2 bytes 01 00
   - 4 bytes null
-  - 2 bytes 00 01
+  - 4 bytes 02 00 00 00
+  - 1 byte bookmark
+  - 4 bytes null
+  - 1 byte 01
   - 2 bytes 40 00
     - number of elements in the network
     - including dangling arrows
@@ -539,7 +549,6 @@ the basic format of a network element is as follows
       - 01 15 00 00: NC contact
     - 4 bytes 03 00 00 00
       - sometimes 03 02 00 00
-      - not sure what the meaning is
     - 4 bytes: 03 00 00 00
     - 22 bytes null
     - 4 bytes: 01 00 00 00
@@ -695,7 +704,7 @@ the basic format of a network element is as follows
         - 4 bytes: 00 00 01 07
           - 00 00 01 unknown
           - 07 is real, 01 is whole number
-          - 6 bytes: 08 01 7B 00 00 00
+        - 6 bytes: 08 01 7B 00 00 00
           - 02 is ...? byte? not bit? if 01 then bit, if 08 then 32-bit dword or real
           - 01 unknown
           - 7B 00 00 00 = 123 is the number on top
