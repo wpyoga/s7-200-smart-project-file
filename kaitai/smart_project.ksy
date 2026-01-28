@@ -5,6 +5,7 @@ meta:
   imports:
     - preamble
     - system_block
+    - program_block
 
 seq:
   # Versioning
@@ -45,8 +46,10 @@ seq:
   - id: timestamp2d
     type: smart_types::timestamp
 
-  # - id: program_block
-  #   type: program_block
+  - id: program_block
+    type: program_block
+
+  # - type: u1
 
   # - id: cpu_information
   #   type: cpu_info
