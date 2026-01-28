@@ -232,9 +232,12 @@ symbol table entry (program block)
 - symbol name
   - 2 bytes length
   - n bytes string
-- 4 bytes: 00 01 02 00
-  - if incomplete: 00 03 00 00
+- 1 byte null
+- 2 bytes: 01 02
+  - if incomplete: 03 00
+- 1 byte null
 - 2 bytes type
+  - **none if entry incomplete**
   - EN: 00 00
   - bool: 01 00
   - byte: 02 00
@@ -244,19 +247,18 @@ symbol table entry (program block)
   - dint: 08 00
   - real: 08 00
   - string: 08 00
-  - none if entry incomplete
 - 1 byte type
+  - **none if entry incomplete**
   - EN: 00
   - in/in_out/out/temp: 20
-  - none if entry incomplete
 - 2 bytes null
-- 2 bytes offset
+- 4 bytes offset
+  - **none if entry incomplete**
   - bool: number of bits
   - other: number of bytes
   - present but ignored if entry is invalid
-  - none if entry incomplete
-- 6 bytes null
-  - none if entry incomplete
+- 4 bytes null
+  - **none if entry incomplete**
 - 4 bytes type
   - EN: 02 00 00 80
     - any consecutive bool at the top also has this type
@@ -316,7 +318,7 @@ symbol table entry (program block)
   - real: 04
   - string: 06
     - only IN can be string
-  - type missing: 09
+  - type **missing/incomplete**: 09
 - 1 byte (bitfield?)
   - EN: 00
   - variable: 01
@@ -325,7 +327,7 @@ symbol table entry (program block)
     - invalid due to local variable memory not enough
     - can also be due to number of leads not enough (too many local variables)
   - incomplete:
-    - no name & no type: 2B
+    - **no name & no type**: 2B
     - name only: 23
     - type only: 29
 - 1 byte null
