@@ -151,14 +151,14 @@ the basic format of a network description is as follows
 - network comment
   - 2 bytes length
   - n bytes comment string
-- 2 byte version
-  - 02 00: R03.01.00.00
-  - 01 00: R02.04.00.00 & R01.00.00.00
-- 3 bytes null
-  - only if R03.01.00.00
-- 4 bytes
-  - 02 00 00 00: R03.01.00.00
-  - 00 00 00 00: R02.04.00.00 & R01.00.00.00
+- 1 byte version
+  - 02: R03.01.00.00
+  - 01: R02.04.00.00 & R01.00.00.00
+- 4 bytes null
+  - only on R03.01.00.00
+- 1 byte 02
+  - only on R03.01.00.00
+- 4 bytes null
 - 1 byte: 02
 - 4 bytes
   - 00 00 00 00: no bookmark
