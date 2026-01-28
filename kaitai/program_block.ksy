@@ -6,7 +6,7 @@ meta:
 
 seq:
   # - size: 0x0be5
-  - size: 0x0768
+  # - size: 0x0768
 
   - id: version
     type: u1

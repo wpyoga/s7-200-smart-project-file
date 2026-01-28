@@ -6,6 +6,8 @@ meta:
 
 
 seq:
+  # - size: 0x076b
+
   - id: version
     type: u1
 
@@ -24,6 +26,7 @@ seq:
   - id: editor_open
     type: u4
     enum: editor_open
+    if: version > 7
 
   - id: block_version
     type: u2
@@ -153,8 +156,8 @@ types:
         if: block_version == 2
 
       - type: u1
-        valid: 2
-        if: block_version == 2
+        # valid: 2
+        # if: block_version == 2
 
       - type: u4
         valid: 0

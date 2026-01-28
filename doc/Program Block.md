@@ -156,8 +156,9 @@ the basic format of a network description is as follows
   - 01: R02.04.00.00 & R01.00.00.00
 - 4 bytes null
   - only on R03.01.00.00
-- 1 byte 02
-  - only on R03.01.00.00
+- 1 byte
+  - 02: R03.01.00.00
+  - 00: R02.04.00.00 & R01.00.00.00
 - 4 bytes null
 - 1 byte: 02
 - 4 bytes
