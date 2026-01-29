@@ -53,7 +53,7 @@ seq:
   # TODO: verify
   - id: serial_port_security
     type: u4
-    enum: allow_disallow_reversed
+    enum: allow_disallow
 
   - id: password_block
     type:
@@ -204,7 +204,9 @@ types:
       - type: u2
         valid: 1
 
-      - type: smart_types::nulls(30)
+      - type: smart_types::nulls(10)
+      - type: u4
+      - type: smart_types::nulls(16)
 
       - id: cpu_type2
         type: cpu_type
@@ -256,6 +258,16 @@ types:
             'cpu_series::st_g2': cpu_io_g2
             'cpu_series::cr_s': cpu_io
 
+  cpu_io:
+    seq:
+      - type: u1
+        enum: cpu_io
+
+  cpu_io_g2:
+    seq:
+      - type: u1
+        enum: cpu_io_g2
+
   legacy_extra:
     seq:
       - type: smart_types::null1
@@ -278,10 +290,19 @@ types:
         type: cpu_di_entry
 
   cpu_di_entry:
+    meta:
+      bit-endian: be
     seq:
-      - size: 1
-      - id: filter_flags
-        type: u1
+      - id: reserved
+        type: b8
+      - id: unit
+        type: b1
+        enum: ms_or_us
+      - id: pulse_catch
+        type: b1
+      - id: input_filter
+        type: b6
+        enum: input_filter
 
   cpu_do_config:
     seq:
@@ -292,12 +313,12 @@ types:
       - id: sub_type
         type: u1
       - id: count
-        type: u2
-      - id: records
+        type: u4
+      - id: output_in_stop
+        type: u4
         repeat: expr
-        repeat-expr: count
-        size: 4
-      - size: 2
+        # round up to multiples of 8
+        repeat-expr: ((count + 7) / 8) * 8
 
   trailing_records:
     seq:
@@ -334,17 +355,6 @@ types:
       - id: data
         size: len * 4
       - size: 2
-
-  cpu_io:
-    seq:
-      - type: u1
-        enum: cpu_io
-
-  cpu_io_g2:
-    seq:
-      - type: u1
-        enum: cpu_io_g2
-
 
   signal_board_1:
     seq:
@@ -421,6 +431,28 @@ enums:
     
   cpu_io_g2:
     0x03: xx32
+
+  ms_or_us:
+    0: ms
+    1: us
+
+  input_filter:
+    14: none
+    9: filter_12_8
+    7: filter_6_4
+    6: filter_3_2
+    5: filter_1_6
+    4: filter_0_8
+    3: filter_0_4
+    2: filter_0_2
+
+
+
+
+
+
+
+
 
 
 
