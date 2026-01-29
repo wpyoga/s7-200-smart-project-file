@@ -8,20 +8,24 @@ meta:
   
 seq:
   # - size: 0x0577
+  # - size: 0x058e
+  # - size: 0x0593
 
   - id: version
-    size: 2
+    type: u2
 
   - type:
       switch-on: version
       cases:
-        '[0x13,0x06]': smart_types::nulls(44)
-        '[0x0f,0x06]': smart_types::nulls(44)
-        '[0x0f,0x03]': smart_types::nulls(35)
+        0x0613: smart_types::nulls(44)
+        0x060f: smart_types::nulls(44)
+        0x030f: smart_types::nulls(35)
 
-  - type: smart_types::u2_val(0x0100)
+  - type: u2
+    valid: 0x0100
 
-  - type: smart_types::u1_val(0x02)
+  - type: u1
+    valid: 2
 
   - id: modbus_station_port0
     type: u4
@@ -32,14 +36,15 @@ seq:
 
   - type: smart_types::nulls(8)
 
-  - type: smart_types::u1_val(0x01)
+  - type: u1
+    valid: 1
 
   - id: retentive_ranges
     repeat: expr
     repeat-expr: 6
     type: retentive_range
 
-  - id: sys_version
+  - id: block_version
     type: u1
 
   - id: cpu_privileges
@@ -54,16 +59,18 @@ seq:
     type:
       switch-on: version
       cases:
-        '[0x13,0x06]': password_sha256
-        '[0x0f,0x06]': password_sha1
-        '[0x0f,0x03]': password_v1
+        0x0613: password_sha256
+        0x060f: password_sha1
+        0x030f: password_v1
 
-  - type: smart_types::u1_val(0x01)
+  - type: u1
+    valid: 1
 
   - id: comms_background_percent
     type: u4
 
-  - type: smart_types::u1_val(0x01)
+  - type: u1
+    valid: 1
 
   - type: u1
 
@@ -71,7 +78,8 @@ seq:
     type: u1
     enum: startup_mode
 
-  - type: smart_types::nulls(2)
+  - type: u2
+    valid: 0
 
   - id: allow_missing_hw
     type: u4
@@ -81,7 +89,8 @@ seq:
     type: u4
     enum: allow_disallow
 
-  - type: smart_types::u1_val(0x03)
+  - type: u1
+    valid: 3
 
   - id: ip_config
     type: ip_config
@@ -89,24 +98,24 @@ seq:
   - type: smart_types::nulls(16)
 
   - id: legacy_extra
-    if: sys_version == 3
+    if: block_version == 3
     type: legacy_extra
 
   - id: cpu_config
-    if: sys_version != 3
+    if: block_version != 3
     type: cpu_config
 
   - id: cpu_di_config
-    if: sys_version != 3
+    if: block_version != 3
     type: cpu_di_config
 
   - id: cpu_do_config
-    if: sys_version != 3
+    if: block_version != 3
     type: cpu_do_config
 
   - id: signal_board_info
     type:
-      switch-on: sys_version
+      switch-on: block_version
       cases:
         6: signal_boards
         5: signal_board_1
@@ -119,18 +128,19 @@ seq:
     type: smart_types::rec(4,8)
 
   - size: 14
-    if: sys_version == 6
+    if: block_version == 6
 
   - id: unknown_data2
     type: smart_types::rec(4,4)
-    if: sys_version == 6
+    if: block_version == 6
 
 
 types:
 
   retentive_range:
     seq:
-      - size: 4
+      - type: u4
+        valid: 0
       - id: data_width
         type: u4
         enum: data_width
@@ -180,17 +190,19 @@ types:
 
       - id: communication_restrict
         type: communication_restrict
-        if: _root.version != [0x0f,0x03]
+        if: _root.version != 0x030f
 
       - id: cpu_type
         type: cpu_type
 
-      - type: smart_types::u2_val(0x8000)
+      - type: u2
+        valid: 0x8000
 
-      - id: cpu_block_version
+      - id: block_version
         type: u1
 
-      - type: smart_types::u2_val(0x0001)
+      - type: u2
+        valid: 1
 
       - type: smart_types::nulls(30)
 
@@ -198,7 +210,8 @@ types:
         type: cpu_type
         # validate by ourselves
 
-      - type: smart_types::u2_val(0x8000)
+      - type: u2
+        valid: 0x8000
 
       - type: u4
         valid: 0x01
@@ -207,11 +220,11 @@ types:
         valid: 0x00
 
       - id: plc_version
-        if: _root.version != [0x0f,0x03]
+        if: _root.version != 0x030f
         type: smart_types::strl1
 
-      - if: cpu_block_version == 7
-        size: 24
+      - size: 24
+        if: block_version == 7
 
       - type: u2
         valid: 0x0101
@@ -255,11 +268,10 @@ types:
 
   cpu_di_config:
     seq:
-      - id: type
+      - id: version
         type: u1
       - id: count
-        type: u2
-      - size: 2
+        type: u4
       - id: entries
         repeat: expr
         repeat-expr: count
@@ -273,11 +285,10 @@ types:
 
   cpu_do_config:
     seq:
-      - id: type
+      - id: version
         type: u1
       - id: freeze
-        type: u1
-      - size: 3
+        type: u4
       - id: sub_type
         type: u1
       - id: count

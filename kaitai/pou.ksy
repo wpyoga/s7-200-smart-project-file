@@ -7,11 +7,21 @@ meta:
 
 seq:
   # - size: 0x076b
+  # - size: 0x0be8
+  # - size: 0x0ba4
+  # - size: 0x0b78
+  # - size: 0x0a76
+  # - size: 0x0af7
+  # - size: 0x088c
+  # - size: 0x22cdf
+  # - size: 0x85ebb
+  # - size: 0x18311
+  # - size: 0x19ac5
 
   - id: version
     type: u1
 
-  - id: pou_id
+  - id: pou_type
     type: u4
     enum: pou_type
 
@@ -31,6 +41,7 @@ seq:
   - id: block_version
     type: u2
     # 83 00: R03.01.00.00
+    # 80 00: R02.04.00.00 with password protection
     # 0D 00: R02.04.00.00
     # 0B 00: R01.00.00.00
 
@@ -55,6 +66,7 @@ seq:
       switch-on: block_version
       cases:
         0x0083: protection_v3
+        0x0080: protection_v3
         0x000d: protection_v2
         0x000b: protection_v1
 
@@ -157,6 +169,7 @@ types:
 
       - type: u1
         # valid: 2
+        # sometimes 0 in the case of encrypted? wizard POU
         # if: block_version == 2
 
       - type: u4
@@ -219,17 +232,19 @@ types:
         type: label_l_r
         repeat: expr
         repeat-expr: label_line_count
+        # label is the inside of the box or element
 
       - type: u2
         valid: 0x0101
 
-      - id: param_count
+      - id: arg_count
         type: u2
 
-      - id: param
-        type: param_array
+      - id: arg
+        type: arg
         repeat: expr
-        repeat-expr: param_count
+        repeat-expr: arg_count
+        # arg is the given value or symbol/identifier
 
   label_l_r:
     seq:
@@ -282,7 +297,7 @@ types:
         # 0x0001: usually
         # 0x0202: box last part
 
-  param_array:
+  arg:
     seq:
       - id: index
         type: u2
@@ -295,8 +310,9 @@ types:
     seq:
       - id: value_type
         type: u2
+        # 0x0300: string
         # 0x0301: ...?
-        # 0x0302: string
+        # 0x0302: string?
         # 0x0300: number?
 
       - type: u1
@@ -375,7 +391,6 @@ types:
 
       - id: raw
         type: u4
-
 
   pou_symbol:
     seq:
@@ -458,7 +473,7 @@ types:
         size: len1
       - id: len2
         type: u4
-      - id: hash2
+      - id: encrypted_network_data
         size: len2
       - type: smart_types::nulls(3)
 
