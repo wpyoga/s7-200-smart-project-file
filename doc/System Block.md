@@ -44,8 +44,8 @@ this block is similar across R01 R02 R03 versions
 - 4 bytes: serial port security
   - allow cpu mode change without password
   - allow time of day reads and writes without password
-  - 01 00 00 00: no allow
-  - 00 00 00 00: allow
+  - 01 00 00 00: allow
+  - 00 00 00 00: no allow
 - hashed password or unknown data
   - 34 bytes: seems like hashed & salted password -> R03.01.00.00
     - 2 bytes: salt
