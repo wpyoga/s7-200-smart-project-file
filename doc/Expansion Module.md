@@ -513,7 +513,7 @@ The data looks like this
 - 4 bytes: 01 00 00 00
 - 4 bytes: 20 00 2E 00 -> input image offset
 - 4 bytes: 20 00 2E 00 -> output image offset
-- 4 bytes null
+- 4 bytes null -> not always null
 - 4 bytes EM number
 - 8 bytes null
 - 4 bytes null

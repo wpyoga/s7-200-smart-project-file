@@ -23,8 +23,8 @@
   - main: 00 00 (always OB1)
   - subroutine: SBRx (0-based)
   - interrupt: INTx (0-based)
-- 2 bytes: 01 00
-- 18 bytes null
+- 4 bytes: 01 00 00 00
+- 16 bytes null
 - 4 bytes editor open status
   - only on R02.04.00.00
   - missing on R01.00.00.00
@@ -94,9 +94,9 @@
 - 1 byte null
 - 2 bytes number of networks
 - n [networks](#network-content) (repeated for each network)
+- 1 byte null
 - symbol table for program block
   - not present on R03.01.00.00
-  - 1 byte null
   - 2 bytes number of entries
   - n [symbol table entries](Symbol%20Table.md#program-block-symbol-table)
 - 4 bytes null
@@ -205,8 +205,8 @@ the basic format of a network element is as follows
   - 07: final arrow
   - 06: dangling arrow
   - 05: horizontal line
-  - 03: contact
   - 04: coil (output)
+  - 03: contact
   - 02: second half of box
     - maybe: box or part of box, with call parameters
   - 01: subroutine or box or top of box

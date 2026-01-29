@@ -182,10 +182,9 @@ this block is similar across R01 R02 R03 versions
   - only on R02.04.00.00 & R03.01.00.00
   - missing on R01.00.00.00
   - 1 byte: 01
-  - 1 byte: freeze outputs in last state
+  - 4 bytes: freeze outputs in last state
     - 01: freeze
     - 00: no freeze
-  - 3 bytes null
   - 1 byte type: 01
   - subrecord: CPU output status in STOP mode
     - 2 bytes length

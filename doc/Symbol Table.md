@@ -284,15 +284,15 @@ symbol table entry (program block)
   - temp: 03
 - 2 bytes: bitfield?
   - in
-    - EN: F3 2E
-    - bool: F3 2E
-    - byte: 33 7E
-    - word: F7 7E
-    - int: F7 7E
-    - dword: F3 FF
-    - dint: F3 FF
-    - real: F3 7F
-    - string: 10 60
+    - EN: ..... F3 2E
+    - bool: ... F3 2E
+    - byte: ... 33 7E
+    - word: ... F7 7E
+    - int: .... F7 7E
+    - dword: .. F3 FF
+    - dint: ... F3 FF
+    - real: ... F3 7F
+    - string: . 10 60
   - in_out
     - bool: F3 2E
     - byte: 33 7E
