@@ -320,14 +320,23 @@ symbol table entry (program block)
     - only IN can be string
   - type **missing/incomplete**: 09
 - 1 byte (bitfield?)
-  - EN: 00
-  - variable: 01
-  - maybe 00 means read-only
-  - invalid: 11
+  - 7654 3210 --> bits
+  - 0000 0000: EN
+  - 0000 0001: variable
+  - maybe 00 means read-only?
+  - 0001 0001: invalid
     - invalid due to local variable memory not enough
     - can also be due to number of leads not enough (too many local variables)
-  - incomplete:
-    - **no name & no type**: 2B
-    - name only: 23
-    - type only: 29
+  - 0010 1011: incomplete -- no name & no type
+  - 0010 0011: incomplete -- name only, no type
+  - 0010 1001: incomplete -- no name, type only
+  - maybe it's like this
+    - b7: unknown
+    - b6: unknown
+    - b5: incomplete
+    - b4: invalid
+    - b3: missing name
+    - b2: unknown
+    - b1: missing type
+    - b0: is variable
 - 1 byte null
