@@ -14,6 +14,9 @@ seq:
       switch-on: editor_version
       cases:
         '0x1c': encoded_version_8
+        '0x1b': encoded_version_8
+        '0x1a': encoded_version_8
+        '0x18': encoded_version_8
         '0x12': encoded_version_4
 
   # Constant separator (usually 0x03)
@@ -39,10 +42,8 @@ seq:
   - type: smart_types::null1
 
   - id: view_mode
-    type: u1
+    type: u4
     enum: view_mode
-
-  - size: 3
 
   - id: printer_information
     type: printer_information
@@ -66,11 +67,16 @@ types:
         type: str
         size: 32
         encoding: ASCII
-      - type:
-          switch-on: _root.editor_version
-          cases:
-            '0x1c': smart_types::nulls(124)
-            '0x12': smart_types::unknown(116)
+
+      # there is something really funny going on here
+      # if the marker+unkown block is not null, the
+      # following null block (8 bytes) is not present
+      - id: marker
+        type: u4
+      - type: smart_types::unknown(112)
+      - size: 8
+        if: marker != 0x40050401
+
       - id: margin_left
         type: u4
       - id: margin_top
@@ -110,6 +116,9 @@ types:
           switch-on: _root.editor_version
           cases:
             0x1c: smart_types::nulls(2)
+            0x1b: smart_types::nulls(2)
+            0x1a: smart_types::nulls(2)
+            0x18: smart_types::nulls(2)
             0x12: smart_types::nulls(10)
 
 
