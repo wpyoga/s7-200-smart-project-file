@@ -124,14 +124,14 @@
 
 ## network content
 
-- the ladder network is described in terms of elements / blocks
+- the ladder network is described in terms of cells / blocks
 - each network can have a maximum of 32 lines (rows) and 32 items per line (columns)
-- each element in each network has a line number & column number
-- even connecting lines are described as an element
-- dangling arrows are also described as an element
-- any element that can be visually added in the program editor is described as an element
+- each cell in each network has a line number & column number
+- even connecting lines are described as an cell
+- dangling arrows are also described as an cell
+- any cell that can be visually added in the program editor is described as an cell
 - ~~vertical connection is "owned" by the lower line~~
-- for connecting lines, an element describes
+- for connecting lines, an cell describes
   - horizontal line in the middle
   - vertical line going up on the right side
   - vertical line going down on the right side
@@ -166,15 +166,15 @@ the basic format of a network description is as follows
   - 01 00 00 00: bookmark
 - 4 bytes null
 - 1 byte 01
-- 2 bytes: number of elements in the network
-- element 0
-- element 1
+- 2 bytes: number of cells in the network
+- cell 0
+- cell 1
 - ...
-- last element
+- last cell
 
-## network element
+## cell
 
-the basic format of a network element is as follows
+the basic format of a cell is as follows
 
 - 1 byte null
 - 1 byte line number
@@ -279,7 +279,7 @@ the basic format of a network element is as follows
     - 01 00 usually, box top half, subroutine, XMT box second half
     - 02 02: ADD_I ADD_R MOV_W LPF box second half, SBR_0 third part
   - 1 byte null
-  - 24 bytes: element data? or label? or second line of box?
+  - 24 bytes: cell data? or label? or second line of box?
     - 00 00 00 00 ... unknown but this is the usual value, also MOV_W box second half
     - ' ' 00 00 00 ... NO contact, output coil
       - NO contact has a space in the middle
@@ -323,7 +323,7 @@ the basic format of a network element is as follows
     - 01 00: usually
     - 02 02: SBR_0 third part
 - 2 bytes: 01 01
-- array: values to give to the element, only found at the first part if a box
+- array: values to give to the cell, only found at the first part if a box
   - 2 bytes: number of records
   - n records
     - example indexes for: ADD_I 12 + 25 = VW15 (0c 19 0f)
@@ -439,7 +439,7 @@ the basic format of a network element is as follows
         - 4 bytes: 01 00 00 00 -> 1 bit
         - 1 byte null
 
-## network element examples
+## cell examples
 
 starting from second version field:
 - 2 byte version
@@ -454,8 +454,8 @@ starting from second version field:
   - 4 bytes null
   - 2 bytes 00 01
   - 2 bytes 01 00
-    - number of elements in the network
-  - element 0: dangling arrow
+    - number of cells in the network
+  - cell 0: dangling arrow
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte index: 00
@@ -472,8 +472,8 @@ starting from second version field:
   - 4 bytes null
   - 1 byte 01
   - 4 bytes 02 00
-    - number of elements in the network
-  - element 0
+    - number of cells in the network
+  - cell 0
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte index: 00
@@ -499,7 +499,7 @@ starting from second version field:
     - 4 byte: 00 00 01 00
     - 4 bytes: 01 01
     - array
-      - 2 bytes number of elements: 01 00
+      - 2 bytes number of cells: 01 00
       - index: 00 00
       - 2 bytes: 02 03
       - 4 bytes: 01 00 00 00
@@ -509,10 +509,10 @@ starting from second version field:
       - ---string
       - ---1 byte length: 09
       - ---n bytes content: Always_On
-  - element 1: dangling arrow
+  - cell 1: dangling arrow
     - 1 byte null
     - 1 byte line number: 00
-    - 1 byte element index in line: 01
+    - 1 byte cell index in line: 01
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> arrow?
     - 4 bytes: 06 00 00 00 -> connection?
@@ -538,9 +538,9 @@ starting from second version field:
   - 4 bytes null
   - 1 byte 01
   - 2 bytes 40 00
-    - number of elements in the network
+    - number of cells in the network
     - including dangling arrows
-  - element 0: NC contact with value 1
+  - cell 0: NC contact with value 1
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte index: 00
@@ -573,7 +573,7 @@ starting from second version field:
     - 4 bytes: 00 00 01 01
     - 4 bytes: 01 01 01 00
     - 3 bytes null
-  - element 1: horizontal line
+  - cell 1: horizontal line
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte index: 01
@@ -594,10 +594,10 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - element 2: horizontal line
+  - cell 2: horizontal line
     - 1 byte null
     - 1 byte line number: 00
-    - 1 byte element index: 02
+    - 1 byte cell index: 02
     - 1 byte: 03
     - 4 bytes: 01 01 00 00 -> line?
     - 4 bytes: 05 00 00 00 -> line?
@@ -615,10 +615,10 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - element 3
+  - cell 3
     - 1 byte null
     - 1 byte line number: 00
-    - 1 byte element index: 03
+    - 1 byte cell index: 03
     - 1 byte: 03
     - 4 bytes: 01 01 00 00 -> line?
     - 4 bytes: 05 00 00 00 -> line?
@@ -637,7 +637,7 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - element 4: NC contact with value 2
+  - cell 4: NC contact with value 2
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte index: 04
@@ -670,7 +670,7 @@ starting from second version field:
     - 4 bytes: 02 01 02 00
     - 3 bytes null
   - ...
-  - element 31: 123 R 456
+  - cell 31: 123 R 456
     - 1 byte null
     - 1 byte line number: 00
     - 1 byte index: 1F
@@ -710,7 +710,7 @@ starting from second version field:
           - 01 unknown
           - 7B 00 00 00 = 123 is the number on top
         - 1 byte null
-      - second element
+      - second cell
         - 2 byte index: 01 00
         - 2 bytes 00 03
         - 4 bytes: 01 00 00 00
@@ -722,10 +722,10 @@ starting from second version field:
           - C8 01 00 00 = 456 is the number at the bottom
           - D1 2F 01 00 = 77777
         - 1 byte null
-  - element 32: vertical line on right side
+  - cell 32: vertical line on right side
     - 1 byte null
     - 1 byte line number: 01
-    - 1 byte element index: 00
+    - 1 byte cell index: 00
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> vertical line?
     - 4 bytes: 00 03 00 00 -> vertical line?
@@ -743,10 +743,10 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - element 33: vertical line on right side
+  - cell 33: vertical line on right side
     - 1 byte null
     - 1 byte line number: 02
-    - 1 byte element index: 00
+    - 1 byte cell index: 00
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> vertical line?
     - 4 bytes: 00 03 00 00 -> vertical line?
@@ -764,10 +764,10 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - element 34: vertical line on right side
+  - cell 34: vertical line on right side
     - 1 byte null
     - 1 byte line number: 03
-    - 1 byte element index: 00
+    - 1 byte cell index: 00
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> vertical line?
     - 4 bytes: 00 03 00 00 -> vertical line?
@@ -785,7 +785,7 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - element 35: NC contact with value 5
+  - cell 35: NC contact with value 5
     - 1 byte null
     - 1 byte line number: 04
     - 1 byte index: 00
@@ -818,10 +818,10 @@ starting from second version field:
     - 4 bytes: 02 01 05 00
     - 3 bytes null
   - ...
-  - element 62: vertical line on right side
+  - cell 62: vertical line on right side
     - 1 byte null
     - 1 byte line number: 1f
-    - 1 byte element index: 00
+    - 1 byte cell index: 00
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> vertical line?
     - 4 bytes: 00 01 00 00 -> vertical line on right side but only halfway?
@@ -839,10 +839,10 @@ starting from second version field:
     - 22 bytes null
     - 4 bytes: 00 00 01 00
     - 4 bytes: 01 01 00 00
-  - last element 63: dangling arrow
+  - last cell 63: dangling arrow
     - 1 byte null
     - 1 byte line number: 1f
-    - 1 byte element index: 01
+    - 1 byte cell index: 01
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> open arrow?
     - 4 bytes: 06 00 00 00 -> connection?
@@ -867,10 +867,10 @@ starting from second version field:
   - 4 bytes null
   - 2 bytes 00 01
   - 4 bytes 06 00 00 00
-    - number of elements in the network
+    - number of cells in the network
     - including dangling arrows
-  - element 0
-    - 1 byte element index: 00
+  - cell 0
+    - 1 byte cell index: 00
     - 1 byte 03
     - 4 bytes
       - 01 14 00 00: NO contact
@@ -900,8 +900,8 @@ starting from second version field:
     - 4 bytes: 0A 00 00 00
       - variable offset
     - 2 bytes null
-  - element 1
-    - 1 byte element index: 01
+  - cell 1
+    - 1 byte cell index: 01
     - 1 byte 03
     - 4 bytes
       - 01 14 00 00: NO contact
@@ -932,8 +932,8 @@ starting from second version field:
       - variable offset
     - 2 bytes null
   - ...
-  - last element: dangling arrow
-    - 1 byte element index: 05
+  - last cell: dangling arrow
+    - 1 byte cell index: 05
     - 1 byte: 03
     - 4 bytes: 01 00 00 00 -> open arrow?
     - 4 bytes: 06 00 00 00 -> connection?
