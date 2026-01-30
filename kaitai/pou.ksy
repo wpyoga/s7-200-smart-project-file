@@ -16,7 +16,8 @@ seq:
   # - size: 0x22cdf
   # - size: 0x85ebb
   # - size: 0x18311
-  # - size: 0x19ac5
+  # - size: 0x19acp5
+  # - size: 0x088d
 
   - id: version
     type: u1
@@ -153,10 +154,10 @@ types:
       - id: network_type
         type: u2
         valid:
-          any-of: [0x0102, 0x0106]
-        # 0x0102: regular network, or ladder network?
-        # 0x0106: network in password-protected imported POU
-        #         , or STL network?
+          any-of: [network_type::lad, network_type::stl]
+        enum: network_type
+        # 0x0102: ladder network
+        # 0x0106: STL network
 
       - id: version
         type: u2
@@ -171,34 +172,39 @@ types:
       - id: comment
         type: smart_types::strl
 
-      - id: block_version
+      - id: network_version
         type: u1
         # 02: R03.01.00.00
         # 01: R02.04.00.00 & R01.00.00.00
 
       - type: u4
         valid: 0
-        if: block_version == 2
+        if: network_version == 2
 
-      - type: u1
+      - id: line_status_count
+        type: u2
+        if: network_type == network_type::stl
+
+      - id: line_status
+        type: line_status
+        repeat: expr
+        repeat-expr: line_status_count
+        # usually just 0xffff
+
         # valid: 2
         # sometimes 0 in the case of encrypted? wizard POU
-        # if: block_version == 2
-      - type: u2
+        # if: network_version == 2
+      - type: u1
         # valid: 0
-      - id: unknown_count
+      - id: line_comment_count
         type: u2
-        # valid: 0
-        # usually 0, sometimes 3 (encrypted? wizard POU)
-
+        valid: line_status_count
 
       # unknown records
-      - id: unknown_data
-        type: unknown_data
+      - id: comment_data
+        type: comment_data
         repeat: expr
-        repeat-expr: unknown_count
-
-
+        repeat-expr: line_comment_count
 
 
 
@@ -215,124 +221,152 @@ types:
       - type: u2
         valid: 0
 
-      - id: stl_count
+      # user input (LAD, FBD, STL) is converted to compiled STL during compilation
+      # comments are not included in this list
+
+      - id: compiled_stl_count
         type: u2
 
-      # STL only present if network has been compiled
-      # otherwise stl_count = 0
-      - id: stl
-        type: stl
+      - id: compiled_stl
+        type: stl_combi(true)
         repeat: expr
-        repeat-expr: stl_count
+        repeat-expr: compiled_stl_count
 
       - type: u1
         valid: 1
 
+      # the following contains raw network data
+      # i.e. what the user has typed in, inside the application
 
-
-      - id: cell_count
+      - id: lad_cell_count
         type: u2
-        if: network_type == 0x0102
+        if: network_type == network_type::lad
 
-      - id: cell
-        type: cell
+      - id: lad_cell
+        type: lad_cell
         repeat: expr
-        repeat-expr: cell_count
-        if: network_type == 0x0102
+        repeat-expr: lad_cell_count
+        if: network_type == network_type::lad
 
       - id: stl_line_count
         type: u2
-        if: network_type == 0x0106
+        if: network_type == network_type::stl
 
       - id: stl_line
-        type: stl_line
+        type: stl_combi(false)
         repeat: expr
         repeat-expr: stl_line_count
-        if: network_type == 0x0106
+        if: network_type == network_type::stl
 
-  unknown_data:
+  comment_data:
     seq:
-      - id: unknown_index
+      - id: index
         type: u2
-      - type: u2
-        valid: 0x0302
-        if: unknown_index != 0xffff
       - type: u1
-        if: unknown_index != 0xffff
+        if: index != 0xffff
+      - type: u1
+        valid:
+          any-of: [1, 3, 6, 7]
+        if: index != 0xffff
+      - type: u1
+        if: index != 0xffff
       - type: u4
-        if: unknown_index != 0xffff
+        if: index != 0xffff
       - type: smart_types::strl
-        if: unknown_index != 0xffff
+        if: index != 0xffff
 
-
-
-  stl:
+  line_status:
     seq:
       - id: index
         type: u2
-      - type: u2
-        valid: 0
-      - id: stl_opcode
-        type: u2
-        enum: stl_opcode
-      - size: 2
-        contents: [0x01, 0x01]
-
-      - id: stl_arg_count
-        type: u2
-      - id: stl_arg
-        type: stl_arg
-        repeat: expr
-        repeat-expr: stl_arg_count
+        # index, or 0xffff if invalid
+      - type: u1
+        if: index != 0xffff
+        # might be: 0 for string, 1 for number
+      - id: line_content
+        type: smart_types::strl
+        if: index != 0xffff
 
 
-  stl_line:
+
+
+
+  stl_combi:
+    params:
+      - id: compiled
+        type: bool
     seq:
       - id: index
         type: u2
+      - id: stl_content
+        type: stl_content(compiled)
+        if: index != 0xffff
+        # if index is 0xffff, the line consists of only comment or is empty
+
+  stl_content:
+    params:
+      - id: compiled
+        type: bool
+    seq:
       - type: u2
         valid: 0x0104
+        if: not compiled
       - type: u2
         valid: 0
       - id: stl_opcode
         type: u2
         enum: stl_opcode
       - size: 4
-        # only in uncompiled
+        if: not compiled
       - size: 2
         contents: [0x01, 0x01]
 
       - id: stl_arg_count
         type: u2
       - id: stl_arg
-        type: stl_line_arg
+        type: stl_arg_combi(compiled)
         repeat: expr
         repeat-expr: stl_arg_count
 
-
-
-
-
-
-  stl_arg:
+  stl_arg_combi:
+    params:
+      - id: compiled
+        type: bool
     seq:
       - id: index
         type: u2
+
       - type: u1
-        # valid: 1
+        valid:
+          any-of: [0, 1]
+        if: compiled
         # usually 1, sometimes 0
-      - type: u2
+      - type: u1
+        valid:
+          any-of: [0, 1, 2]
+        if: not compiled
+        # type or version
+        # usually 1, sometimes 0, sometimes 2 (STL network)
+        # STL network also sometimes 0
+
+      - id: stl_arg_type
+        type: u2
         valid: 0x0103
       - type: u4
         valid: 0
       - type: u1
         valid: 1
-      - type: u4
-        valid: 0
+
+      - id: col_number
+        type: u4
+        # column number, useful for original STL
+        # encodes the position of each argument in the line
+        # sometimes still present even after compilation
+
       - id: token_form
         type: u1
-        # valid:
-        #   any-of: [1, 2]
+        valid:
+          any-of: [token_form::literal, token_form::identifier]
         enum: token_form
 
       - id: is_pointer
@@ -352,7 +386,7 @@ types:
         enum: arg_type
         if: token_form == token_form::identifier
       - id: arg_class
-        type: u2
+        type: u1
         enum: var_class
         if: token_form == token_form::identifier
         # looks like type & bit field
@@ -362,7 +396,7 @@ types:
         # unknown: 0x20 -> data_type = 1, arg_type = 0, offset = 480
         # unknown: 0x20
         # 0x200 -> imported MBUS_INIT, data_type = 4, arg_type = 0, offset = 10 (SBR10)
-      - type: u1
+      - type: u2
         valid: 0
         if: token_form == token_form::identifier
       - id: offset_or_pou_number
@@ -399,105 +433,17 @@ types:
           token_form == token_form::literal
           and (token_type == token_type::string
                or token_type == token_type::identifier)
+
       - type: u1
-        if: unknown_flag == 1
-
-
-
-
-  stl_line_arg:
-    seq:
-      - id: index
-        type: u2
-      - type: u1
-        valid:
-          any-of: [0, 1, 2]
-        # type or version
-        # usually 1, sometimes 0, sometimes 2 (STL network)
-        # STL network also sometimes 0
-      - type: u2
-        valid: 0x0103
-      - type: u4
-        valid: 0
-      - type: u1
-        valid: 1
-      - type: u4
-        valid: 0
-      - id: token_form
-        type: u1
-        # valid:
-        #   any-of: [1, 2]
-        enum: token_form
-
-      - id: is_pointer
-        type: u1
-        valid:
-          any-of: [0, 1, 2]
-        if: token_form == token_form::identifier
-        # 0: not pointer
-        # 1: pointer to VB
-        # 2: pointer to VD ?
-      - id: data_type
-        type: u1
-        enum: data_type_short
-        if: token_form == token_form::identifier
-      - id: arg_type
-        type: u1
-        enum: arg_type
-        if: token_form == token_form::identifier
-      - id: arg_class
-        type: u2
-        enum: var_class
-        if: token_form == token_form::identifier
-        # looks like type & bit field
-        # sometimes 0x02, sometimes 0x20
-        # Always_On: 0x02
-        # I123.4, T37 (bit): 0x00
-        # unknown: 0x20 -> data_type = 1, arg_type = 0, offset = 480
-        # unknown: 0x20
-        # 0x200 -> imported MBUS_INIT, data_type = 4, arg_type = 0, offset = 10 (SBR10)
-      - type: u1
-        valid: 0
-        if: token_form == token_form::identifier
-      - id: offset_or_pou_number
-        type: u4
-        if: token_form == token_form::identifier
-        # looks like type & offset for subroutine?
-        # but not for contacts
-
-      - id: token_type
-        type: u1
-        enum: token_type
-        if: token_form == token_form::literal
-      - id: mem_width
-        type: u1
-        enum: mem_width
-        if: token_form == token_form::literal
-      - type: u1
-        if: token_form == token_form::literal
-      - id: value_integer
-        type: u4
         if: >
-          token_form == token_form::literal
-          and (token_type == token_type::unsigned_integer
-               or token_type == token_type::signed_integer)
-      - id: value_float
-        type: f4
-        if: >
-          token_form == token_form::literal
-          and token_type == token_type::floating_point
-      - id: value_string
-        type: smart_types::strl1
-        if: >
-          token_form == token_form::literal
-          and (token_type == token_type::string
-               or token_type == token_type::identifier)
-
+          unknown_flag == 1
+          and compiled
       - type: u1
         valid: 0
         if: >
           token_form == token_form::literal
           and token_type != token_type::identifier
+          and not compiled
 
 
 
@@ -507,7 +453,256 @@ types:
 
 
 
-  cell:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # stl:
+  #   seq:
+  #     - id: index
+  #       type: u2
+  #     - type: u2
+  #       valid: 0
+  #     - id: stl_opcode
+  #       type: u2
+  #       enum: stl_opcode
+  #     - size: 2
+  #       contents: [0x01, 0x01]
+
+  #     - id: stl_arg_count
+  #       type: u2
+  #     - id: stl_arg
+  #       type: stl_arg
+  #       repeat: expr
+  #       repeat-expr: stl_arg_count
+
+
+  # stl_line:  # uncompiled
+  #   seq:
+  #     - id: index
+  #       type: u2
+  #     - type: u2
+  #       valid: 0x0104        # only in uncompiled
+  #     - type: u2
+  #       valid: 0
+  #     - id: stl_opcode
+  #       type: u2
+  #       enum: stl_opcode
+  #     - size: 4        # only in uncompiled
+  #     - size: 2
+  #       contents: [0x01, 0x01]
+
+  #     - id: stl_arg_count
+  #       type: u2
+  #     - id: stl_arg
+  #       type: stl_line_arg
+  #       repeat: expr
+  #       repeat-expr: stl_arg_count
+
+
+
+
+  # stl_arg:
+  #   seq:
+  #     - id: index
+  #       type: u2
+  #     - type: u1
+  #       # valid: 1
+  #       # usually 1, sometimes 0
+  #     - id: type
+  #       type: u2
+  #       valid: 0x0103
+  #     - type: u4
+  #       valid: 0
+  #     - type: u1
+  #       valid: 1
+  #     - type: u4
+  #       # valid: 0
+  #       # sometimes 7
+  #     - id: token_form
+  #       type: u1
+  #       # valid:
+  #       #   any-of: [1, 2]
+  #       enum: token_form
+
+  #     - id: is_pointer
+  #       type: u1
+  #       valid:
+  #         any-of: [0, 1, 2]
+  #       if: token_form == token_form::identifier
+  #       # 0: not pointer
+  #       # 1: pointer to VB
+  #       # 2: pointer to VD ?
+  #     - id: data_type
+  #       type: u1
+  #       enum: data_type_short
+  #       if: token_form == token_form::identifier
+  #     - id: arg_type
+  #       type: u1
+  #       enum: arg_type
+  #       if: token_form == token_form::identifier
+  #     - id: arg_class
+  #       type: u1
+  #       enum: var_class
+  #       if: token_form == token_form::identifier
+  #       # looks like type & bit field
+  #       # sometimes 0x02, sometimes 0x20
+  #       # Always_On: 0x02
+  #       # I123.4, T37 (bit): 0x00
+  #       # unknown: 0x20 -> data_type = 1, arg_type = 0, offset = 480
+  #       # unknown: 0x20
+  #       # 0x200 -> imported MBUS_INIT, data_type = 4, arg_type = 0, offset = 10 (SBR10)
+  #     - type: u2
+  #       valid: 0
+  #       if: token_form == token_form::identifier
+  #     - id: offset_or_pou_number
+  #       type: u4
+  #       if: token_form == token_form::identifier
+  #       # looks like type & offset for subroutine?
+  #       # but not for contacts
+
+  #     - id: token_type
+  #       type: u1
+  #       enum: token_type
+  #       if: token_form == token_form::literal
+  #     - id: mem_width
+  #       type: u1
+  #       enum: mem_width
+  #       if: token_form == token_form::literal
+  #     - id: unknown_flag
+  #       type: u1
+  #       if: token_form == token_form::literal
+  #     - id: value_integer
+  #       type: u4
+  #       if: >
+  #         token_form == token_form::literal
+  #         and (token_type == token_type::unsigned_integer
+  #             or token_type == token_type::signed_integer)
+  #     - id: value_float
+  #       type: f4
+  #       if: >
+  #         token_form == token_form::literal
+  #         and token_type == token_type::floating_point
+  #     - id: value_string
+  #       type: smart_types::strl1
+  #       if: >
+  #         token_form == token_form::literal
+  #         and (token_type == token_type::string
+  #             or token_type == token_type::identifier)
+  #     - type: u1
+  #       if: unknown_flag == 1
+
+
+
+  # stl_line_arg:
+  #   seq:
+  #     - id: index
+  #       type: u2
+  #     - type: u1
+  #       valid:
+  #         any-of: [0, 1, 2]
+  #       # type or version
+  #       # usually 1, sometimes 0, sometimes 2 (STL network)
+  #       # STL network also sometimes 0
+  #     - id: type
+  #       type: u2
+  #       valid: 0x0103
+  #     - type: u4
+  #       valid: 0
+  #     - type: u1
+  #       valid: 1
+  #     - type: u4
+  #       valid: 0
+  #     - id: token_form
+  #       type: u1
+  #       # valid:
+  #       #   any-of: [1, 2]
+  #       enum: token_form
+
+  #     - id: is_pointer
+  #       type: u1
+  #       valid:
+  #         any-of: [0, 1, 2]
+  #       if: token_form == token_form::identifier
+  #       # 0: not pointer
+  #       # 1: pointer to VB
+  #       # 2: pointer to VD ?
+  #     - id: data_type
+  #       type: u1
+  #       enum: data_type_short
+  #       if: token_form == token_form::identifier
+  #     - id: arg_type
+  #       type: u1
+  #       enum: arg_type
+  #       if: token_form == token_form::identifier
+  #     - id: arg_class
+  #       type: u1
+  #       enum: var_class
+  #       if: token_form == token_form::identifier
+  #       # looks like type & bit field
+  #       # sometimes 0x02, sometimes 0x20
+  #       # Always_On: 0x02
+  #       # I123.4, T37 (bit): 0x00
+  #       # unknown: 0x20 -> data_type = 1, arg_type = 0, offset = 480
+  #       # unknown: 0x20
+  #       # 0x200 -> imported MBUS_INIT, data_type = 4, arg_type = 0, offset = 10 (SBR10)
+  #     - type: u2
+  #       valid: 0
+  #       if: token_form == token_form::identifier
+  #     - id: offset_or_pou_number
+  #       type: u4
+  #       if: token_form == token_form::identifier
+  #       # looks like type & offset for subroutine?
+  #       # but not for contacts
+
+  #     - id: token_type
+  #       type: u1
+  #       enum: token_type
+  #       if: token_form == token_form::literal
+  #     - id: mem_width
+  #       type: u1
+  #       enum: mem_width
+  #       if: token_form == token_form::literal
+  #     - type: u1
+  #       if: token_form == token_form::literal
+  #     - id: value_integer
+  #       type: u4
+  #       if: >
+  #         token_form == token_form::literal
+  #         and (token_type == token_type::unsigned_integer
+  #             or token_type == token_type::signed_integer)
+  #     - id: value_float
+  #       type: f4
+  #       if: >
+  #         token_form == token_form::literal
+  #         and token_type == token_type::floating_point
+  #     - id: value_string
+  #       type: smart_types::strl1
+  #       if: >
+  #         token_form == token_form::literal
+  #         and (token_type == token_type::string
+  #             or token_type == token_type::identifier)
+
+  #     - type: u1
+  #       valid: 0
+  #       if: >
+  #         token_form == token_form::literal
+  #         and token_type != token_type::identifier
+
+
+
+
+
+  lad_cell:
     seq:
       - type: smart_types::null1
 
@@ -808,7 +1003,8 @@ types:
     seq:
       - id: salt
         type: u2
-      - type: smart_types::nulls(20)
+      # - type: smart_types::nulls(20)
+      - size: 20
       - id: sha512
         size: 64
         # this is sha512 of password+salt
@@ -855,6 +1051,11 @@ enums:
     0x03e9: sbr
     0x03ea: int
     0x03eb: fb
+
+  # TODO: rename
+  network_type:
+    0x0102: lad
+    0x0106: stl
 
   editor_open:
     0x01: open
@@ -929,7 +1130,7 @@ enums:
     # maybe number of bytes? but why is string 0x0008?
 
   var_class:
-    0x00: power_flow
+    0x00: not_local_variable
     0x20: local_variable
 
   arg_type:
@@ -1031,7 +1232,15 @@ enums:
     0x02d5: add_i
     0x030f: movr
     0x02c6: add_r
-
+    0x0258: ldw_gt
+    0x0238: get
+    0x0239: put
+    0x0230: xmt
+    0x0231: rcv
+    0x0236: gip
+    0x0237: sip
+    0x0234: gpa
+    0x0235: spa
 
 
 
