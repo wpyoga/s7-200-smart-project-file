@@ -11,6 +11,7 @@ seq:
   # - size: 0x058e
   # - size: 0x0593
   # - size: 0x057e
+  # - size: 0x056d
 
   - id: version
     type: u2
@@ -21,6 +22,7 @@ seq:
         0x0613: smart_types::nulls(44)
         0x060f: smart_types::nulls(44)
         0x030f: smart_types::nulls(35)
+        0x010e: smart_types::unknown(16) # just a guess for now
 
   - id: sometimes_version_info
     type: smart_types::strl1

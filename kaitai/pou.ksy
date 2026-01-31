@@ -35,6 +35,9 @@ seq:
   # - size: 0x15969
   # - size: 0x16afca
   # - size: 0x17ae43
+  # - size: 0x0a73
+  # - size: 0x8427
+  # - size: 0x991c
 
   - id: version
     type: u1
@@ -85,6 +88,7 @@ seq:
     # 80 00: R02.04.00.00 with password protection
     # 0D 00: R02.04.00.00
     # 0B 00: R01.00.00.00
+    # 0A 00: R04.00 -> 4.0.0.46 -> MWP, not SMART
     # 01 00: empty, no data, related to encrypted POU without possibility to enter password
 
   - id: name
@@ -133,6 +137,7 @@ types:
             0x0080: protection_v3
             0x000d: protection_v2
             0x000b: protection_v1
+            0x000a: smart_types::unknown(5)
 
       - id: timestamp_created
         type: smart_types::timestamp

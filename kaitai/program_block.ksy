@@ -8,6 +8,8 @@ seq:
   # - size: 0x0be5
   # - size: 0x0768
   # - size: 0x0af4
+  # - size: 0x0a70
+  # - size: 0x0a7c
 
   - id: version
     type: u1

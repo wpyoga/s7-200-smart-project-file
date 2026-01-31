@@ -18,6 +18,7 @@ seq:
         '0x1a': encoded_version_8
         '0x18': encoded_version_8
         '0x12': encoded_version_4
+        # before 0x12, there is no encoded version
 
   # Constant separator (usually 0x03)
   - id: magic
