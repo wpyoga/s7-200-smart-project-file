@@ -179,7 +179,8 @@ types:
         repeat-expr: dependency_count
         if: dependency_count > 0
 
-      - type: u4
+      - id: usually_1
+        type: u4
         # valid: 1
         # sometimes 0
         # if: dependency_count > 0
@@ -241,22 +242,60 @@ types:
       - type: u2
         valid: 0x0101
 
-      # - type: smart_types::rec(4,10)
       - id: data_count
         type: u4
         valid: network_count
-      - id: data_records_lad
-        size: 10
+
+      - id: data_record
+        type: data_record
+        repeat: eos
+        # lad, fbd: seems to be a collection of labels used by the POU
+        #           labels for each FBD block
+        #           how to determine number of records is unknown
+
+
+
+  data_record:
+    seq:
+      - id: version
+        type: u1
+        valid: 2
+      - id: cell_count
+        type: u4
+      - id: cell_label
+        type: cell_label
         repeat: expr
-        repeat-expr: data_count
-        if: _root.content.network[0].network_type == network_type::lad
-        # not present in STL, even when data_count == network_count
-        # these records look like a list of symbols used or imported by the network
-      - id: data_records_fbd
-        size: 5
+        repeat-expr: cell_count
+
+  cell_label:
+    seq:
+      - id: version
+        type: u1
+        valid: 4
+      - id: label_pair_count
+        type: u4
+        # usually either 0 or 3
+      - id: label_pair
+        type: label_pair
         repeat: expr
-        repeat-expr: data_count
-        if: _root.content.network[0].network_type == network_type::fbd
+        repeat-expr: label_pair_count
+        # first label pair is the internal label of the box/cell
+        # S_ITR '' -> this is label on top of subroutine box
+        # EN '' -> second row of box, no output
+        # Input Output -> third row of box, Input on left side, Output on right side
+        # so far, label_pair_count is always either 3 or 0
+        # in LAD, the 2nd and 3rd pairs describe the 2nd and 3rd rows of the cell
+        # in FBD, the 2nd and 3rd pairs are always empty strings
+
+  label_pair:
+    seq:
+      - id: fixed_1
+        type: u1
+        valid: 1
+      - id: label_l
+        type: smart_types::strl
+      - id: label_r
+        type: smart_types::strl
 
 
   network:
@@ -340,7 +379,7 @@ types:
         repeat-expr: line_comment_count
         # if: network_type == network_type::stl
 
-      - id: usually2
+      - id: usually_2
         type: u1
         # valid: 2
         # usually 2
@@ -1237,7 +1276,7 @@ types:
                or (arg_type == arg_type::literal_or_i_memory
                    and token_type == token_type::string
                    and mem_width == mem_width::string))
-               
+
         # if: >
         #   token_form == token_form::literal
         #   and (token_flag == token_flag::pointer_dereference
