@@ -6,6 +6,12 @@ meta:
 
 
 seq:
+  # - size: 0x07b8
+  # - size: 0x0883
+  # - size: 0x094e
+  # - size: 0x07d0
+  # - size: 0x7fc
+
   - id: module_id
     type: u4
     enum: expansion_module_id
@@ -32,9 +38,13 @@ types:
       - type: u4
       - type: u4
       
-      - type: u4
-        valid: 0x00
-        
+      - id: status
+        type: u4
+        # valid: 0x00
+        # not always 0x00
+        # sometimes 04 00 08 00
+        # sometimes 00 00 00 08
+
       - id: module_number
         type: u4
         enum: module_number
@@ -105,7 +115,7 @@ types:
   em_io_rec_01:
     seq:
       - id: len
-        type: u2
+        type: u4
       - id: records
         type: u4
         repeat: expr
@@ -118,7 +128,7 @@ types:
   em_io_rec_02:
     seq:
       - id: len
-        type: u2
+        type: u4
       - id: records
         type: u2
         repeat: expr
@@ -279,7 +289,7 @@ types:
         type:
           switch-on: rec_type
           cases:
-            0x02: em_io_rec_02
+            0x02: em_io_rec_01  # this should be 02, right?
             0x01: em_io_rec_01
 
   # analog expansion modules
@@ -296,8 +306,6 @@ types:
         valid: 0x01
       - type: u2
         # valid: 0x0100
-      - type: u1
-        valid: 01
 
   em_aq_rec:
     seq:
@@ -358,6 +366,8 @@ types:
     seq:
       - id: analog_input_config
         type: em_ai_rec
+      - type: u1
+        valid: 1
       - id: analog_output_config
         type: em_aq_rec
 
@@ -369,6 +379,8 @@ types:
     seq:
       - id: analog_input_config
         type: em_ai_rec
+      - type: u1
+        valid: 1
       - id: analog_output_config
         type: em_aq_rec
 

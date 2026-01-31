@@ -71,6 +71,7 @@ types:
       # there is something really funny going on here
       # if the marker+unkown block is not null, the
       # following null block (8 bytes) is not present
+      # also see below, after the print options
       - id: marker
         type: u4
       - type: smart_types::unknown(112)
@@ -112,14 +113,10 @@ types:
         type: print_options
       - id: db_print_options
         type: print_options
-      - type:
-          switch-on: _root.editor_version
-          cases:
-            0x1c: smart_types::nulls(2)
-            0x1b: smart_types::nulls(2)
-            0x1a: smart_types::nulls(2)
-            0x18: smart_types::nulls(2)
-            0x12: smart_types::nulls(10)
+      - type: u2
+        valid: 0
+      - type: smart_types::nulls(8)
+        if: marker != 0
 
 
 
