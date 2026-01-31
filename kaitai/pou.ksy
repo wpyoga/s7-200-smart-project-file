@@ -29,14 +29,17 @@ seq:
   # - size: 0x088c
   # - size: 0x2edfb
   # - size: 0x9099
-
   # - size: 0xede
   # - size: 0x90a1
   # - size: 0x90c8
   # - size: 0x15969
+  # - size: 0x16afca
+  # - size: 0x17ae43
 
   - id: version
     type: u1
+    valid:
+      any-of: [7, 8]
 
   - id: pou_type
     type: u4
@@ -78,6 +81,7 @@ seq:
   - id: block_version
     type: u2
     # 83 00: R03.01.00.00
+    # 82 00: R03.00.00.00
     # 80 00: R02.04.00.00 with password protection
     # 0D 00: R02.04.00.00
     # 0B 00: R01.00.00.00
@@ -96,7 +100,7 @@ seq:
     if: name.len == 0
 
   - id: extra_data
-    type: pou_extra_data(version)
+    type: pou_extra_data(version, content.network_count)
     if: block_version == 0x0083
 
 
@@ -164,34 +168,69 @@ types:
 
       # this might be a dependency list
       # for an imported POU, if it has dependencies, it will pull those as well
-      - id: marker
+      - id: dependency_count
         type: u4
       - type: u1
         valid: 0
-        if: marker == 1
-      - type: smart_types::strl
-        if: marker == 1
+        if: dependency_count > 0
+      - id: dependency
+        type: dependency(version)
+        repeat: expr
+        repeat-expr: dependency_count
+        if: dependency_count > 0
 
       - type: u4
         # valid: 1
         # sometimes 0
-        if: marker == 0
+        # if: dependency_count > 0
 
-      - type: u4
+      - id: usually_0x64
+        type: u4
         # valid: 100 = 0x64
         # sometimes 42 = 0x2a
-        if: marker == 0
+        # if: dependency_count > 0
 
+
+  dependency:
+    params:
+      - id: version
+        type: u1
+    seq:
+      - type: smart_types::strl
+      - id: version2
+        type: u1
+        valid: version
+      - type: u2
+        enum: pou_type
+      - size: 8
+      - id: hash
+        size: 16
+        # not sure what to hash, but sure looks like 128-bit hash
+      - type: u4
+        valid: 0
+
+  # one for each network
   pou_extra_data:
     params:
       - id: version
         type: u1
+      - id: network_count
+        type: u4
     seq:
       - id: version2
         type: u1
         valid: version
 
-      - size: 30
+      - id: fb_related
+        type: u2
+        valid:
+          any-of: [0x0000, 0x32ca]
+        # ca 32 seen on fb POU, 00 00 elsewhere
+      - type: u4
+        valid: 0
+      - type: u2
+        valid: 1
+      - type: smart_types::nulls(22)
 
       - id: xml_len
         type: u4
@@ -202,7 +241,22 @@ types:
       - type: u2
         valid: 0x0101
 
-      - type: smart_types::rec(4,10)
+      # - type: smart_types::rec(4,10)
+      - id: data_count
+        type: u4
+        valid: network_count
+      - id: data_records_lad
+        size: 10
+        repeat: expr
+        repeat-expr: data_count
+        if: _root.content.network[0].network_type == network_type::lad
+        # not present in STL, even when data_count == network_count
+        # these records look like a list of symbols used or imported by the network
+      - id: data_records_fbd
+        size: 5
+        repeat: expr
+        repeat-expr: data_count
+        if: _root.content.network[0].network_type == network_type::fbd
 
 
   network:
@@ -213,9 +267,10 @@ types:
       - id: network_type
         type: u2
         valid:
-          any-of: [network_type::lad, network_type::stl]
+          any-of: [network_type::lad, network_type::stl, network_type::fbd]
         enum: network_type
-        # 0x0102: ladder network
+        # 0x0101?: FBD network
+        # 0x0102: LAD network
         # 0x0106: STL network
 
       - id: version
@@ -231,21 +286,31 @@ types:
       - id: comment
         type: smart_types::strl
 
+
+
+
+
       - id: network_version
         type: u1
         # 02: R03.01.00.00
         # 01: R02.04.00.00 & R01.00.00.00
 
-      - type: u4
-        valid: 0
-        if: network_version == 2
+      # - type: u4
+      #   valid: 0
+      #   if: network_version == 2
 
       - id: line_status_count
-        type: u2
+        # type: u2
         # if: network_type == network_type::stl
+        # if: network_version == 1
+        type:
+          switch-on: network_version
+          cases:
+            1: u2
+            2: u4
 
       - id: line_status
-        type: line_status
+        type: line_status(network_version)
         repeat: expr
         repeat-expr: line_status_count
         # if: network_type == network_type::stl
@@ -253,26 +318,35 @@ types:
 
       - type: u1
         # valid: 0
+        # usually 0 when network_version == 1
+        # 2 when network_version == 2
+
       - id: line_comment_count
-        type: u2
+        # type: u2
         # valid: line_status_count
         # sometimes (value is 3) not equal to line_status_count (value is 0)
         # if: network_type == network_type::stl
+        # if: network_version == 1
+        type:
+          switch-on: network_version
+          cases:
+            1: u2
+            2: u4
 
       # unknown records
       - id: line_comment_data
-        type: line_comment_data
+        type: line_comment_data(network_version)
         repeat: expr
         repeat-expr: line_comment_count
         # if: network_type == network_type::stl
 
-
-
-      - type: u1
+      - id: usually2
+        type: u1
         # valid: 2
         # usually 2
         # 6: password-protected imported POU, no possibility to enter password
         # might be a bit field
+        # 1: native FBD
 
       - id: bookmark
         type: u4
@@ -292,8 +366,15 @@ types:
         repeat: expr
         repeat-expr: compiled_stl_count
 
-      - type: u1
+      - id: fixed1
+        type: u1
         valid: 1
+        # if: network_type != network_type::fbd
+
+      # - id: fixed1_fbd
+      #   type: u1
+      #   valid: 1
+      #   if: network_type == network_type::fbd
 
       # the following contains raw network data
       # i.e. what the user has typed in, inside the application
@@ -301,7 +382,6 @@ types:
       - id: lad_cell_count
         type: u2
         if: network_type == network_type::lad
-
       - id: lad_cell
         type: lad_cell
         repeat: expr
@@ -311,17 +391,59 @@ types:
       - id: stl_line_count
         type: u2
         if: network_type == network_type::stl
-
       - id: stl_line
         type: stl_combi(false)
         repeat: expr
         repeat-expr: stl_line_count
         if: network_type == network_type::stl
 
-  line_comment_data:
+      - id: fbd_cell_count
+        type: u2
+        if: network_type == network_type::fbd
+      - id: fbd_cell
+        type: fbd_cell
+        repeat: expr
+        repeat-expr: fbd_cell_count
+        if: network_type == network_type::fbd
+
+
+
+
+
+
+  line_status:
+    params:
+      - id: network_version
+        type: u1
     seq:
       - id: index
-        type: u2
+        # type: u2
+        type:
+          switch-on: network_version
+          cases:
+            1: u2
+            2: u4
+        # index, or 0xffff if invalid
+      - type: u1
+        if: index != 0xffff
+        # might be: 0 for string, 1 for number
+      - id: line_content
+        type: smart_types::strl
+        if: index != 0xffff
+
+  line_comment_data:
+    params:
+      - id: network_version
+        type: u1
+    seq:
+      - id: index
+        # type: u2
+        type:
+          switch-on: network_version
+          cases:
+            1: u2
+            2: u4
+        # index, or 0xffff if invalid
       - type: u1
         if: index != 0xffff
       - type: u1
@@ -333,18 +455,6 @@ types:
       - type: u4
         if: index != 0xffff
       - type: smart_types::strl
-        if: index != 0xffff
-
-  line_status:
-    seq:
-      - id: index
-        type: u2
-        # index, or 0xffff if invalid
-      - type: u1
-        if: index != 0xffff
-        # might be: 0 for string, 1 for number
-      - id: line_content
-        type: smart_types::strl
         if: index != 0xffff
 
 
@@ -368,7 +478,8 @@ types:
       - id: compiled
         type: bool
     seq:
-      - type: u2
+      - id: type
+        type: u2
         valid: 0x0104
         if: not compiled
       - type: u2
@@ -411,7 +522,9 @@ types:
 
       - id: stl_arg_type
         type: u2
-        valid: 0x0103
+        valid:
+          any-of: [0x0103, 0x0104]
+        # 0x0103 found on V3
       - type: u4
         valid: 0
       - type: u1
@@ -466,6 +579,17 @@ types:
         # looks like type & offset for subroutine?
         # but not for contacts
 
+      - id: fixed1_n2
+        type: u2
+        valid: 1
+        if: >
+          token_form == token_form::identifier
+          and _parent._parent._parent.version == 7
+        # and _root.content.network[0].version == 7
+
+
+
+
       - id: token_type
         type: u1
         enum: token_type
@@ -514,7 +638,6 @@ types:
           and token_type != token_type::identifier
           and not compiled
           and arg_type != arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory
-
 
 
 
@@ -826,9 +949,88 @@ types:
         repeat-expr: arg_count
         # arg is the given value or symbol/identifier
 
-  label_l_r:
+
+
+
+
+
+
+
+
+  fbd_cell:
     seq:
       - type: smart_types::null1
+
+      - id: row
+        type: u1
+
+      - id: col
+        type: u1
+
+      - type: u2
+        valid: 0x0103
+
+      - id: cell_type
+        type: u2
+        enum: cell_type
+
+      - type: u1
+        # usually 0, sometimes but rarely 1
+
+      - id: cell_subtype
+        type: u1
+        enum: cell_subtype
+
+      - id: vertical_lines_right_side
+        type: u1
+        # this is a bit field
+        enum: vertical_lines
+
+      - id: cell_flags
+        type: u2
+        enum: cell_flags
+
+      - id: label_line_count
+        type: u1
+
+      - id: label_l_r
+        type: label_l_r
+        repeat: expr
+        repeat-expr: label_line_count
+        # label is the inside of the box or element
+
+      - type: u2
+        valid: 0x0101
+
+      - id: arg_count
+        type: u2
+
+      - id: arg
+        type: arg
+        repeat: expr
+        repeat-expr: arg_count
+        # arg is the given value or symbol/identifier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  label_l_r:
+    seq:
+      # - type: smart_types::null1
+      - type: u1
+        valid:
+          any-of: [0, 1]
 
       - id: label_l
         type: strz
@@ -889,26 +1091,35 @@ types:
   value:
     seq:
       - id: value_type
-        type: u2
-        # 0x0300: string
-        # 0x0301: ...?
-        # 0x0302: string?
-        # 0x0300: number?
+        type: u1
+        # 0x00: string
+        # 0x01: ...?
+        # 0x02: identifier?
+        # 0x00: number?
+
+      - id: version
+        type: u1
+        valid:
+          any-of: [3, 4]
+        # seen in real projects:
+        # 4 -> &MB_TaskTbl, &VB3040
+        # 3 -> +2, 1, 0, 22, 4, 16#7000, 7
 
       - type: u1
         # 01 normal
-        # 00 ENO ...???
+        # 00 ...???
 
       - type: u4
         # valid: 0
         # sometimes 2
 
-      - type: u1
+      - id: fixed1
+        type: u1
         valid: 1
 
       - type: u4
         # usually: 0
-        # 7: &VB100
+        # 7: &VB100 (but only found in one place, with &VB0 this is 0)
 
       - id: token_form
         type: u1
@@ -937,6 +1148,7 @@ types:
       - id: token_type
         type: u1
         enum: token_type
+        # if: offset > 0
 
       - id: mem_width
         type: u1
@@ -949,13 +1161,14 @@ types:
         # 01=literal
 
         # arg_type=00=invalid, value_str
-        # 00 01: Always_On
-
-        # arg_type=00=invalid, value_str
         # 00 02: #使能 -> local variable
-        # 00 01: 偏移量, 总值 -> global variable
+        # 00 01: Always_On, 偏移量, 总值 -> global variable
+        # 02 02: *#tmpPtr -> pointer dereference on local variable
         # 02 01: *指针 -> pointer dereference on global variable
         # 01 01: &MB_TaskTbl -> pointer from global variable
+
+        # arg_type=01=literal_or_i_memory, value_str
+        # 08 10: "hello"
 
         # arg_type=01=literal_or_i_memory, value_float
         # 07 08: 100.0, 0.0, 90.0, 1.0, 0.0
@@ -964,9 +1177,11 @@ types:
         # 01 01: 0, 1 -> zero and one encoded as bit
         # 01 02: 10, 4 -> unsigned integer = byte
         # 01 04: 27648, 5530
-        # 02 02: +100
+        # 02 02: +100, +2
         # 02 01: +0 -> positive zero encoded as bit
         # 05 02: 2#1000100 -> binary literal
+        # 04 01: 16#0 -> hexadecimal literal (1 bit)
+        # 04 04: 16#7000 -> hexadecimal literal (2 bytes)
 
         ##################################################
 
@@ -979,7 +1194,7 @@ types:
         # 10=v_memory, offset
         # 00 08: VD40
         # 00 04: VW0
-        # 01 02: &VB100 -> pointer from byte memory address
+        # 01 02: &VB100, &VB3040 -> pointer from byte memory address
 
         # 40=t_memory, offset
         # 00 01: T101
@@ -1001,7 +1216,8 @@ types:
 
 
 
-      - type: u4
+      - id: before_string
+        type: u4
         if: token_type == token_type::string
         # if: token_flag == token_flag::string2
 
@@ -1009,14 +1225,19 @@ types:
         type: smart_types::strl1
         if: >
           token_form == token_form::literal
+          and ((not arg_type == arg_type::literal_or_i_memory
           and (token_type == token_type::identifier
                or token_type == token_type::string
-               or (token_type == token_type::signed_integer
-                   and mem_width == mem_width::bit_or_some_text
-                   and arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
+               or (arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory
+                   and token_type == token_type::signed_integer
+                   and (mem_width == mem_width::bit_or_some_text
+                        or mem_width == mem_width::byte))
                or (token_type == token_type::unsigned_integer
-                   and mem_width == mem_width::bit_or_some_text))
-          and not arg_type == arg_type::literal_or_i_memory
+                   and mem_width == mem_width::bit_or_some_text)))
+               or (arg_type == arg_type::literal_or_i_memory
+                   and token_type == token_type::string
+                   and mem_width == mem_width::string))
+               
         # if: >
         #   token_form == token_form::literal
         #   and (token_flag == token_flag::pointer_dereference
@@ -1038,9 +1259,11 @@ types:
                     or token_type == token_type::unsigned_integer)
                    and mem_width == mem_width::bit_or_some_text
                    and arg_type == arg_type::literal_or_i_memory))
-          and not (token_type == token_type::unsigned_integer
-                   and mem_width == mem_width::bit_or_some_text
-                   and arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
+          and not (arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory
+                   and (token_type == token_type::unsigned_integer
+                        or token_type == token_type::signed_integer)
+                   and (mem_width == mem_width::bit_or_some_text
+                        or mem_width == mem_width::byte))
         # if: >
         #   token_flag == token_flag::byte
         #   or token_flag == token_flag::word
@@ -1061,9 +1284,11 @@ types:
                     or token_type == token_type::unsigned_integer)
                    and mem_width == mem_width::bit_or_some_text
                    and arg_type == arg_type::literal_or_i_memory))
-          and not (token_type == token_type::unsigned_integer
-                   and mem_width == mem_width::bit_or_some_text
-                   and arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
+          and not (arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory
+                   and (token_type == token_type::unsigned_integer
+                        or token_type == token_type::signed_integer)
+                   and (mem_width == mem_width::bit_or_some_text
+                        or mem_width == mem_width::byte))
         # ^ above condition copied from value_int
 
         # token_form == token_form::literal
@@ -1107,6 +1332,14 @@ types:
         # if: >
         #   token_form == token_form::identifier
         #   and token_flag == token_flag::symbol
+
+      - id: fixed1_n2
+        type: u2
+        valid: 1
+        if: >
+          token_form == token_form::identifier
+          and version == 4
+
 
 
   cell_value:
@@ -1200,6 +1433,17 @@ types:
         type: u4
       - id: hash1
         size: len1
+        # usually found in imported POU
+        # looks like SHA1, because length is always 20 = 160 bits
+        # seems related to password, with password "1234", the hash is:
+        # 27 09 c5 59 cb 56 49 5f 53 2f ce 04 1e 06 7b 9d 4e 10 b5 7e 6c
+        # NOT related to: (confirmed)
+        # - salt for sha512 above
+        # - project name
+        # - library name
+        # - POU name
+        # - timestamp
+        # - dependencies
       - id: len2
         type: u4
       - id: encrypted_network_data
@@ -1209,9 +1453,12 @@ types:
         valid: 0
       - type: u1
         valid:
-          any-of: [0, 1, 2]
+          any-of: [0, 1, 2, 4]
       - type: u1
-        valid: 0
+        valid:
+          any-of: [0, 2]
+        # usually 0
+        # 2 seen in MBUSM1 and MBUS_MSG migrated from V2 to V3
 
   protection_v2:
     seq:
@@ -1268,6 +1515,7 @@ enums:
 
   # TODO: rename
   network_type:
+    0x0101: fbd
     0x0102: lad
     0x0106: stl
 
@@ -1297,6 +1545,7 @@ enums:
     0x0159: add_i
     0x01a0: mov_w
     0x03e9: subroutine
+    0x03eb: function_block
 
   cell_subtype:
     0x07: final_arrow
@@ -1425,6 +1674,7 @@ enums:
     0x01fe: ld # NO contact
     0x0214: eq # = / output
     0x03e9: call
+    0x03eb: fbcall
     0x0321: scre
     0x031c: next
     0x0211: lps
