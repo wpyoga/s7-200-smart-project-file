@@ -10,6 +10,7 @@ seq:
   # - size: 0x0577
   # - size: 0x058e
   # - size: 0x0593
+  # - size: 0x057e
 
   - id: version
     type: u2
@@ -21,8 +22,14 @@ seq:
         0x060f: smart_types::nulls(44)
         0x030f: smart_types::nulls(35)
 
-  - type: u2
-    valid: 0x0100
+  - id: sometimes_version_info
+    type: smart_types::strl1
+    # string is usually 0-length (empty)
+    # V3 template shows V01.00.00_00.00.00.00, might be minor version?
+    # after saved by version 3.01, this string is empty
+
+  - type: u1
+    valid: 1
 
   - type: u1
     valid: 2
@@ -55,7 +62,7 @@ seq:
     type: u4
     enum: allow_disallow
 
-  - id: password_block
+  - id: plc_password
     type:
       switch-on: version
       cases:
