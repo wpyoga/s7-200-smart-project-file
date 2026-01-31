@@ -18,6 +18,22 @@ seq:
   # - size: 0x18311
   # - size: 0x19acp5
   # - size: 0x088d
+  # - size: 0x0850
+  # - size: 0x084e
+  # - size: 0x1720
+  # - size: 0x08ce9
+  # - size: 0x5ebd
+  # - size: 0x85ebb
+  # - size: 0xcc30f
+  # - size: 0x3548b
+  # - size: 0x088c
+  # - size: 0x2edfb
+  # - size: 0x9099
+
+  # - size: 0xede
+  # - size: 0x90a1
+  # - size: 0x90c8
+  # - size: 0x15969
 
   - id: version
     type: u1
@@ -29,13 +45,26 @@ seq:
   - id: index
     type: u2
 
-  - type: u4
+  - id: origin_and_protection
+    type: u4
     # valid: 1
     # this may be related to encryption
-    # 0x00000001: no encryption
+    # 0x00000001: native POU, not password-protected
     # 0x00001100: encryption
-    # 0x00000002: imported POU, not encrypted
+    # 0x00000002: imported POU, not password-protected
+    # 0x00000200: imported POU, password-protected, possible to enter password
+    # 0x00000400: imported POU, password-protected, not possible to enter password
+    #             or: wizard-created POU, not supposed to be edited
     # imported means imported from library
+    # native means POU from this program
+
+  # - id: protection
+  #   type: u1
+
+  # - id: origin
+  #   type: u1
+
+  # - type: u2
 
   - type: smart_types::unknown(16)
     # this is null if native POU
@@ -52,99 +81,129 @@ seq:
     # 80 00: R02.04.00.00 with password protection
     # 0D 00: R02.04.00.00
     # 0B 00: R01.00.00.00
+    # 01 00: empty, no data, related to encrypted POU without possibility to enter password
 
   - id: name
     type: smart_types::strl
 
-  - type: u1
-    valid: 0
-
-  - id: comment
-    type: smart_types::strl
-    # always zero length on R02.04.00.00
-
-  - type: u1
-    valid: 0
-
-  - id: author
-    type: smart_types::strl
-
-  - id: protection
-    type:
-      switch-on: block_version
-      cases:
-        0x0083: protection_v3
-        0x0080: protection_v3
-        0x000d: protection_v2
-        0x000b: protection_v1
-
-  - id: timestamp_created
-    type: smart_types::timestamp
-
-  - id: timestamp_modified
-    type: smart_types::timestamp
-
-  - type: u1
-    valid: 0
-
-  - id: network_count
-    type: u2
-
-  - id: network
-    type: network
-    repeat: expr
-    repeat-expr: network_count
-
-  - type: u1
-    valid: 0
-    if: block_version != 0x0083
-
-  # symbol table comes AFTER networks
-  - id: symbol_count
-    type: u2
-    if: block_version != 0x0083
-
-  - id: symbols
-    type: pou_symbol
-    repeat: expr
-    repeat-expr: symbol_count
-    if: block_version != 0x0083
+  - id: content
+    type: pou_content(version, block_version)
+    if: name.len != 0
 
   - type: u4
-    valid: 0
+    # valid: 0
+    # sometimes 100 = 0x64
+    if: name.len == 0
 
-  - type: u4
-    valid: 1
-
-  - type: u4
-    # valid: 100 = 0x64
-    # sometimes 42 = 0x2a
-
-  - id: version2
-    type: u1
-    valid: version
-    if: block_version == 0x0083
-
-  - size: 30
-    if: block_version == 0x0083
-
-  - id: xml_len
-    type: u4
-    if: block_version == 0x0083
-
-  - id: variable_table_xml
-    size: xml_len
-    if: block_version == 0x0083
-
-  - type: u2
-    valid: 0x0101
-    if: block_version == 0x0083
-
-  - type: smart_types::rec(4,10)
+  - id: extra_data
+    type: pou_extra_data(version)
     if: block_version == 0x0083
 
 
 types:
+  pou_content:
+    params:
+      - id: version
+        type: u1
+      - id: block_version
+        type: u2
+    seq:
+      - type: u1
+        valid: 0
+
+      - id: comment
+        type: smart_types::strl
+        # always zero length on R02.04.00.00
+
+      - type: u1
+        valid: 0
+
+      - id: author
+        type: smart_types::strl
+
+      - id: protection
+        type:
+          switch-on: block_version
+          cases:
+            0x0083: protection_v3
+            0x0080: protection_v3
+            0x000d: protection_v2
+            0x000b: protection_v1
+
+      - id: timestamp_created
+        type: smart_types::timestamp
+
+      - id: timestamp_modified
+        type: smart_types::timestamp
+
+      - type: u1
+        valid: 0
+
+      - id: network_count
+        type: u2
+
+      - id: network
+        type: network
+        repeat: expr
+        repeat-expr: network_count
+
+      - type: u1
+        valid: 0
+        if: block_version != 0x0083
+
+      # symbol table comes AFTER networks
+      - id: symbol_count
+        type: u2
+        if: block_version != 0x0083
+
+      - id: symbols
+        type: pou_symbol
+        repeat: expr
+        repeat-expr: symbol_count
+        if: block_version != 0x0083
+
+      # this might be a dependency list
+      # for an imported POU, if it has dependencies, it will pull those as well
+      - id: marker
+        type: u4
+      - type: u1
+        valid: 0
+        if: marker == 1
+      - type: smart_types::strl
+        if: marker == 1
+
+      - type: u4
+        # valid: 1
+        # sometimes 0
+        if: marker == 0
+
+      - type: u4
+        # valid: 100 = 0x64
+        # sometimes 42 = 0x2a
+        if: marker == 0
+
+  pou_extra_data:
+    params:
+      - id: version
+        type: u1
+    seq:
+      - id: version2
+        type: u1
+        valid: version
+
+      - size: 30
+
+      - id: xml_len
+        type: u4
+
+      - id: variable_table_xml
+        size: xml_len
+
+      - type: u2
+        valid: 0x0101
+
+      - type: smart_types::rec(4,10)
+
 
   network:
     seq:
@@ -183,35 +242,36 @@ types:
 
       - id: line_status_count
         type: u2
-        if: network_type == network_type::stl
+        # if: network_type == network_type::stl
 
       - id: line_status
         type: line_status
         repeat: expr
         repeat-expr: line_status_count
+        # if: network_type == network_type::stl
         # usually just 0xffff
 
-        # valid: 2
-        # sometimes 0 in the case of encrypted? wizard POU
-        # if: network_version == 2
       - type: u1
         # valid: 0
       - id: line_comment_count
         type: u2
-        valid: line_status_count
+        # valid: line_status_count
+        # sometimes (value is 3) not equal to line_status_count (value is 0)
+        # if: network_type == network_type::stl
 
       # unknown records
-      - id: comment_data
-        type: comment_data
+      - id: line_comment_data
+        type: line_comment_data
         repeat: expr
         repeat-expr: line_comment_count
+        # if: network_type == network_type::stl
 
 
 
       - type: u1
         # valid: 2
         # usually 2
-        # in the case of a password-protected imported POU, this is 6
+        # 6: password-protected imported POU, no possibility to enter password
         # might be a bit field
 
       - id: bookmark
@@ -258,7 +318,7 @@ types:
         repeat-expr: stl_line_count
         if: network_type == network_type::stl
 
-  comment_data:
+  line_comment_data:
     seq:
       - id: index
         type: u2
@@ -266,7 +326,7 @@ types:
         if: index != 0xffff
       - type: u1
         valid:
-          any-of: [1, 3, 6, 7]
+          any-of: [1, 2, 3, 6, 7]
         if: index != 0xffff
       - type: u1
         if: index != 0xffff
@@ -338,9 +398,9 @@ types:
 
       - type: u1
         valid:
-          any-of: [0, 1]
+          any-of: [0, 1, 2]
         if: compiled
-        # usually 1, sometimes 0
+        # usually 1, sometimes 0, sometimes 2
       - type: u1
         valid:
           any-of: [0, 1, 2]
@@ -381,7 +441,7 @@ types:
         type: u1
         enum: data_type_short
         if: token_form == token_form::identifier
-      - id: arg_type
+      - id: arg_type_identifier
         type: u1
         enum: arg_type
         if: token_form == token_form::identifier
@@ -397,7 +457,8 @@ types:
         # unknown: 0x20
         # 0x200 -> imported MBUS_INIT, data_type = 4, arg_type = 0, offset = 10 (SBR10)
       - type: u2
-        valid: 0
+        # valid: 0
+        # sometimes 2 when POU (subroutine call to POU 2 maybe?)
         if: token_form == token_form::identifier
       - id: offset_or_pou_number
         type: u4
@@ -413,15 +474,21 @@ types:
         type: u1
         enum: mem_width
         if: token_form == token_form::literal
-      - id: unknown_flag
+      # - id: unknown_flag
+      - id: arg_type
         type: u1
+        enum: arg_type
         if: token_form == token_form::literal
       - id: value_integer
         type: u4
         if: >
           token_form == token_form::literal
           and (token_type == token_type::unsigned_integer
-               or token_type == token_type::signed_integer)
+               or token_type == token_type::signed_integer
+               or token_type == token_type::binary
+               or token_type == token_type::hexadecimal
+               or token_type == token_type::string)
+          and not arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory
       - id: value_float
         type: f4
         if: >
@@ -432,18 +499,21 @@ types:
         if: >
           token_form == token_form::literal
           and (token_type == token_type::string
-               or token_type == token_type::identifier)
+               or token_type == token_type::identifier
+               or arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
 
       - type: u1
         if: >
-          unknown_flag == 1
+          arg_type == arg_type::literal_or_i_memory
           and compiled
+          and token_type != token_type::string
       - type: u1
         valid: 0
         if: >
           token_form == token_form::literal
           and token_type != token_type::identifier
           and not compiled
+          and arg_type != arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory
 
 
 
@@ -837,7 +907,8 @@ types:
         valid: 1
 
       - type: u4
-        valid: 0
+        # usually: 0
+        # 7: &VB100
 
       - id: token_form
         type: u1
@@ -845,11 +916,29 @@ types:
         # 01: literal
         # 02: identifier
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      # - id: token_flag  # TODO: rename
+      #   type: u2
+      #   enum: token_flag
+
       - id: token_type
         type: u1
         enum: token_type
 
-      - id: mem_type
+      - id: mem_width
         type: u1
         enum: mem_width
 
@@ -857,36 +946,149 @@ types:
         type: u1
         enum: arg_type
 
+        # 01=literal
+
+        # arg_type=00=invalid, value_str
+        # 00 01: Always_On
+
+        # arg_type=00=invalid, value_str
+        # 00 02: #使能 -> local variable
+        # 00 01: 偏移量, 总值 -> global variable
+        # 02 01: *指针 -> pointer dereference on global variable
+        # 01 01: &MB_TaskTbl -> pointer from global variable
+
+        # arg_type=01=literal_or_i_memory, value_float
+        # 07 08: 100.0, 0.0, 90.0, 1.0, 0.0
+
+        # arg_type=01=literal_or_i_memory, value_int
+        # 01 01: 0, 1 -> zero and one encoded as bit
+        # 01 02: 10, 4 -> unsigned integer = byte
+        # 01 04: 27648, 5530
+        # 02 02: +100
+        # 02 01: +0 -> positive zero encoded as bit
+        # 05 02: 2#1000100 -> binary literal
+
+        ##################################################
+
+        # 02=identifier
+
+        # 20=m_memory, offset
+        # 00 04: MW20, MW22
+        # 00 01: M24.0, M24.1, M24.2
+
+        # 10=v_memory, offset
+        # 00 08: VD40
+        # 00 04: VW0
+        # 01 02: &VB100 -> pointer from byte memory address
+
+        # 40=t_memory, offset
+        # 00 01: T101
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       - type: u4
         if: token_type == token_type::string
+        # if: token_flag == token_flag::string2
 
       - id: value_str
         type: smart_types::strl1
         if: >
-          (token_type == token_type::identifier
-          or token_type == token_type::string)
-          and token_form == token_form::literal
+          token_form == token_form::literal
+          and (token_type == token_type::identifier
+               or token_type == token_type::string
+               or (token_type == token_type::signed_integer
+                   and mem_width == mem_width::bit_or_some_text
+                   and arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
+               or (token_type == token_type::unsigned_integer
+                   and mem_width == mem_width::bit_or_some_text))
+          and not arg_type == arg_type::literal_or_i_memory
+        # if: >
+        #   token_form == token_form::literal
+        #   and (token_flag == token_flag::pointer_dereference
+        #       or token_flag == token_flag::symbol
+        #       or token_flag == token_flag::string2)
+
+        # str might be identifier
 
       - id: value_int
         type: u4
         if: >
-          token_type == token_type::unsigned_integer
-          or token_type == token_type::signed_integer
+          token_form == token_form::literal
+          and (token_type == token_type::unsigned_integer
+               or token_type == token_type::binary
+               or token_type == token_type::hexadecimal
+               or (token_type == token_type::signed_integer
+                   and mem_width != mem_width::bit_or_some_text)
+               or ((token_type == token_type::signed_integer
+                    or token_type == token_type::unsigned_integer)
+                   and mem_width == mem_width::bit_or_some_text
+                   and arg_type == arg_type::literal_or_i_memory))
+          and not (token_type == token_type::unsigned_integer
+                   and mem_width == mem_width::bit_or_some_text
+                   and arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
+        # if: >
+        #   token_flag == token_flag::byte
+        #   or token_flag == token_flag::word
+        #   or token_flag == token_flag::int
+        #   or token_flag == token_flag::dword
+        #   or token_flag == token_flag::dint
 
       - type: u1
         valid: 0
         if: >
-          (token_type == token_type::unsigned_integer
-          or token_type == token_type::signed_integer)
-          and token_form == token_form::literal
+          token_form == token_form::literal
+          and (token_type == token_type::unsigned_integer
+               or token_type == token_type::binary
+               or token_type == token_type::hexadecimal
+               or (token_type == token_type::signed_integer
+                   and mem_width != mem_width::bit_or_some_text)
+               or ((token_type == token_type::signed_integer
+                    or token_type == token_type::unsigned_integer)
+                   and mem_width == mem_width::bit_or_some_text
+                   and arg_type == arg_type::literal_or_i_memory))
+          and not (token_type == token_type::unsigned_integer
+                   and mem_width == mem_width::bit_or_some_text
+                   and arg_type == arg_type::invalid_or_hc_sm_scr_ac_l_pou_memory)
+        # ^ above condition copied from value_int
+
+        # token_form == token_form::literal
+        # and (token_type == token_type::unsigned_integer
+        #     or token_type == token_type::signed_integer)
+        # and not (token_type == token_type::signed_integer
+        #         and mem_width == mem_width::bit_or_some_text)
+
+        # if: >
+        #   token_form == token_form::literal
+        #   and (token_flag == token_flag::byte
+        #       or token_flag == token_flag::word
+        #       or token_flag == token_flag::int
+        #       or token_flag == token_flag::dword
+        #       or token_flag == token_flag::dint)
 
       - id: value_float
         type: f4
         if: token_type == token_type::floating_point
+        # if: token_flag == token_flag::float
 
       - type: u1
         valid: 0
         if: token_type == token_type::floating_point
+        # if: token_flag == token_flag::float
 
       - type: u1
         if: token_form == token_form::identifier
@@ -898,9 +1100,14 @@ types:
       - id: offset
         type: u4
         if: >
-          token_type != token_type::unsigned_integer
-          and token_type != token_type::signed_integer
-          and token_form == token_form::identifier
+          token_form == token_form::identifier
+        # and token_type != token_type::unsigned_integer
+        # and token_type != token_type::signed_integer
+
+        # if: >
+        #   token_form == token_form::identifier
+        #   and token_flag == token_flag::symbol
+
 
   cell_value:
     seq:
@@ -997,7 +1204,14 @@ types:
         type: u4
       - id: encrypted_network_data
         size: len2
-      - type: smart_types::nulls(3)
+      # - type: smart_types::nulls(3)
+      - type: u1
+        valid: 0
+      - type: u1
+        valid:
+          any-of: [0, 1, 2]
+      - type: u1
+        valid: 0
 
   protection_v2:
     seq:
@@ -1129,12 +1343,31 @@ enums:
     0x0008: dword_or_dint_or_real_or_string
     # maybe number of bytes? but why is string 0x0008?
 
-  var_class:
-    0x00: not_local_variable
-    0x20: local_variable
+
+
+
+  token_form:
+    0x01: literal
+    0x02: identifier
+
+  token_type:
+    0x00: identifier
+    0x01: unsigned_integer
+    0x02: signed_integer
+    0x04: hexadecimal  # -> 16#abcd (just a guess for now, TODO: confirm)
+    0x05: binary  # --> 2#010101010101
+    0x07: floating_point
+    0x08: string
+
+  mem_width:
+    0x01: bit_or_some_text
+    0x02: byte
+    0x04: word
+    0x08: dword
+    0x10: string
 
   arg_type:
-    0x00: invalid_or_l_sm_pou_hc_ac_scr_memory
+    0x00: invalid_or_hc_sm_scr_ac_l_pou_memory
     0x01: literal_or_i_memory
     0x02: q_memory
     0x04: ai_memory
@@ -1144,23 +1377,45 @@ enums:
     0x40: t_memory
     0x80: c_memory
 
-  mem_width:
-    0x01: bit_or_some_text
-    0x02: byte
-    0x04: word
-    0x08: dword
-    0x10: string
+  var_class:
+    # 0x0000: not_local_variable
+    # regular/other memory maybe?
+    0x0001: hc_memory
+    0x0002: sm_memory
+    0x0004: s_memory
+    0x0010: ac_memory
+    0x0020: l_memory
+    0x8000: pou
 
-  token_type:
-    0x00: identifier
-    0x01: unsigned_integer
-    0x02: signed_integer
-    0x07: floating_point
-    0x08: string
+  # it looks like token_type and mem_width are not independent of each other
+  # if token_type is 2 and mem_width is 2, then the arg is an integer value
+  # if token_type is 2 and mem_width is 1, then the arg is a symbol pointer dereference
 
-  token_form:
-    0x01: literal
-    0x02: identifier
+  token_flag:
+    0x0100: symbol
+    0x0102: pointer_dereference
+    # 0x0108: str
+    0x0201: byte
+    0x0401: word
+    0x0200: b_memory_address
+    0x0400: w_memory_address
+    0x0800: d_memory_address
+    0x0402: int
+    0x0801: dword
+    0x0802: dint
+    0x0807: float
+    0x1008: string2
+
+
+
+
+
+
+
+
+
+
+
 
   # opcodes for the same instruction in STL and LAD are different
   # for example:
