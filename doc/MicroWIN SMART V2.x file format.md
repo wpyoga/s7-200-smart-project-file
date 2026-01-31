@@ -18,6 +18,8 @@
   - when file is opened, the program asks for password
   - if password is correct, the file is loaded, otherwise a new empty project is opened instead
 - library subroutines used in the program is saved in the project file
+- symbols that appear with ellipsis (`~`) in the editor are actually saved as the whole string --
+  the ellipsis is only for visual purposes inside the editor
 
 ## project file structure
 
