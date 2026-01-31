@@ -3,9 +3,11 @@ meta:
   title: MicroWIN SMART decompressed project data
   endian: le
   imports:
+    - smart_types
     - preamble
     - system_block
     - program_block
+
 
 seq:
   # Versioning

@@ -20,9 +20,10 @@ seq:
         '0x12': encoded_version_4
         # before 0x12, there is no encoded version
 
-  # Constant separator (usually 0x03)
+  # might be version, not sure
   - id: magic
     type: u1
+    valid: 3
 
   - id: modbus_station_port0
     type: u4
@@ -32,12 +33,13 @@ seq:
 
   - type: smart_types::null1
 
+  # seems to be: software version that originally created this project
   - id: software_version
     type: smart_types::strl
 
   - type: smart_types::null1
 
-  - id: project_filename
+  - id: project_name
     type: smart_types::strl
 
   - type: smart_types::null1
@@ -47,7 +49,7 @@ seq:
     enum: view_mode
 
   - id: printer_information
-    type: printer_information
+    type: printer_information(editor_version)
 
 
 types:
@@ -61,6 +63,14 @@ types:
       - size: 4
 
   printer_information:
+    params:
+      - id: editor_version
+        type: u1
+    instances:
+      paper_width_inch:
+        value: paper_width_twip / 1440.0
+      paper_height_inch:
+        value: paper_height_twip / 1440.0
     seq:
       - type: u1
         valid: 1
@@ -75,9 +85,23 @@ types:
       # also see below, after the print options
       - id: marker
         type: u4
+        # the marker is either null, or 01 04 05 40
+        # note: 0x0401 = 1025, 0x4005: 16389
       - type: smart_types::unknown(112)
+        # if marker is not null, this is always the value:
+        # starts with 32 bytes:
+        # 9c 00 62 04 0f ff 00 1e 01 00 01 00 ea 0a 6f 08
+        # 64 00 01 00 07 00 2c 01 02 00 01 00 2c 01 03 00
+        ### the values above do make sense if read as u2 each
+        ### but we don't currently know what they mean
+        ###   156  1122 65295  7680 1 1  2794  2159
+        ###   100     1     7   300 2 1  300      3
+        # then 56 null bytes
+        # then 6x u4 values: 1, 3, 1, 1, 0, 0
       - size: 8
-        if: marker != 0x40050401
+        if: >
+          marker != 0x40050401
+          and editor_version >= 0x12
 
       - id: margin_left
         type: u4
@@ -87,7 +111,16 @@ types:
         type: u4
       - id: margin_bottom
         type: u4
-      - size: 10
+
+      # a twip is one-twentieth of a point
+      # a point is 1/72 of an inch
+      - id: paper_width_twip
+        type: u4
+      - id: paper_height_twip
+        type: u4
+      - type: u2
+        valid: 0
+
       - id: justify_header
         type: u2
       - id: justify_footer
@@ -117,7 +150,9 @@ types:
       - type: u2
         valid: 0
       - type: smart_types::nulls(8)
-        if: marker != 0
+        if: >
+          marker == 0x40050401
+          and editor_version >= 0x12
 
 
 
