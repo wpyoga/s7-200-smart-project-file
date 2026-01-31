@@ -13,8 +13,19 @@ seq:
   # - size: 0x057e
   # - size: 0x056d
 
+  # maybe this needs to be split into 2
+  # the first byte doesn't seem to do anything much
+  # the second byte seems to determine structure
+  # also, first byte seems to have its own series: 0e, 0f, 13
+  # the second byte also seems to have its own series: 01, 03, 06
+  # - 13 06: R03.01.00.00
+  # - 0F 06: R02.04.00.00
+  # - 0F 03: R01.00.00.00
+  # - 0E 01: R04.00 / 4.0.0.46 / MicroWin / pre-SMART
   - id: version
     type: u2
+    valid:
+      any-of: [0x010e, 0x030f, 0x060f, 0x0613]
 
   - type:
       switch-on: version
@@ -55,6 +66,11 @@ seq:
 
   - id: block_version
     type: u1
+    valid:
+      any-of: [3, 5, 6]
+    # 3 -- R01
+    # 5 -- R02
+    # 6 -- R03
 
   - id: cpu_privileges
     type: u4
@@ -136,10 +152,11 @@ seq:
   - id: unknown_data
     type: smart_types::rec(4,8)
 
-  - size: 14
+  - id: unknown_data_2
+    type: smart_types::rec(2,4)
     if: block_version == 6
 
-  - id: unknown_data2
+  - id: unknown_data_3
     type: smart_types::rec(4,4)
     if: block_version == 6
 
@@ -199,7 +216,7 @@ types:
 
       - id: communication_restrict
         type: communication_restrict
-        if: _root.version != 0x030f
+        if: _parent.version != 0x030f
 
       - id: cpu_type
         type: cpu_type

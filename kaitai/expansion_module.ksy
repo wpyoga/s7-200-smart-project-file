@@ -10,7 +10,9 @@ seq:
   # - size: 0x0883
   # - size: 0x094e
   # - size: 0x07d0
-  # - size: 0x7fc
+  # - size: 0x07fc
+  # - size: 0x0313
+  # - size: 0x0392
 
   - id: module_id
     type: u4
@@ -24,16 +26,20 @@ seq:
     type: expansion_module_config
     if: configured_flag == configured_notconfigured::configured
 
-
 types:
 
   expansion_module_config:
     seq:
       - id: block_version
         type: u1
+        valid:
+          any-of: [6, 7]
+        # 6 on V2
+        # 7 on V3
 
       - type: u4
-        valid: 0x01
+        valid:
+          any-of: [0, 1]
         
       - type: u4
       - type: u4
@@ -60,7 +66,7 @@ types:
       - id: module_id
         type: u4
         enum: expansion_module_id
-        valid: _root.module_id
+        valid: _parent.module_id
 
       - type: u4
         valid: 0x03
@@ -70,13 +76,32 @@ types:
         type: u4
         enum: module_number
 
-      - type: u2
-        valid: 0x0300
+      - type: u1
+        valid: 0
 
+      - id: marker_1
+        type: u4
+        if: block_version == 7
+      - id: marker_2
+        type: u4
+        if: block_version == 7
       - type: u4
-        valid: 0x01
+        valid: marker_1
+        if: block_version == 7
+      - type: u4
+        valid: marker_2
+        if: block_version == 7
+      - id: input_offset_bytes
+        type: u4
+        if: block_version == 7
+      - id: output_offset_bytes
+        type: u4
+        if: block_version == 7
 
-      - type: smart_types::null1
+      - type: u2
+        valid: 0x0103
+
+      - type: smart_types::nulls(4)
 
       - id: em_io_rec_type
         type: u1
