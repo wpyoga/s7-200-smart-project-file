@@ -134,6 +134,14 @@ types:
             expansion_module_id::em_qt16: em_qt16_config(em_io_rec_type)
             expansion_module_id::em_qr16: em_qr16_config(em_io_rec_type)
             expansion_module_id::em_dp01: em_dp01_config(em_io_rec_type)
+            expansion_module_id::em_de16_0aa1: em_de16_0aa1_config(em_io_rec_type)
+            expansion_module_id::em_qt16_0aa1: em_qt16_0aa1_config(em_io_rec_type)
+            expansion_module_id::em_ae04_0aa1: em_ae04_0aa1_config(em_aio_rec_type)
+            expansion_module_id::em_ae08_0aa1: em_ae08_0aa1_config(em_aio_rec_type)
+            expansion_module_id::em_aq04_0aa1: em_aq04_0aa1_config(em_aio_rec_type)
+            expansion_module_id::em_am06_0aa1: em_am06_0aa1_config(em_aio_rec_type)
+            expansion_module_id::em_ar04_0aa1: em_ar04_0aa1_config(em_aio_rec_type)
+            expansion_module_id::em_at08_0aa1: em_at08_0aa1_config(em_aio_rec_type)
 
   # digital expansion modules
 
@@ -317,6 +325,32 @@ types:
             0x02: em_io_rec_01  # this should be 02, right?
             0x01: em_io_rec_01
 
+  em_de16_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 02, manually validate
+    seq:
+      - id: digital_input_config
+        type:
+          switch-on: rec_type
+          cases:
+            0x02: em_io_rec_02
+            0x01: em_io_rec_01
+
+  em_qt16_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 01, manually validate
+    seq:
+      - id: digital_output_config
+        type:
+          switch-on: rec_type
+          cases:
+            0x02: em_io_rec_02
+            0x01: em_io_rec_01
+
   # analog expansion modules
 
   em_ai_rec:
@@ -409,6 +443,46 @@ types:
       - id: analog_output_config
         type: em_aq_rec
 
+  em_ae04_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 01, manually validate
+    seq:
+      - id: analog_input_config
+        type: em_ai_rec
+
+  em_ae08_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 01, manually validate
+    seq:
+      - id: analog_input_config
+        type: em_ai_rec
+
+  em_aq04_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 01, manually validate
+    seq:
+      - id: analog_output_config
+        type: em_aq_rec
+
+  em_am06_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 01, manually validate
+    seq:
+      - id: analog_input_config
+        type: em_ai_rec
+      - type: u1
+        valid: 1
+      - id: analog_output_config
+        type: em_aq_rec
+
   # temperature expansion modules
 
   em_temp_rec:
@@ -452,6 +526,24 @@ types:
         type: em_temp_rec
 
   em_at08_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 00, manually validate
+    seq:
+      - id: temp_input_config
+        type: em_temp_rec
+
+  em_ar04_0aa1_config:
+    params:
+      - id: rec_type
+        type: u1
+        # should be 01, manually validate
+    seq:
+      - id: temp_input_config
+        type: em_temp_rec
+
+  em_at08_0aa1_config:
     params:
       - id: rec_type
         type: u1
@@ -505,6 +597,14 @@ enums:
     0x80003017: em_qt16
     0x80003018: em_qr16
     0x80004001: em_dp01
+    0x80003100: em_de16_0aa1
+    0x80003101: em_qt16_0aa1
+    0x80003102: em_ae04_0aa1
+    0x80003104: em_ae08_0aa1
+    0x80003103: em_aq04_0aa1
+    0x80003105: em_am06_0aa1
+    0x80003106: em_ar04_0aa1
+    0x80003107: em_at08_0aa1
 
   module_number:
     0: em_00
