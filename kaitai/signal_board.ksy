@@ -4,7 +4,10 @@ meta:
   imports:
     - smart_types
 
+
 seq:
+  # - size: 0x026d
+
   - id: signal_board_id
     type: u4
     enum: signal_board_id
@@ -31,23 +34,46 @@ types:
     seq:
       - id: block_version
         type: u1
-      - id: unknown1
-        size: 32
+
+      - type: u4
+        valid: 1
+      - id: input_offset_start
+        type: u2
+      - id: input_offset_end
+        type: u2
+        valid: 0
+        # always 0 for SB DT04
+      - id: output_offset_start
+        type: u2
+      - id: output_offset_end
+        type: u2
+        valid: 0
+        # always 0 for SB DT04
+      - type: u4
+        valid: 0
+      - id: slot_number
+        type: u4
+        enum: slot_number
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 0
+
       - type: u4
         enum: signal_board_id
         valid: _root.signal_board_id
       - type: u4
         valid: 0x02
-      - id: position
-        type: u4
+      - type: u4
         enum: slot_number
+        valid: slot_number
       - type: smart_types::null1
       - id: freeze_cfg
         size: 5
       - size: 1
-      - id: input_cfg
-        type: sb_io_block
-      - id: output_cfg
+      - id: io_cfg
         type: sb_io_block
       - size: 6
       - size: 18
@@ -61,15 +87,39 @@ types:
     seq:
       - id: block_version
         type: u1
-      - size: 32
+
+      - type: u4
+        valid: 1
+      - id: input_offset_start
+        type: u2
+      - id: input_offset_end
+        type: u2
+        valid: input_offset_start + 2
+      - id: output_offset_start
+        type: u2
+      - id: output_offset_end
+        type: u2
+        valid: output_offset_start + 2
+      - type: u4
+        valid: 0
+      - id: slot_number
+        type: u4
+        enum: slot_number
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 0
+
       - type: u4
         enum: signal_board_id
         valid: _root.signal_board_id
       - type: u4
         valid: 0x02
-      - id: position
-        type: u4
+      - type: u4
         enum: slot_number
+        valid: slot_number
       - type: smart_types::null1
       - size: 5
       - size: 2
@@ -86,15 +136,39 @@ types:
     seq:
       - id: block_version
         type: u1
-      - size: 32
+
+      - type: u4
+        valid: 1
+      - id: input_offset_start
+        type: u2
+      - id: input_offset_end
+        type: u2
+        valid: input_offset_start + 2
+      - id: output_offset_start
+        type: u2
+      - id: output_offset_end
+        type: u2
+        valid: output_offset_start + 2
+      - type: u4
+        valid: 0
+      - id: slot_number
+        type: u4
+        enum: slot_number
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 0
+
       - type: u4
         enum: signal_board_id
         valid: _root.signal_board_id
       - type: u4
         valid: 0x02
-      - id: position
-        type: u4
+      - type: u4
         enum: slot_number
+        valid: slot_number
       - type: smart_types::null1
       - id: freeze_cfg
         size: 5
@@ -112,19 +186,41 @@ types:
     seq:
       - id: block_version
         type: u1
+
       - type: u4
-        valid: 0x01
-      - size: 24
+        valid: 1
+      - id: input_offset_start
+        type: u2
+      - id: input_offset_end
+        type: u2
+        valid: 0
+        # always 0 for SB DT04
+      - id: output_offset_start
+        type: u2
+      - id: output_offset_end
+        type: u2
+        valid: 0
+        # always 0 for SB DT04
       - type: u4
-        valid: 0x00
+        valid: 0
+      - id: slot_number
+        type: u4
+        enum: slot_number
+      - type: u4
+        valid: 0
+      - type: u4
+        valid: 1
+      - type: u4
+        valid: 0
+
       - type: u4
         enum: signal_board_id
         valid: _root.signal_board_id
       - type: u4
         valid: 0x02
-      - id: position
-        type: u4
+      - type: u4
         enum: slot_number
+        valid: slot_number
       - type: smart_types::null1
       - type: u2
         valid: 0x0102
@@ -154,13 +250,13 @@ types:
       - id: block_version
         type: u1
       - type: u4
-        valid: 0x01
+        valid: 1
       - size: 8
       - type: u4
         valid: 0x00
-      - id: port_number
+      - id: slot_number
         type: u4
-        enum: port_number
+        enum: slot_number
       - type: u4
         valid: 0x01
       - type: u4
@@ -172,9 +268,9 @@ types:
         valid: _root.signal_board_id
       - type: u4
         valid: 0x02
-      - id: slot_number
-        type: u4
+      - type: u4
         enum: slot_number
+        valid: slot_number
       - type: smart_types::null1
       - type: u2
         valid: 0x0202
@@ -202,9 +298,9 @@ types:
       - size: 8
       - type: u4
         valid: 0x00
-      - id: port_number
+      - id: slot_number
         type: u4
-        enum: port_number
+        enum: slot_number
       - type: u4
         valid: 0x01
       - type: u4
@@ -216,9 +312,9 @@ types:
         valid: _root.signal_board_id
       - type: u4
         valid: 0x02
-      - id: position
-        type: u4
+      - type: u4
         enum: slot_number
+        valid: slot_number
       - type: smart_types::null1
       - id: slot_unknown
         if: block_version == 7
@@ -242,35 +338,45 @@ types:
       - type: u4
         valid: 0x01
 
+
+
+
+
   sb_io_block:
     seq:
-      - id: kind
+      - id: input_type
         type: u1
-      - id: count
+        valid: 2
+      - id: input_count
+        type: u4
+      - id: input_config
         type: u2
-      - size: 2
-      - id: configs
-        size: count * 2
-      - size: 4
-      - size: 1
-      - id: kind2
+        repeat: expr
+        repeat-expr: input_count
+      - type: u4
+        valid: 1
+      - type: u1
+        valid: 0
+      - id: output_type
         type: u1
-      - id: count2
-        type: u2
-      - size: 2
-      - id: outputs
-        size: count2 * 4
+        valid: 1
+      - id: output_count
+        type: u4
+      - id: output_config
+        type: u4
+        repeat: expr
+        repeat-expr: output_count
 
   sb_ai_block:
     seq:
-      - id: kind
+      - id: input_type
         type: u1
-      - id: count
+      - id: input_count
         type: u2
       - size: 2
       - id: ai_data
         repeat: expr
-        repeat-expr: count
+        repeat-expr: input_count
         type: sb_ai_channel
 
   sb_ai_channel:
@@ -287,14 +393,14 @@ types:
 
   sb_aq_block:
     seq:
-      - id: kind
+      - id: output_type
         type: u1
-      - id: count
-        type: u2
+      - id: output_count
+        type: u1
       - size: 2
       - id: aq_data
         repeat: expr
-        repeat-expr: count
+        repeat-expr: output_count
         type: sb_aq_channel
 
   sb_aq_channel:
@@ -320,10 +426,6 @@ enums:
   configured_notconfigured:
     0x01: configured
     0x00: not_configured
-
-  port_number:
-    0x01: port_2
-    0x00: port_1
 
   slot_number:
     0x01: slot_1

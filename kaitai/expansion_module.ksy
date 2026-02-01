@@ -13,6 +13,11 @@ seq:
   # - size: 0x07fc
   # - size: 0x0313
   # - size: 0x0392
+  # - size: 0x072e
+  # - size: 0x0383
+  # - size: 0x0494
+  # - size: 0x04eb
+  # - size: 0x0552
 
   - id: module_id
     type: u4
@@ -37,13 +42,25 @@ types:
         # 6 on V2
         # 7 on V3
 
-      - type: u4
+      - id: usually_1
+        type: u4
         valid:
           any-of: [0, 1]
+        # not sure when it is 0, when it is 1
         
-      - type: u4
-      - type: u4
-      
+      - id: input_offset_start
+        type: u2
+      - id: input_offset_end
+        type: u2
+        valid:
+          any-of: [0, input_offset_start + 0x0e]
+      - id: output_offset_start
+        type: u2
+      - id: output_offset_end
+        type: u2
+        valid:
+          any-of: [0, output_offset_start + 0x0e]
+
       - id: status
         type: u4
         # valid: 0x00
@@ -265,7 +282,7 @@ types:
         type:
           switch-on: rec_type
           cases:
-            0x02: em_io_rec_02
+            0x02: em_io_rec_01  # why is this 01? shouldn't it be 02?
             0x01: em_io_rec_01
 
   em_dr16_config:
@@ -284,7 +301,7 @@ types:
         type:
           switch-on: rec_type
           cases:
-            0x02: em_io_rec_02
+            0x02: em_io_rec_01  # using 01 for now
             0x01: em_io_rec_01
 
   em_dt32_config:
@@ -303,7 +320,7 @@ types:
         type:
           switch-on: rec_type
           cases:
-            0x02: em_io_rec_02
+            0x02: em_io_rec_01  # using 01 for now
             0x01: em_io_rec_01
 
   em_dr32_config:
