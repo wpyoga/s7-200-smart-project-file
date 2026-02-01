@@ -7,10 +7,9 @@ meta:
     - preamble
     - system_block
     - program_block
-
+    - symbol_table
 
 seq:
-  # Versioning
   - id: preamble
     type: preamble
 
@@ -34,6 +33,7 @@ seq:
 
   - type: u1
     # this is 1 for R02.04.00.00 and R03.01.00.00
+    #   and also for R04.00 (MWP)
     # this is 0 for R01.00.00.00
 
   - id: timestamp2a
@@ -51,23 +51,11 @@ seq:
   - id: program_block
     type: program_block
 
-  # - type: u1
+  - id: symbol_table
+    type: symbol_table
 
-  # - id: cpu_information
-  #   type: cpu_info
-
-types:
-
-  placeholder:
-    seq:
-      - type: u4
-
-
-
-
-
-
-
+  # - id: status_chart
+  #   type: status_chart
 
 
 
