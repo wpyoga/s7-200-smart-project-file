@@ -38,8 +38,8 @@
 
 ## 文件格式文档
 
-- [Micro/WIN SMART V2.x 工程文件格式](MicroWIN%20SMART%20V2.x%20file%20format.md)
-- [Micro/WIN SMART V3.x 工程文件格式](MicroWIN%20SMART%20V3.x%20file%20format.md)
+- [Micro/WIN SMART V2.x 工程文件格式](doc/MicroWIN%20SMART%20V2.x%20file%20format.md)
+- [Micro/WIN SMART V3.x 工程文件格式](doc/MicroWIN%20SMART%20V3.x%20file%20format.md)
 
 ---
 
