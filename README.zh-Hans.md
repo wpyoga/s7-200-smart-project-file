@@ -1,4 +1,4 @@
-# S7-200 SMART 工程文件格式
+# S7-200 以及 SMART 工程文件格式
 
 [English](README.md)
 
@@ -6,9 +6,9 @@
 >
 > 请在github上提交Issue和PR，或者向[工控人家园论坛wpyoga](http://www.ymmfa.com/u-gkuid-616507.html)发短消息。
 
-本项目旨在对 S7-200 SMART 系列 PLC 的**工程文件结构和存储格式**进行分析。
+本项目旨在对 **S7-200** 以及 **SMART** 系列 PLC 的**工程文件结构和存储格式**进行分析。
 
-更具体地说，这是 **STEP 7-Micro/WIN SMART** 所使用的工程文件格式。
+更具体地说，这是 **STEP 7-Micro/WIN SMART** （以及**STEP 7-Micro/WIN**） 所使用的工程文件格式。
 
 ---
 
@@ -16,11 +16,12 @@
 
 ### 当前主要目标
 - 分析工程文件的内部结构与数据组织方式
-- 将工程文件格式转换为 JSON 或其他标准格式
-- 从 JSON 文件生成工程文件
-- 生成可直接复制粘贴的符号表（Symbol Table）和数据块（Data Block）内容
 - 使工程文件能够兼容 git 进行版本控制
+  - 将工程文件格式转换为 JSON 或其他标准格式
+  - 从 JSON 文件生成工程文件
   - 可通过 git 提交钩子（commit hooks）实现
+  - 按道理，被生成的工程文件与原工程文件100%相符
+- 生成可直接复制粘贴的符号表（Symbol Table）和数据块（Data Block）内容
 
 ### 可选目标（Nice-to-have/非必须）
 - 在程序块（Program Block）与 SCL 之间进行双向转换
@@ -95,3 +96,5 @@
   该 PLC 也逐渐在世界各地得到应用。
 - 最初的文件结构分析参考并使用了 **French Cafe** 技术：
   https://download.samba.org/pub/tridge/misc/french_cafe.txt
+- SMART V2 和 V3 反工程工作进行了一大半，发现V2的文件格式与老200的文件格式没有很多差别。
+  除了preamble略微不同，Program Block部分接近100%一样。

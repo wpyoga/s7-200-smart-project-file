@@ -1,7 +1,10 @@
-# microwin smart 2.8.2
+# STEP 7-Micro/WIN & STEP 7-Micro/WIN SMART V2
 
-## smart project file format
+## project file format
 
+- STEP 7-Micro/WIN for S7-200, and STEP 7-Micro/WIN SMART V2 for S7-200 SMART
+  - `*.mwp`: S7-200
+  - `*.smart`: S7-200 SMART
 - saving multiple times don't change the bytes
 - small changes in-app leads to almost whole file changes
   - deletion of an empty network sometimes leads to file size increasing
@@ -26,6 +29,7 @@
 - 4 bytes header
   - `SH3\0` -> R02.04.00.00
   - `DEM\0` -> R01.00.00.00
+  - `GJK\0` -> R04.00 (old S7-200)
 - 12 bytes version
   - R02.04.00.00 -> saved by MicroWin SMART v2.8
   - R01.00.00.00 -> original template file
