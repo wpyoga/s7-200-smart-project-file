@@ -219,7 +219,7 @@
 
 - 2 bytes year
 - 2 bytes month
-- 2 bytes -- unknown
+- 2 bytes day of week
 - 2 bytes day of month
 - 2 bytes hour
 - 2 bytes minutes
