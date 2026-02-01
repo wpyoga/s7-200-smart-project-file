@@ -54,4 +54,4 @@ We are not trying to:
   worldwide, the PLC has spread to all corners of the world.
 - The initial reverse engineering efforts were based on the French Cafe technique: https://download.samba.org/pub/tridge/misc/french_cafe.txt
 - After reverse engineering parts of S7-200 SMART V2 and V3 project files, it was discovered that the older S7-200 file format is incredibly similar
-  to that of SMART V2. The preamble section was minimally different, and the Program Block was almost 100% compatible.
+  to that of SMART V2. The preamble section was minimally different, and the Program Block and Symbol Table sections were identical.

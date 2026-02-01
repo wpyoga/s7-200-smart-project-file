@@ -97,4 +97,4 @@
 - 最初的文件结构分析参考并使用了 **French Cafe** 技术：
   https://download.samba.org/pub/tridge/misc/french_cafe.txt
 - SMART V2 和 V3 反工程工作进行了一大半，发现V2的文件格式与老200的文件格式没有很多差别。
-  除了preamble略微不同，Program Block部分接近100%一样。
+  除了preamble略微不同，Program Block和Symbol Table部分都相同的。
