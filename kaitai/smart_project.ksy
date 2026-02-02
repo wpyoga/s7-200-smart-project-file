@@ -8,6 +8,8 @@ meta:
     - system_block
     - program_block
     - symbol_table
+    - status_chart
+    # - data_block
 
 seq:
   - id: preamble
@@ -54,10 +56,11 @@ seq:
   - id: symbol_table
     type: symbol_table
 
-  # - id: status_chart
-  #   type: status_chart
+  - id: status_chart
+    type: status_chart
 
-
+  # - id: data_block
+  #   type: data_block
 
 
 
