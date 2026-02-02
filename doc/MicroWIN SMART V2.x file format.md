@@ -5,6 +5,12 @@
 - STEP 7-Micro/WIN for S7-200, and STEP 7-Micro/WIN SMART V2 for S7-200 SMART
   - `*.mwp`: S7-200
   - `*.smart`: S7-200 SMART
+- these sections are identical on S7-200 and SMART
+  - Program Block
+  - Symbol Table
+  - Status Chart
+  - ...
+- preamble is slightly different between S7-200 and SMART
 - saving multiple times don't change the bytes
 - small changes in-app leads to almost whole file changes
   - deletion of an empty network sometimes leads to file size increasing
