@@ -1,6 +1,7 @@
 meta:
   id: system_block
   endian: le
+  bit-endian: be
   imports:
     - smart_types
     - signal_board
@@ -316,8 +317,6 @@ types:
         type: cpu_di_entry
 
   cpu_di_entry:
-    meta:
-      bit-endian: be
     seq:
       - id: reserved
         type: b8

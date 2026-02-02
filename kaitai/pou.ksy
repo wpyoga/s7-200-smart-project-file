@@ -1,6 +1,7 @@
 meta:
   id: pou
   endian: le
+  bit-endian: be
   imports:
     - smart_types
 
@@ -1529,8 +1530,6 @@ types:
       - type: smart_types::nulls(3)
 
   var_status:
-    meta:
-      bit-endian: be
     seq:
       - id: unknown0
         type: b1
