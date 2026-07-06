@@ -86,16 +86,16 @@ Being a binary blob, it is encoded with base64. The following description refers
 - 4 bytes:
   - 02 00 09 00 for ST32
   - 00 20 03 00 for v2.x v1.x
-- 2 bytes
-  - c8 00 for ST32
-  - 3C 00 for SR60
-  - 30 00 for ST40 v1.x
-  - 18 00 for CR60s
-- 4 bytes null
-- 4 bytes
-  - 00 c8 14 00 for ST32
-  - 00 C8 03 E8 for v2.x
-  - 00 64 01 F4 for v1.x
+- 1 byte
+  - c8 for ST32
+  - 3C for SR60
+  - 30 for ST40 v1.x
+  - 18 for CR60s
+- 6 bytes null
+- 3 bytes
+  - c8 14 00 for ST32
+  - C8 03 E8 for v2.x
+  - 64 01 F4 for v1.x
 - 6 bytes:
   - 2 bytes: 00 01
   - 2 bytes:
@@ -124,16 +124,17 @@ Being a binary blob, it is encoded with base64. The following description refers
   - 00 10 for v2.8 ST32
   - 00 08 for v2.7 v2.6 v2.5 v2.4 v2.3 v2.2 v2.1 v2.0 v1.x
 - 1 byte null
-- 1 byte: number of expansion modules supported
-  - 10 for ST32 (16 expansion modules)
-  - should be 08 for v3 then
-  - 06 for ST SR v2.x
-  - 04 for ST SR v1.x
+- 2 bytes: number of expansion modules supported
+  - 10 00 for ST32 (16 expansion modules)
+  - should be 08 00 for v3 then
+  - 06 00 for ST SR v2.x
+  - 04 00 for ST SR v1.x
+  - 00 00 for CR60s
+- 2 bytes null
+- 1 byte
+  - 04 for ST60 ST32
+  - 03 for SR60 ST40v1.x
   - 00 for CR60s
-- 4 bytes
-  - 00 00 00 04 for ST60 ST32
-  - 00 00 00 03 for SR60 ST40v1.x
-  - 00 00 00 00 for CR60s
 - 6 bytes unknown: ff 07 0f 07 07 00
 - 2 bytes
   - 01 01 v2.8 v2.7 v2.6 v2.5 ST32
@@ -199,20 +200,20 @@ Being a binary blob, it is encoded with base64. The following description refers
 - 1 byte number of cpu inputs
 - 1 byte number of cpu outputs
 - 2 bytes null
-- 2 bytes
-  - c8 00 for ST32
-  - 3C 00 for SR60
-  - 18 00 for CR60s CR40s
-  - 30 00 for ST40v1.x
-- 6 bytes null
+- 1 byte
+  - c8 for ST32
+  - 3C for SR60
+  - 18 for CR60s CR40s
+  - 30 for ST40v1.x
+- 8 bytes null
 - 4 bytes related to CPU
-  - 00 04 00 CB for SR60 ST32
+  - 04 00 CB 00 for SR60 ST32
   - 00 00 00 00 for CR60s
-  - 00 04 00 CB for CR v2.x
+  - 04 00 CB 00 for CR v2.x
   - 00 00 00 00 for CR v1.x ST40v1.x
-- 2 bytes:
-  - 00 fa for ST32
-  - 00 C8 for v2.x v1.x
+- 1 byte:
+  - fa for ST32
+  - C8 for v2.x v1.x
 - 512 bytes unknown, only for ST32 (or R03?)
   - records
     - 2 bytes length: 01 00
