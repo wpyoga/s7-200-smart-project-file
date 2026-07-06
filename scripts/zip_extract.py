@@ -15,7 +15,11 @@ zip_dirname, zip_ext = os.path.splitext(zip_basename)
 
 os.mkdir(zip_dirname)
 
-with ZipFile(zip_file, 'r') as zip:
+# need to specify GBK as encoding, otherwise Chinese characters will be malformed
+# the file entries (references) in project.devproj is still UTF-8 though,
+# which is consistent with the XML declaration on the first line
+# do we need to convert back to GBK when writing the zip file?
+with ZipFile(zip_file, 'r', metadata_encoding="gbk") as zip:
   for member in zip.infolist():
     member.filename = member.filename.replace('\\', '/')
     # zip.extract(member, zip_dirname)
