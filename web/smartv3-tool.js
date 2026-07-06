@@ -76,10 +76,11 @@ async function processProjectFile(bytes) {
   statusElem.textContent = "File decrypted successfully.";
   setContent(outputElem, "pre", null, hexDump(bytes, 1, 32));
 
-  const zipReader = new zip.ZipReader(new zip.Uint8ArrayReader(plaintext));
+  const zipReader = new zip.ZipReader(new zip.Uint8ArrayReader(plaintext), {
+    decodeText: (bytes) => new TextDecoder("gbk").decode(bytes),
+  });
   try {
-    const filenameEncoding = "cp437";
-    zipEntries = await zipReader.getEntries({ filenameEncoding });
+    zipEntries = await zipReader.getEntries();
   } catch (err) {
     console.log("err", err);
     return;
@@ -91,6 +92,7 @@ async function processProjectFile(bytes) {
   outputElem.textContent = "";
   const ul = document.createElement("ul");
   zipEntries.forEach((entry) => {
+    console.log("entry filename: ", entry.filename);
     const li = document.createElement("li");
     li.textContent = entry.filename;
     ul.appendChild(li);
@@ -98,6 +100,7 @@ async function processProjectFile(bytes) {
   outputElem.appendChild(ul);
 
   // console.log("entries", zipEntries);
+  // console.log("num of entries", zipEntries.length);
   // const xmlFile = await zipEntries
   //   .find((x) => x.filename.endsWith("m_mGlbVarTables.xml"))
   //   .arrayBuffer();
@@ -113,6 +116,9 @@ async function processProjectFile(bytes) {
   // don't forget to close the zip archive
   await zipReader.close();
 
+  statusElem.textContent =
+    "Successfully decrypted, unzipped, and listed, files shown below.";
+
   const zipWriter = new zip.ZipWriter(new zip.Uint8ArrayWriter());
   for (let i = 0; i < zipEntries.length; ++i) {
     if (zipEntries[i].directory)
@@ -124,6 +130,9 @@ async function processProjectFile(bytes) {
       );
   }
   const newZipFile = await zipWriter.close();
+
+  statusElem.textContent = "Project file created in-memory.";
+
   const zipBlob = new Blob([newZipFile], { type: "application/zip" });
   if (downloadURL) URL.revokeObjectURL(downloadURL);
   downloadURL = URL.createObjectURL(zipBlob);
