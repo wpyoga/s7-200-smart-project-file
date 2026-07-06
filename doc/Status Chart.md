@@ -3,12 +3,12 @@
 - 1 byte identifier: 03
 - 4 bytes: 01 00 00 00
 - 2 bytes number of status charts: 05 00
-- 1 byte version
-  - 08: R02.04.00.00
-  - 07: R01.00.00.00
-- 2 bytes: A0 0F (4000)
-- 2 bytes null
 - status chart
+  - 1 byte version
+    - 08: R02.04.00.00
+    - 07: R01.00.00.00
+  - 2 bytes: A0 0F (4000)
+  - 2 bytes null
   - 2 bytes status chart index (0-based)
   - 2 bytes type: 01 00
   - null bytes

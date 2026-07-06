@@ -142,3 +142,6 @@ Format description:
     - trailing spaces are encoded as-is
     - trailing null is not present
     - can be zero-length
+- unknown data
+  - 2 bytes: size
+  - n bytes: unknown

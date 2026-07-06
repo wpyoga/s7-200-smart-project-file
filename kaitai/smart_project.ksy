@@ -9,7 +9,7 @@ meta:
     - program_block
     - symbol_table
     - status_chart
-    # - data_block
+    - data_block
 
 seq:
   - id: preamble
@@ -59,8 +59,8 @@ seq:
   - id: status_chart
     type: status_chart
 
-  # - id: data_block
-  #   type: data_block
+  - id: data_block
+    type: data_block
 
 
 
