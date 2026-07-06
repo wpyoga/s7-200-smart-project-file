@@ -5,7 +5,7 @@ meta:
     - smart_types
 
 seq:
-  - size: 0x8be33
+  # - size: 0x8be33
 
   - type: smart_types::null1
 

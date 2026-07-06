@@ -10,6 +10,8 @@ meta:
     - symbol_table
     - status_chart
     - data_block
+    - cpu_information
+    - unknown_data
 
 seq:
   - id: preamble
@@ -61,6 +63,24 @@ seq:
 
   - id: data_block
     type: data_block
+
+  - id: cpu_information
+    type: cpu_information
+
+  - id: unknown_data
+    type: unknown_data
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
