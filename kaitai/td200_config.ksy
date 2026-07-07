@@ -1,5 +1,5 @@
 meta:
-  id: unknown_data40
+  id: td200_config
   endian: le
   imports:
     - smart_types

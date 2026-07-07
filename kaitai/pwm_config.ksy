@@ -1,5 +1,5 @@
 meta:
-  id: unknown_data30
+  id: pwm_config
   endian: le
   imports:
     - smart_types
