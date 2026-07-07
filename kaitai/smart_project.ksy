@@ -17,7 +17,7 @@ meta:
     - hsc_config
     - pwm_config
     - td200_config
-    - unknown_data50
+    - get_put_config
     - unknown_data60
     - profinet_config
     - hsc_config_2
@@ -95,8 +95,8 @@ seq:
   - id: td200_config
     type: td200_config
 
-  - id: unknown_data50
-    type: unknown_data50
+  - id: get_put_config
+    type: get_put_config
 
   - id: unknown_data60
     type: unknown_data60

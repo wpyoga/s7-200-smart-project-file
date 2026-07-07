@@ -1,5 +1,5 @@
 meta:
-  id: unknown_data50
+  id: get_put_config
   endian: le
   imports:
     - smart_types
