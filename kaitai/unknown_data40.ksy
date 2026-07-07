@@ -5,7 +5,7 @@ meta:
     - smart_types
 
 seq:
-  - size: 0x8d71d
+  # - size: 0x8d71d
 
   - type: u1
     valid: 2
