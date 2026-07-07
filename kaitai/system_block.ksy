@@ -13,6 +13,7 @@ seq:
   # - size: 0x0593
   # - size: 0x057e
   # - size: 0x056d
+  # - size: 0x0588
 
   # maybe this needs to be split into 2
   # the first byte doesn't seem to do anything much
@@ -150,8 +151,13 @@ seq:
   - id: expansion_module_info
     type: expansion_modules
 
-  - id: unknown_data
-    type: smart_types::rec(4,8)
+  - id: num_axis
+    type: u4
+
+  - id: motion_wizard_data
+    type: motion_wizard_data
+    repeat: expr
+    repeat-expr: num_axis
 
   - id: unknown_data_2
     type: smart_types::rec(2,4)
@@ -202,13 +208,13 @@ types:
       - id: fixed_ip
         type: u4
       - id: ip_addr
-        type: u4
+        type: smart_types::ipv4_addr
       - id: netmask
-        type: u4
+        type: smart_types::ipv4_addr
       - id: gateway
-        type: u4
+        type: smart_types::ipv4_addr
       - id: station_name
-        size: 64
+        type: smart_types::strn(64)
 
   cpu_config:
     seq:
@@ -403,6 +409,47 @@ types:
         type: expansion_module
         repeat: expr
         repeat-expr: num_expansion_modules
+
+  motion_wizard_data:
+    seq:
+      - type: smart_types::nulls(4)
+
+      - id: configured
+        type: u4
+
+      - id: motion_axis_config
+        type: motion_axis_config
+        size: 85
+        if: configured == 1
+
+  motion_axis_config:
+    seq:
+      - id: marker
+        type: u2
+        valid: 0x0106
+
+      - type: smart_types::nulls(15)
+
+      - id: index
+        type: u2
+
+      - type: smart_types::nulls(27)
+
+      - id: marker_2
+        type: u1
+        valid: 2
+
+      - size: 26
+
+      - type: u4
+        valid: 2
+
+      - type: u4
+        valid: 16
+
+      - id: mem_alloc_offset
+        type: u4
+
 
 
 

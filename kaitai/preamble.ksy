@@ -9,7 +9,7 @@ seq:
     type: u1
 
   # Encoded version (usually 8 bytes, sometimes 4)
-  - id: encoded_version
+  - id: mwsmart_comm_version
     type:
       switch-on: editor_version
       cases:
@@ -56,11 +56,15 @@ types:
 
   encoded_version_8:
     seq:
-      - size: 8
+      - type: u2
+        repeat: expr
+        repeat-expr: 4
 
   encoded_version_4:
     seq:
-      - size: 4
+      - type: u1
+        repeat: expr
+        repeat-expr: 4
 
   printer_information:
     params:
