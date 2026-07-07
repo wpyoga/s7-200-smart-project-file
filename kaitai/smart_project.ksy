@@ -94,6 +94,7 @@ seq:
 
   - id: unknown_data40
     type: unknown_data40
+    # looks like TD200 text display config
 
   - id: unknown_data50
     type: unknown_data50
