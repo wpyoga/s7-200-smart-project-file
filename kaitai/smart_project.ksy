@@ -11,7 +11,17 @@ meta:
     - status_chart
     - data_block
     - cpu_information
-    - unknown_data
+    - unknown_data10
+    - unknown_data20
+    - pid_config
+    - hsc_config
+    - unknown_data30
+    - unknown_data40
+    - unknown_data50
+    - unknown_data60
+    - profinet_config
+    - hsc_config_2
+    - unknown_data70
 
 seq:
   - id: preamble
@@ -67,21 +77,38 @@ seq:
   - id: cpu_information
     type: cpu_information
 
-  - id: unknown_data
-    type: unknown_data
+  - id: unknown_data10
+    type: unknown_data10
 
+  - id: unknown_data20
+    type: unknown_data20
 
+  - id: pid_config
+    type: pid_config
 
+  - id: hsc_config
+    type: hsc_config
 
+  - id: unknown_data30
+    type: unknown_data30
 
+  - id: unknown_data40
+    type: unknown_data40
 
+  - id: unknown_data50
+    type: unknown_data50
 
+  - id: unknown_data60
+    type: unknown_data60
 
+  - id: profinet_config
+    type: profinet_config
 
+  - id: hsc_config_2
+    type: hsc_config_2
 
-
-
-
+  - id: unknown_data70
+    type: unknown_data70
 
 
 

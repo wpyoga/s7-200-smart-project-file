@@ -1,0 +1,23 @@
+meta:
+  id: unknown_data50
+  endian: le
+  imports:
+    - smart_types
+
+seq:
+  # unknown block 6
+
+  - type: smart_types::nulls(4)
+
+  - type: u1
+    valid: 4
+
+  - id: num_records_4
+    type: u4
+
+  - type: smart_types::nulls(4)
+
+  - id: net_exe_pou_name
+    type: smart_types::strl
+
+  - size: 22
