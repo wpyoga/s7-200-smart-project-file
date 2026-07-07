@@ -6,6 +6,7 @@ meta:
 
 seq:
   # - size: 0x8d71d
+  # - size: 0x1bd07e
 
   - type: u1
     valid: 2
@@ -15,7 +16,8 @@ seq:
 
   - id: unknown_record
     type: unknown_record
-    size: 442
+    # size: 442
+    # size: 96
     repeat: expr
     repeat-expr: num_record
 
@@ -38,7 +40,9 @@ types:
       - id: lang
         type: smart_types::strl
 
-      - type: u1
+      - id: attr1
+        type: u1
+        # valid: 1
 
       - type: smart_types::nulls(4)
 
@@ -51,8 +55,28 @@ types:
         type: key_related_record
         repeat: expr
         repeat-expr: 8
+        if: attr1 == 1
 
-      - size: 54
+      - type: smart_types::nulls(4)
+
+      - type: u4
+
+      - type: smart_types::nulls(8)
+
+      - id: index
+        type: u2
+
+      - type: smart_types::nulls(2)
+
+      - type: u2
+
+      - type: smart_types::nulls(20)
+
+      - type: u4
+
+      - type: u4
+
+      - type: u4
 
 
 
@@ -64,7 +88,7 @@ types:
       - type: u4
 
       - type: u1
-        valid: 1
+        # valid: 1
 
       - id: index
         type: u2
@@ -73,16 +97,17 @@ types:
         type: u2
 
       - type: u2
-        valid: 2
+        # valid: 2
 
       - id: key_name_copy
         type: u2
         valid: key_name
 
-      - type: smart_types::nulls(8)
+      # - type: smart_types::nulls(8)
+      - size: 8
 
       - type: u1
-        valid: 1
+        # valid: 1
 
       - id: key_name_full
         type: smart_types::strl
