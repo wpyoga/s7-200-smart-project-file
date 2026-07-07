@@ -6,6 +6,7 @@ meta:
 
 seq:
   # - size: 0xa1203
+  # - size: 0x1bec0c
 
   - type: u1
     valid: 4
@@ -18,7 +19,7 @@ seq:
 
   - id: hsc_data_2
     type: hsc_data_2
-    size: 128
+    # size: 128
     repeat: expr
     repeat-expr: num_hsc_2
 
@@ -76,21 +77,28 @@ types:
       - id: count_eq_name
         type: smart_types::strl
 
-      - type: smart_types::nulls(8)
-
-      - id: index
-        type: u1
-
       - type: smart_types::nulls(4)
 
       - type: u4
-        valid: 0
+
+      - type: u4
+
+      - id: symbol_name
+        type: smart_types::strl1
+
+      - id: flag
+        type: u4
+        # valid: 0
+        # maybe: if 1 then use this copy
+        # or maybe it means this HSC is configured
 
       - type: u2
-        valid: 0xffff
+        # valid: 0xffff
+        # this is 0 if flag is 1
 
       - type: u2
-        valid: 0xffff
+        # valid: 0xffff
+        # this is 0 if flag is 1
 
 
 
