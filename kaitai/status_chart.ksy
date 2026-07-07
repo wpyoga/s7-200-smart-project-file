@@ -21,14 +21,6 @@ seq:
     valid: 1
   - id: status_chart_count
     type: u2
-  - id: block_version
-    type: u1
-    valid:
-      any-of: [7, 8]
-  - id: marker_4000
-    type: u2
-    valid: 4000
-  - type: smart_types::nulls(2)
   - id: status_charts
     type: status_chart1
     repeat: expr
@@ -38,6 +30,15 @@ seq:
 types:
   status_chart1:
     seq:
+      - id: block_version
+        type: u1
+        valid:
+          any-of: [7, 8]
+      - id: marker_4000
+        type: u2
+        valid: 4000
+      - type: smart_types::nulls(2)
+
       - id: index
         type: u2
       - id: version
@@ -46,7 +47,7 @@ types:
           any-of: [1]
       - id: null_bytes
         type:
-          switch-on: _parent.block_version
+          switch-on: block_version
           cases:
             7: smart_types::nulls(18)
             8: smart_types::nulls(22)
@@ -62,9 +63,6 @@ types:
         type: entry
         repeat: expr
         repeat-expr: entry_count
-      - id: trailer
-        size: 5
-        # seems to be uninitialized memory
 
   entry:
     seq:
