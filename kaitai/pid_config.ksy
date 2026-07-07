@@ -15,7 +15,6 @@ seq:
 
   - id: pid_data
     type: pid_data
-    size: 274
     repeat: expr
     repeat-expr: num_pid
 
