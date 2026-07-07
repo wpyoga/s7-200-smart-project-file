@@ -35,7 +35,8 @@ Notes:
       - 01 for v1.x template
     - 4 bytes null
     - 2 bytes: 02 00
-    - 4 bytes: 63 6d 88 13
+    - 2 bytes: 63 6d
+    - 2 bytes: 88 13
     - null bytes
       - 8 bytes null for v2.x
       - 4 bytes null for v1.x
