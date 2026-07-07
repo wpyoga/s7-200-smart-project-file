@@ -15,8 +15,8 @@ meta:
     - unknown_data20
     - pid_config
     - hsc_config
-    - unknown_data30
-    - unknown_data40
+    - pwm_config
+    - td200_config
     - unknown_data50
     - unknown_data60
     - profinet_config
@@ -89,12 +89,11 @@ seq:
   - id: hsc_config
     type: hsc_config
 
-  - id: unknown_data30
-    type: unknown_data30
+  - id: pwm_config
+    type: pwm_config
 
-  - id: unknown_data40
-    type: unknown_data40
-    # looks like TD200 text display config
+  - id: td200_config
+    type: td200_config
 
   - id: unknown_data50
     type: unknown_data50
