@@ -231,7 +231,7 @@ Notes:
     - string: HSC renamed
       - 1 byte length: 03 for example, can be 00 which means HSC is not renamed
       - string: PG1 for example
-- unknown block
+- PWM config
   - 1 byte: 01
   - 4 bytes number of records: 04 00 00 00
   - 4x 59 byte records
@@ -243,7 +243,7 @@ Notes:
     - 4x 11 bytes
       - 3 bytes: 02 03 40
       - 8 bytes null
-- unknown block
+- TD200 config
   - 1 byte: 02
   - 4 bytes number of records: 05 00 00 00
   - 5x 106 byte records

@@ -6,6 +6,7 @@ meta:
 
 seq:
   # - size: 0x8d353
+  # - size: 0x1bcc95
 
   - type: u1
     valid: 4
@@ -18,7 +19,6 @@ seq:
 
   - id: hsc_data
     type: hsc_data
-    size: 120
     repeat: expr
     repeat-expr: num_hsc
 
@@ -77,12 +77,14 @@ types:
       - id: count_eq_name
         type: smart_types::strl
 
-      - type: smart_types::nulls(8)
-
-      - id: index
-        type: u1
-
       - type: smart_types::nulls(4)
+
+      - type: u4
+
+      - type: u4
+
+      - id: symbol_name
+        type: smart_types::strl1
 
 
 
