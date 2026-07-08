@@ -20,6 +20,7 @@ meta:
     - get_put_config
     - data_log_config
     - profinet_config
+    - web_server_config
     - hsc_config_2
     - unknown_data70
 
@@ -103,6 +104,9 @@ seq:
 
   - id: profinet_config
     type: profinet_config
+
+  - id: web_server_config
+    type: web_server_config
 
   - id: hsc_config_2
     type: hsc_config_2
