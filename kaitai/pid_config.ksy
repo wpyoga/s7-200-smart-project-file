@@ -6,6 +6,7 @@ meta:
 
 seq:
   # - size: 0x8ca8b
+  # - size: 0x43380
 
   - type: u1
     valid: 1
@@ -37,67 +38,72 @@ types:
         # this is the same format found in unknown_data20
         # might be related
 
+      - id: maybe_controller_type
+        type: u1
+        valid: 1
+        # 1: normal ??
+
+      - id: gain
+        type: f4
+
+      - id: sample_time_s
+        type: f4
+
+      - id: integral_time_s
+        type: f4
+
+      - id: derivative_time_s
+        type: f4
+
       - type: u1
-        valid: 1
 
-      - type: smart_types::nulls(2)
+      - id: pv_low
+        type: u4
 
-      - id: some_attr
-        type: u1
-        # f0: v2.x
-        # 80: v1.x
-        # same values as in unknown_data20
+      - id: pv_high
+        type: u4
 
-      - id: some_attr_2
-        type: u1
-        valid: 0x3f
-        # same value as in unknown_data20
+      - id: sp_low
+        type: f4
 
-      - type: smart_types::nulls(2)
-
-      - id: some_attr_copy
-        type: u1
-        valid: some_attr
-
-      - id: some_attr_2_copy
-        type: u1
-        valid: some_attr_2
-
-      - type: smart_types::nulls(2)
-
-      - type: u2
-        valid: 0x4120
+      - id: sp_high
+        type: f4
 
       - type: smart_types::nulls(4)
 
-      - type: u2
-        valid: 1
+      - size: 9
 
-      - type: smart_types::nulls(4)
+      - id: range_low
+        type: u4
 
-      - size: 23
+      - id: range_high
+        type: u4
 
-      - size: 17
+      - type: f4
 
-      - size: 17
+      - type: f4
+      - type: u1
+      - type: u4
+      - type: u4
+      - type: u4
+      - id: alarm_pv_low
+        type: f4
+      - id: alarm_pv_high
+        type: f4
+      - type: u1
+      - id: pid_init_pou_name
+        type: smart_types::strl
 
       - type: u4
-
+      - type: u4
       - type: u1
-        valid: 2
+      - type: u4
+      - type: u4
+      - id: memory_allocation_offset
+        type: u4
 
       - id: pid_name
         type: smart_types::strl
-
-      - type: smart_types::nulls(4)
-
-      - type: u1
-        valid: 1
-
-      - id: some_index_array
-        size: 16
-
-      - type: smart_types::nulls(2)
 
 
 
