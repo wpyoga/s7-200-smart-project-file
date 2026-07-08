@@ -439,7 +439,16 @@ types:
         type: u1
         valid: 2
 
-      - size: 26
+      - size: 9
+
+      - id: flag
+        type: u1
+
+      - id: output_bit
+        type: u4
+        # bit starts from Q0.0 = 0 and counting up
+
+      - type: smart_types::nulls(12)
 
       - type: u4
         valid: 2
