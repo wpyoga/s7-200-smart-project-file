@@ -6,6 +6,9 @@ meta:
 
 seq:
   # - size: 0x8bf4d
+  # - size: 0x3939c
+  # - size: 0x41ca5
+  # - size: 0x426af
 
   - type: u1
     valid: 1
@@ -20,68 +23,75 @@ seq:
   - size: 8
     if: version == 3
 
-  - id: num_records
+  - id: num_axis
     type: u4
 
-  - id: unknown_records_v2
-    type: unknown_records_v2
-    size: 715
+  - id: axis_v2
+    type: axis_v2
+    # size: 715
     if: version == 3
     repeat: expr
-    repeat-expr: num_records
+    repeat-expr: num_axis
 
-  - id: unknown_records_v1
-    type: unknown_records_v1
+  - id: axis_v1
+    type: axis_v1
     size: 562
     if: version == 1
     repeat: expr
-    repeat-expr: num_records
+    repeat-expr: num_axis
 
 
 types:
-  unknown_records_v2:
+  axis_v2:
     seq:
-      - type: u2
+      - id: marker
+        type: u2
         valid: 0x0104
 
       - type: smart_types::nulls(8)
 
       - id: version
         type: u1
-        # 2: v2.x
-        # 1: v1.x
+        # 2: v2.x with double precision floats
+        # 1: v1.x with single precision floats
 
-      - type: smart_types::nulls(4)
+      - id: maybe_measurement_system
+        type: u4
+        # 0: engineering units
+        # 1: relative pulses
 
-      - type: u2
-        valid: 2
+      - id: base_unit
+        type: smart_types::strl
+        # if: maybe_measurement_system == 1
 
-      - type: u2
-        valid: 0x6d63
+      - id: pulses_per_motor_revolution
+        type: u4
 
-      - id: marker
-        type: u2
-        valid: 0x1388
+      - id: cm_per_motor_revolution
+        type: f8
 
-      - type:
-          switch-on: version
-          cases:
-            2: smart_types::nulls(8)
-            1: smart_types::nulls(4)
+      - id: input_config_lmt_pos
+        type: input_config
+        if: version == 2
 
-      - id: some_attr
-        type: u1
-        # f0: v2.x
-        # 80: v1.x
+      - id: input_config_lmt_neg
+        type: input_config
+        if: version == 2
 
-      - id: some_attr_2
-        type: u1
-        valid: 0x3f
+      - id: input_config_lmt_stp
+        type: input_config
+        if: version == 2
 
-      - id: some_records_v2
-        size: 25
-        repeat: expr
-        repeat-expr: 7
+      - id: input_config_rps
+        type: input_config
+        if: version == 2
+
+      - id: input_config_zp
+        type: input_config
+        if: version == 2
+
+      - id: input_config_trig
+        type: input_config
         if: version == 2
 
       - id: some_records_v1
@@ -90,60 +100,90 @@ types:
         repeat-expr: 6
         if: version == 1
 
-      - id: some_record_2_v2
-        size: 10
-        if: version == 2
-
-      - id: some_record_2_v1
-        size: 6
-        if: version == 1
-
-      - id: some_record_3_v2
-        size: 21
-        if: version == 2
-
-      - id: some_record_3_v1
-        size: 9
-        if: version == 1
-
-      - type: smart_types::nulls(2)
-
-      - id: some_attr_copy
-        type: u1
-        valid: some_attr
-
-      - id: some_attr_2_copy
-        type: u1
-        valid: some_attr_2
+      - id: output_config
+        type: output_config
 
       - type: u1
-        valid: 1
 
-      - id: marker_2
+      - type: u1
+        valid: 2
+
+      # values with cm/s units are always stored as cm/s
+      # if the axis works on pulses, values are converted to cm/s first
+      - id: motor_speed_max_cm_s
+        type: f8
+
+      - id: motor_speed_min_cm_s
+        type: f8
+
+      - id: motor_speed_start_stop_cm_s
+        type: f8
+
+      - type: u1
+
+      - id: jog_speed_cm_s
+        type: f8
+
+      - id: jog_increment_cm
+        type: f8
+
+      - type: u1
+
+      - id: motor_accel_ms
         type: u4
-        valid: 0x03e8
 
-      - id: marker_2_copy
+      - id: motor_decel_ms
         type: u4
-        valid: marker_2
 
-      - id: some_record_4_v2
-        size: 28
-        if: version == 2
+      - type: u1
 
-      - id: some_record_4_v1
-        size: 20
-        if: version == 1
+      - id: jerk_time_ms
+        type: u4
 
-      - id: some_record_5_v2
-        size: 113
-        if: version == 2
+      - type: u1
 
-      - id: some_record_5_v1
-        size: 37
-        if: version == 1
+      - id: backlash_compensation_cm
+        type: f8
 
-      - type: smart_types::nulls(16)
+      - size: 14
+
+      - type: f8
+
+      - type: u4
+
+      - type: u4
+
+      - type: u4
+
+      - type: u2
+
+      - type: smart_types::unknown(12)
+
+      - id: num_profile
+        type: u4
+
+      - id: profile
+        type: profile
+        repeat: expr
+        repeat-expr: num_profile
+
+      - type: u1
+
+      - id: some_flags
+        type: u4
+        repeat: expr
+        repeat-expr: 19
+
+      - id: memory_allocation_offset
+        type: u4
+
+      - id: axis_name
+        type: smart_types::strl
+
+      - type: smart_types::unknown(8)
+
+
+
 
       - id: some_records_2
         size: 11
@@ -151,10 +191,80 @@ types:
         repeat-expr: 28
 
 
+  input_config:
+    seq:
+      - id: marker
+        type: u1
+        valid: 2
+      - id: enabled
+        type: u4
+      - type: u4
+      - id: input_bit
+        type: u4
+      - type: u4
+      - id: input_hsc
+        type: u4
+      - type: u4
+
+  output_config:
+    seq:
+      - id: marker
+        type: u1
+        valid: 1
+      - id: enabled
+        type: u4
+      - id: output_bit
+        type: u4
+      - type: u4
+      - type: u4
 
 
 
-  unknown_records_v1:
+  profile:
+    seq:
+      - id: marker
+        type: u1
+        valid: 2
+
+      - id: num_profile_step
+        type: u4
+
+      - id: profile_step
+        type: profile_step
+        repeat: expr
+        repeat-expr: num_profile_step
+
+      - id: name
+        type: smart_types::strl
+        if: num_profile_step > 0
+
+      - id: comment
+        type: smart_types::strl
+        if: num_profile_step > 0
+
+      - type: u4
+        repeat: expr
+        repeat-expr: 4
+        if: num_profile_step > 0
+
+
+  profile_step:
+    seq:
+      - id: marker
+        type: u1
+        valid: 02
+
+      - id: target_speed
+        type: f8
+
+      - id: ending_position
+        type: f8
+
+      - type: f8
+        valid: 0.0
+
+
+  axis_v1:
     seq:
       - type: u1
 
