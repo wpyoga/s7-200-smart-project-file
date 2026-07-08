@@ -11,6 +11,7 @@ seq:
   # - size: 0x0af4
   # - size: 0x0a70
   # - size: 0x0a7c
+  # - size: 0x2e525
 
   - id: marker
     type: u1
@@ -40,9 +41,9 @@ types:
       - id: index
         type: u2
 
-      - id: marker2
-        type: u2
-        valid: 0x0001
+      - type: u2
+        # valid: 0x0001
+        # sometimes 0x0040
 
       - id: hash_maybe
         type:
@@ -112,10 +113,12 @@ types:
 
       - type: smart_types::nulls(4)
 
-      - type: u4
+      - type: u1
         valid: 1
 
-      - type: smart_types::nulls(5)
+      - type: u4
+
+      - type: smart_types::nulls(4)
 
       - type: u2
         valid: 0x0101
@@ -166,6 +169,7 @@ types:
 
       - id: identifier_subtype
         type: u2
+        # should mean data type or size
 
       - id: element
         type:
@@ -175,7 +179,9 @@ types:
             0x0002: elem_offset_type(identifier_subtype)
             0x0101: elem_addr_type(identifier_subtype)
             0x0201: elem_constant_type(identifier_subtype)
+            0x0401: elem_constant_type(identifier_subtype)  # hex
             0x0501: elem_constant_type(identifier_subtype)
+            0x0601: elem_ascii_constant_type(identifier_subtype)  # ascii
             0x0701: elem_constant_type(identifier_subtype)
 
 
@@ -189,7 +195,15 @@ types:
       - id: offset
         type: u4
 
+  elem_ascii_constant_type:
+    params:
+      - id: subtype
+        type: u2
+    seq:
+      - type: smart_types::nulls(4)
 
+      - id: ascii_constant
+        type: smart_types::strl1
 
   elem_constant_type:
     params:
