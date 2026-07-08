@@ -18,7 +18,7 @@ meta:
     - pwm_config
     - td200_config
     - get_put_config
-    - unknown_data60
+    - data_log_config
     - profinet_config
     - hsc_config_2
     - unknown_data70
@@ -98,8 +98,8 @@ seq:
   - id: get_put_config
     type: get_put_config
 
-  - id: unknown_data60
-    type: unknown_data60
+  - id: data_log_config
+    type: data_log_config
 
   - id: profinet_config
     type: profinet_config

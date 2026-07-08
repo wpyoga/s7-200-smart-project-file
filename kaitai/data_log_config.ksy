@@ -1,5 +1,5 @@
 meta:
-  id: unknown_data60
+  id: data_log_config
   endian: le
   imports:
     - smart_types
