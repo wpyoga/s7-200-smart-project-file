@@ -13,10 +13,22 @@ types:
         size: len
         encoding: ASCII
 
+  # string prefixed with 1-byte length, no null terminator
   strl1:
     seq:
       - id: len
         type: u1
+      - id: contents
+        type: str
+        size: len
+        encoding: ASCII
+
+  # string with predetermined length, no null terminator
+  strn:
+    params:
+      - id: len
+        type: u1
+    seq:
       - id: contents
         type: str
         size: len
