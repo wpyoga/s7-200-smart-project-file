@@ -12,7 +12,7 @@ meta:
     - data_block
     - cpu_information
     - unknown_data10
-    - unknown_data20
+    - motion_config
     - pid_config
     - hsc_config
     - pwm_config
@@ -80,8 +80,8 @@ seq:
   - id: unknown_data10
     type: unknown_data10
 
-  - id: unknown_data20
-    type: unknown_data20
+  - id: motion_config
+    type: motion_config
 
   - id: pid_config
     type: pid_config
