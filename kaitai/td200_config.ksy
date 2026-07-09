@@ -9,6 +9,10 @@ seq:
   # - size: 0x1bd07e
   # - size: 0x5a2a4
   # - size: 0x5cf2b
+  # - size: 0x59e15
+  # - size: 0xe7fd
+  # - size: 0x12fe1
+  # - size: 0x5d2e6
 
   - type: u1
     valid: 2
@@ -64,13 +68,16 @@ types:
         repeat: expr
         repeat-expr: num_menu
 
-      - id: key_related_record
-        type: key_related_record
-        repeat: expr
-        repeat-expr: 8
-        # if: attr1 == 1
+      - id: num_keypad_info
+        type: u4
 
-      - type: u4
+      - id: keypad_info
+        type: keypad_info
+        repeat: expr
+        repeat-expr: num_keypad_info
+
+      # - type: u4
+
       - id: num_alarm
         type: u4
       - size: 10
@@ -137,13 +144,19 @@ types:
       - id: num_submenu
         type: u4
       - type: u1
+        if: num_submenu > 0
       - type: u4
+        valid: 3
 
       - type: u2
+        if: num_submenu > 0
       - type: u2
+        if: num_submenu > 0
       - type: u1
+        if: num_submenu > 0
       - id: num_line
         type: u4
+        if: num_submenu > 0
 
       - id: submenu
         type: submenu
@@ -151,6 +164,7 @@ types:
         repeat-expr: num_submenu
 
       - size: 16
+        if: num_submenu > 0
 
       - id: name
         type: smart_types::strl
@@ -192,6 +206,9 @@ types:
 
       - id: submenu_comment
         type: smart_types::strl
+
+
+
 
 
 
@@ -251,12 +268,11 @@ types:
         # 128: Bar Graph
 
 
-  key_related_record:
+  keypad_info:
     seq:
-      - type: u4
-
-      - type: u1
-        # valid: 1
+      - id: marker
+        type: u1
+        valid: 1
 
       - id: key_name
         type: smart_types::strl
@@ -264,58 +280,9 @@ types:
       - id: key_name_with_td
         type: smart_types::strl
 
-      # - type: smart_types::nulls(8)
-      - size: 8
+      - type: u4
 
-      - type: u1
-        # valid: 1
-
-      - id: key_name_full
-        type: smart_types::strl
-
-      - id: key_name_full_abbrev_with_td
-        type: smart_types::strl
-
-      - type: smart_types::nulls(4)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      - id: with_shift
+        type: u4
 
 
