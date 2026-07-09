@@ -1,5 +1,5 @@
 meta:
-  id: td200_config
+  id: td_config
   endian: le
   imports:
     - smart_types
