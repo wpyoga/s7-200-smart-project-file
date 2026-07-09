@@ -16,7 +16,7 @@ meta:
     - pid_config
     - hsc_config
     - pwm_config
-    - td200_config
+    - td_config
     - get_put_config
     - data_log_config
     - profinet_config
@@ -93,8 +93,8 @@ seq:
   - id: pwm_config
     type: pwm_config
 
-  - id: td200_config
-    type: td200_config
+  - id: td_config
+    type: td_config
 
   - id: get_put_config
     type: get_put_config
