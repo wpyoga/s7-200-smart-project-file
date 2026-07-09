@@ -1,0 +1,123 @@
+# Motion Config
+
+- some memory block
+  - 4 bytes: number of records
+    - 04 00 00 00: v2.x
+      - 715 bytes
+    - 03 00 00 00: v1.x template
+      - 562 bytes
+  - each record:
+    - 2 bytes:
+      - 04 01: v2.x
+      - 01 01: v1.x template
+    - 8 bytes null
+    - 1 byte:
+      - 02 for v2.x
+      - 01 for v1.x template
+    - 4 bytes null
+    - 2 bytes: 02 00
+    - 2 bytes: 63 6d
+    - 2 bytes: 88 13
+    - null bytes
+      - 8 bytes null for v2.x
+      - 4 bytes null for v1.x
+    - 2 bytes
+      - f0 3f for v2.x
+      - 80 3f for v1.x
+    - variable records
+      - 6x 25 repeated bytes: v2.x
+        - 1 byte: 02
+        - 4 bytes null
+        - 4 bytes: 01 00 00 00
+        - 16 bytes null
+      - 5x 21 repeated bytes: v1.x
+        - 1 byte: 01
+        - 4 bytes null
+        - 4 bytes: 01 00 00 00
+        - 12 bytes null
+    - variable record
+      - 25 bytes: v2.x
+        - 1 byte: 01
+        - 4 bytes null
+        - 4 bytes 04 00 00 00
+        - 16 bytes
+          - 2 bytes: 01 00
+          - 6 bytes null
+          - 2 bytes: 00 02
+          - 6 bytes null
+      - 21 bytes: v1.x
+        - 1 byte: 01
+        - 4 bytes null
+        - 4 bytes 04 00 00 00
+        - 12 bytes
+          - 1 byte: 01
+          - 4 bytes null
+          - 4 bytes: 06 00 00 00
+          - 1 byte: 01
+          - 2 bytes null
+    - variable block
+      - 10 bytes: v2.x
+        - 34 40 00 00
+        - 00 e0
+        - 4d 62 70 3f
+      - 6 bytes: v1.x template
+        - a0 41
+        - 6f 12 83 3b
+    - variable block
+      - 21 bytes: v2.x
+        - 8 bytes: 00 00 00 a0 99 99 c9 3f
+        - 1 byte: 02
+        - 8 bytes: 00 00 00 a0 99 99 c9 3f
+        - 4 bytes null
+      - 9 bytes: v1.x template
+        - 4 bytes: cd cc 4c 3e
+        - 1 byte: 01
+        - 4 bytes: cd cc 4c 3e
+    - 2 bytes null
+    - 3 bytes:
+      - f0 3f 01: v2.x
+      - 80 3f 01: v1.x
+    - 2x 4 bytes: e8 03 00 00
+    - variable block
+      - v2.x 28 bytes unknown, a bit repetitive, might be flags
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 02
+        - 8 bytes null
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 02
+        - 7 bytes null
+        - 1 byte: 40
+      - v1.x template
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 01
+        - 4 bytes null
+        - 1 byte: 01
+        - 4 byte null
+        - 1 byte: 01
+        - 3 bytes null
+        - 1 byte: 40
+    - variable block
+      - v2.x
+        - 3 bytes null
+        - 4 bytes: a0 99 99 c9
+        - 2 bytes: 3f 01
+        - 34 bytes unknown data
+          - sparse
+          - looks like flags
+        - 14x 4 bytes: 01 00 00 00 -> flag?
+        - 4 bytes null
+        - 4 bytes: 01 00 00 00
+        - 4 bytes null
+        - 2 bytes: 02 00
+      - v1.x template
+        - 4 bytes: cd cc 4c 3e
+        - 33 bytes unknown data
+          - sparse
+          - looks like flags
+    - 16 bytes null
+    - 28x 11 bytes
+      - 3 bytes: 02 03 40
+      - 7 bytes null

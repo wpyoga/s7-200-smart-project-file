@@ -1,0 +1,54 @@
+# PID Config
+
+- pid wizard data
+  - 1 byte: 01
+  - 4 bytes number of PID:
+    - v2.x 10 00 00 00 = 16
+    - v1.x 08 00 00 00 = 8
+  - 16x 274 bytes PID block
+    - 1 byte 03
+    - 14x 11 bytes
+      - 3 bytes: 02 03 40
+      - 8 bytes null
+    - 1 byte: 01
+    - 2 bytes null
+    - 2x 4 bytes: 80 3f 00 00
+    - 2 bytes: 20 41
+    - 4 bytes null
+    - 2 bytes: 01 00
+    - 4 bytes null
+    - 1 byte: 6c
+    - 8 bytes null
+    - 2 bytes: c8 42
+    - 8 bytes null
+    - 2 bytes: 01 00
+    - 8 bytes null
+    - 1 byte: 6c
+    - 6 bytes null
+    - 4 bytes: cd cc cc 3d
+    - 1 byte: 01
+    - 12 bytes null
+    - 4 bytes: cd cc cc 3d
+    - 4 bytes: 66 66 66 3f
+    - 1 byte: 02
+    - PID name string
+      - 2 bytes length: 09 00
+      - string: PID0_CTRL, PID1_CTRL, ...
+    - 4 bytes null
+    - 1 byte 01
+    - PID index
+      - 2x 8 bytes
+        - 1 byte index: 00, 01, 02 ...
+        - 7 bytes null
+    - 2 bytes null
+  - string:
+    - 2 bytes length: 07 00
+    - string: PID_EXE
+  - 42 bytes unknown
+    - 3x 2 bytes: 02 00
+    - 1 byte null
+    - 4 bytes: 22 00 00 00
+    - 1 byte: 08
+    - 6 bytes null
+    - 2 bytes: 01 00
+    - 22 bytes null

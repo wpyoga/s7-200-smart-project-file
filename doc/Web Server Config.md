@@ -1,0 +1,23 @@
+# Web Server Config
+
+- web server config
+  - 1 byte: 04
+  - 2 byte number of records: 02
+  - 2 records of 278 bytes
+    - 4 bytes null
+    - 4 bytes index: 00 00 00 00, 01 00 00 00
+    - 4 bytes null
+    - 4 bytes: 03 00 00 00
+    - 4 bytes: 02 00 00 00
+    - 1 byte null
+    - 2 bytes: 02 00
+    - 4 bytes: 63 6d 88 13
+    - 8 bytes null
+    - 1 byte: f0 = 240, the size of the rest of the structure? but it is 242
+    - 4 bytes: 3f 00 00 00
+    - 12 bytes null
+    - 4 bytes index: 00 00 00 00, 01 00 00 00
+    - 1 byte number of records: 06
+    - 6x 4 byte records: 01 00 00 00
+    - 197 null bytes
+  - 4 bytes: 00 00 00 1b

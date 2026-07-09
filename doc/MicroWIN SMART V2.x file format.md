@@ -160,16 +160,19 @@
 - 1 byte null
 - [CPU information](CPU%20Information.md)
 - 2 bytes null
-- project name string
-  - 2 bytes length (sometimes 00 00, then no name encoded)
-  - n bytes string
-- 2 bytes null
-- 1 byte: 01
-- 4 bytes null
-- 16 bytes hash
-  - looks like MD5
-  - not sure what to hash
 - [unknown data](Unknown%20Data.md)
+- [Motion configuration](Motion%20Config.md)
+- [PID configuration](PID%20Config.md)
+- [HSC configuration](HSC%20Config.md)
+- [PWM configuration](PWM%20Config.md)
+- [TD configuration](TD%20Config.md)
+- [Get/Put configuration](Get%20Put%20Config.md)
+- [Data Log configuration](Data%20Log%20Config.md)
+- [Profinet configuration](Profinet%20Config.md)
+- [Web Server configuration](Web%20Server%20Config.md)
+- [HSC Config #2](HSC%20Config.md)
+- [unknown data](Unknown%20Data.md)
+
 
 ## misc info & notes
 

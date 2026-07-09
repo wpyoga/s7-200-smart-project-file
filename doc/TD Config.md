@@ -1,0 +1,28 @@
+# TD Config
+
+- TD200 config
+  - 1 byte: 02
+  - 4 bytes number of records: 05 00 00 00
+  - 5x 106 byte records
+    - 2 bytes: 03 01
+    - 32 bytes: 8 uint32 flags? only 0 and 1 here, but stored as 32 bits
+      - 4 bytes: 01 00 00 00
+      - 4 bytes null
+      - 4x 4 bytes: 01 00 00 00
+      - 4 bytes null
+      - 4 bytes: 01 00 00 00
+    - 1 byte: 01
+    - string
+      - 2 bytes length: 07 00
+      - string: Chinese
+    - 1 byte: 06
+    - 4 bytes null
+    - 1 byte: 01
+    - 18 bytes null
+    - 2 bytes index: 00 00, 01 00, 02 00, ...
+    - 2 bytes null
+    - 2 bytes: 05 00
+    - 20 bytes null
+    - 2 bytes: 02 00
+    - 6 bytes null
+    - 4 bytes: 01 00 00 00
