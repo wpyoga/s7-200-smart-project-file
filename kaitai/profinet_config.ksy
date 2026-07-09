@@ -70,44 +70,55 @@ seq:
     size: 32403
   - id: idevice_config
     type: idevice_config
-  - size: 596
 
-  - id: submodule_config
-    type: submodule_config
-    repeat: expr
-    repeat-expr: 2
-    # maybe find the number previously somewhere
+  - id: precompiled_profinet_block
+    type: precompiled_profinet_block
 
 
 types:
 
-  submodule_config:
+  # looks like precompiled profinet config for the PLC
+  # this block is big-endian, matching the PLC endianness
+  # while other blocks are little-endian, matching PC endianness
+  precompiled_profinet_block:
+    meta:
+      endian: be
+    seq:
+      - size: 596
+
+      - id: precompiled_sub_block
+        type: precompiled_sub_block
+        repeat: expr
+        repeat-expr: 2
+        # todo: find this info somewhere
+
+  precompiled_sub_block:
+    meta:
+      endian: be
     seq:
       - size: 48
       - id: ip_address
         type: smart_types::ipv4_addr
-      - type: u1
       - type: u2
       - id: cpu_device_name
-        type: smart_types::strl1
-      - type: u1
+        type: smart_types::strl_be
       - id: attr
-        type: u1
-      - type: u4
-        if: attr == 0
+        type: u2
       - size: 3
+        if: attr == 0
+      - size: 2
         if: attr == 1
 
       - id: cpu_submodule_device_name
-        type: smart_types::strl1
-      - size: 438
-      - type: smart_types::strl1
-      - size: 10
-      - type: smart_types::strl1
-      - size: 7
-      - type: smart_types::strl1
-      - size: 7
-      - type: smart_types::strl1
+        type: smart_types::strl_be
+      - size: 437
+      - type: smart_types::strl_be
+      - size: 9
+      - type: smart_types::strl_be
+      - size: 6
+      - type: smart_types::strl_be
+      - size: 6
+      - type: smart_types::strl_be
       - size: 27
       - id: plant_designation
         type: smart_types::strn(32)
@@ -119,10 +130,10 @@ types:
       - size: 10
       - id: additional_information
         type: smart_types::strn(54)
-      - size: 17
+      - size: 16
       - id: name_len
         type: u2
-      - type: u1
+      - type: u2
       - id: dev_name
         size: name_len
       - size: 18
