@@ -3,14 +3,12 @@
 - profinet wizard
   - 1 byte: 01
   - 1 byte: 01
-  - 2 bytes: start up time (ms)
+  - 4 bytes: start up time (ms)
     - 10 27 = 10000
-  - 2 bytes null
-  - 2 bytes: profinet device configuration bit flag
-    - not configured: 00 00
-    - controller: 02 00
-    - i-device: 04 00
-  - 2 bytes null
+  - 4 bytes: profinet device configuration bit flag
+    - not configured: 00 00 00 00
+    - controller: 02 00 00 00
+    - i-device: 04 00 00 00
   - 4 bytes: parameter assignment of profinet interface by higher-level IO controller
     - 01 00 00 00: not enabled
     - 00 00 00 00: enabled
@@ -35,10 +33,12 @@
       - 1 byte: ???
         - 02 -> controller?
         - 03 -> i-device?
-      - 4 bytes null
+        - sometimes also 1
+      - 4 bytes usually null for i-device config
+        - but not always null esp. for controller config
       - 1 byte: number of transfer areas
       - transfer areas
-        - 1 byte null
+        - 1 byte: null
         - 4 bytes: subslot
         - 4 bytes: length
         - transfer area name
