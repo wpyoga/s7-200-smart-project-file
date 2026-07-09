@@ -6,6 +6,7 @@ meta:
 
 seq:
   # - size: 0x8dff0
+  # - size: 0x5ea5e
 
   - type: u1
     valid: 1
@@ -14,87 +15,77 @@ seq:
     type: u4
     valid: 0x83
 
-  - id: num_record
+  - id: num_data_log
     type: u4
 
-  - id: unknown_record
-    type: unknown_record
-    size: 36
+  - id: data_log_data
+    type: data_log_data
+    # size: 36
     repeat: expr
-    repeat-expr: num_record
+    repeat-expr: num_data_log
 
 
 types:
-  unknown_record:
+  data_log_data:
     seq:
-      - type: u1
+      - id: marker
+        type: u1
         valid: 3
 
-      - type: smart_types::nulls(4)
+      - id: enabled
+        type: u4
 
       - id: index
         type: u4
 
-      - type: smart_types::nulls(6)
+      - id: memory_allocation_offset
+        type: u4
 
-      - type: u1
+      - id: name
+        type: smart_types::strl
+
+      - id: flag
+        type: u1
         valid: 1
 
-      - type: u4
+      - id: flag_2
+        type: u4
         valid: 1
 
-      - type: u4
+      - id: flag_3
+        type: u4
         valid: 1
 
-      - type: u4
+      - id: flag_4
+        type: u4
         valid: 0
 
-      - type: u2
-        valid: 0x03e8
+      - id: num_max_records
+        type: u4
 
-      - type: smart_types::nulls(6)
+      - id: num_definition
+        type: u4
 
-
-
-
-
-
-
-
+      - id: definition
+        type: definition
+        repeat: expr
+        repeat-expr: num_definition
 
 
+  definition:
+    seq:
+      - id: marker
+        type: u1
 
+      - id: name
+        type: smart_types::strl
 
+      - id: data_type
+        type: u4
+        # 04 00 00 00: byte
+        # 00 10 00 00: real
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      - id: comment
+        type: smart_types::strl
 
 
