@@ -67,10 +67,79 @@ seq:
   #       3: idevice_config
 
   - type: controller_config_block
+    size: 32403
+  - id: idevice_config
+    type: idevice_config
+  - size: 596
 
+  - id: submodule_config
+    type: submodule_config
+    repeat: expr
+    repeat-expr: 2
+    # maybe find the number previously somewhere
 
 
 types:
+
+  submodule_config:
+    seq:
+      - size: 48
+      - id: ip_address
+        type: smart_types::ipv4_addr
+      - type: u1
+      - type: u2
+      - id: cpu_device_name
+        type: smart_types::strl1
+      - type: u1
+      - id: attr
+        type: u1
+      - type: u4
+        if: attr == 0
+      - size: 3
+        if: attr == 1
+
+      - id: cpu_submodule_device_name
+        type: smart_types::strl1
+      - size: 438
+      - type: smart_types::strl1
+      - size: 10
+      - type: smart_types::strl1
+      - size: 7
+      - type: smart_types::strl1
+      - size: 7
+      - type: smart_types::strl1
+      - size: 27
+      - id: plant_designation
+        type: smart_types::strn(32)
+      - id: location_designation
+        type: smart_types::strn(22)
+      - size: 26
+      - id: installation_date
+        type: smart_types::strn(32)
+      - size: 10
+      - id: additional_information
+        type: smart_types::strn(54)
+      - size: 17
+      - id: name_len
+        type: u2
+      - type: u1
+      - id: dev_name
+        size: name_len
+      - size: 18
+      - id: ip_address_2
+        type: smart_types::ipv4_addr
+      - id: netmask
+        type: smart_types::ipv4_addr
+      - id: ip_address_3
+        type: smart_types::ipv4_addr
+      - size: 19
+
+
+
+
+
+
+
   controller_config_block:
     seq:
       - id: num_controller
@@ -222,17 +291,50 @@ types:
 
   idevice_config:
     seq:
-      - type: u1
+      - type: smart_types::nulls(4)
+
+      - id: num_transfer_area
+        type: u1
+
+      - id: transfer_area
+        type: transfer_area
+        repeat: expr
+        repeat-expr: num_transfer_area
+
+      - type: smart_types::strl
+      - type: smart_types::strl
 
 
 
 
+  transfer_area:
+    seq:
+      - id: marker
+        type: u1
+        valid: 0
 
+      - id: subslot
+        type: u4
 
+      - id: length
+        type: u4
 
+      - id: name
+        type: smart_types::strl
 
+      - id: comment
+        type: smart_types::strl
 
+      - id: marker_2
+        size: 3
 
+      - id: type
+        type: u4
+        # 1: input
+        # 2: output
+
+      - id: offset
+        type: u4
 
 
 
