@@ -78,7 +78,11 @@ seq:
 
   - id: precompiled_profinet_block
     type: precompiled_profinet_block
+    if: profinet_device_config > 0
 
+  # TODO: figure out the actual logic
+  - type: smart_types::nulls(1)
+    if: profinet_device_config == 0
 
 types:
 
