@@ -85,8 +85,8 @@ types:
   # this block is big-endian, matching the PLC endianness
   # while other blocks are little-endian, matching PC endianness
   precompiled_profinet_block:
-    meta:
-      endian: be
+    # meta:
+    #   endian: be
     seq:
       - size: 596
 
@@ -95,12 +95,27 @@ types:
         repeat: expr
         repeat-expr: 2
         # todo: find this info somewhere
+        # this is the number of devices
+      - type: smart_types::null1
 
   precompiled_sub_block:
     meta:
       endian: be
     seq:
-      - size: 48
+      - type: u2
+      - type: u2
+      - id: block_len
+        type: u2le
+      - id: precompiled_sub_data
+        type: precompiled_sub_data
+        size: block_len
+      - type: smart_types::null1
+
+  precompiled_sub_data:
+    meta:
+      endian: be
+    seq:
+      - size: 42
       - id: ip_address
         type: smart_types::ipv4_addr
       - type: u2
@@ -151,36 +166,34 @@ types:
         type: u2
       - id: size_2
         type: u2
-      - type: smart_types::strl_be
-      - size: 27
-      - id: plant_designation
-        type: smart_types::strn(32)
-      - id: location_designation
-        type: smart_types::strn(22)
-      - size: 26
-      - id: installation_date
-        type: smart_types::strn(32)
-      - size: 10
-      - id: additional_information
-        type: smart_types::strn(54)
-      - size: 16
-      - id: name_len
-        type: u2
-      - type: u2
-      - id: dev_name
-        size: name_len
-      - size: 18
-      - id: ip_address_2
-        type: smart_types::ipv4_addr
-      - id: netmask
-        type: smart_types::ipv4_addr
-      - id: ip_address_3
-        type: smart_types::ipv4_addr
-      - size: 19
-
-
-
-
+      # TODO: figure out the structure
+      # comment out for now
+      # - type: smart_types::strl_be
+      # - size: 27
+      # - id: plant_designation
+      #   type: smart_types::strn(32)
+      # - id: location_designation
+      #   type: smart_types::strn(22)
+      # - size: 26
+      # - id: installation_date
+      #   type: smart_types::strn(32)
+      # - size: 10
+      # - id: additional_information
+      #   type: smart_types::strn(54)
+      # - size: 16
+      # - id: name_len
+      #   type: u2
+      # - type: u2
+      # - id: dev_name
+      #   size: name_len
+      # - size: 18
+      # - id: ip_address_2
+      #   type: smart_types::ipv4_addr
+      # - id: netmask
+      #   type: smart_types::ipv4_addr
+      # - id: ip_address_3
+      #   type: smart_types::ipv4_addr
+      # - size: 18
 
 
 
