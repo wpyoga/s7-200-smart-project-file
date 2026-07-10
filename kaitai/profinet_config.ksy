@@ -29,6 +29,7 @@ seq:
     # 00 00 00 00: not configured
     # 02 00 00 00: controller
     # 04 00 00 00: i-device
+    # 08 00 00 00: controller & i-device
 
   - id: parameter_assignment_by_higher_level_io_controller
     type: u4
