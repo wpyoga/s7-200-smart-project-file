@@ -22,6 +22,7 @@ meta:
     - profinet_config
     - web_server_config
     - motion_axis_group_config
+    - pid_config_2
     - hsc_config_2
     - unknown_data70
 
@@ -112,13 +113,12 @@ seq:
   - id: motion_axis_group_config
     type: motion_axis_group_config
 
+  - id: pid_config_2
+    type: pid_config_2
+
   - id: hsc_config_2
     type: hsc_config_2
 
   - id: unknown_data70
     type: unknown_data70
-
-
-
-
 
