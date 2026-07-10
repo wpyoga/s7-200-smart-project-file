@@ -21,6 +21,7 @@ meta:
     - data_log_config
     - profinet_config
     - web_server_config
+    - motion_axis_group_config
     - hsc_config_2
     - unknown_data70
 
@@ -107,6 +108,9 @@ seq:
 
   - id: web_server_config
     type: web_server_config
+
+  - id: motion_axis_group_config
+    type: motion_axis_group_config
 
   - id: hsc_config_2
     type: hsc_config_2
