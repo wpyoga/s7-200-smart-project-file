@@ -70,11 +70,13 @@ seq:
     type: controller_config_block
     # size: 32403
 
-  # - id: idevice_config
-  #   type: idevice_config
+  - type: smart_types::nulls(1)
 
-  # - id: precompiled_profinet_block
-  #   type: precompiled_profinet_block
+  - id: idevice_config
+    type: idevice_config
+
+  - id: precompiled_profinet_block
+    type: precompiled_profinet_block
 
 
 types:
@@ -190,11 +192,12 @@ types:
         type: controller_config
         repeat: expr
         # repeat-expr: num_controller
-        repeat-expr: 1
+        repeat-expr: 2
 
   controller_config:
     seq:
-      - type: u4
+      - id: maybe_index
+        type: u4
       - type: u1
       - id: ip_address
         type: smart_types::ipv4_addr
@@ -231,10 +234,12 @@ types:
       - type: smart_types::strl
       - type: smart_types::strl
       - type: smart_types::strl
-      - type: u1
+      - id: maybe_marker_2
+        type: u1
       - type: smart_types::strl
       - type: smart_types::strl
-      - type: u1
+      - id: maybe_marker_3
+        type: u1
       - type: smart_types::strl
       - type: smart_types::strl
       - type: u1
@@ -277,19 +282,10 @@ types:
       - type: smart_types::strl
       - type: u2
       - type: u4
-      - type: u1
-      - type: smart_types::strl
+
+      - type: ndict(1, 2)
       - type: u2
-      - type: smart_types::strl
-      - type: u2
-      - type: smart_types::strl
-      - type: u2
-      - type: smart_types::strl
-      - type: u2
-      - type: smart_types::strl
-      - type: u2
-      - type: smart_types::strl
-      - type: u4
+
       - type: smart_types::strl
       - type: smart_types::strl
       - type: u2
@@ -302,13 +298,9 @@ types:
       - type: smart_types::strl
       - type: u1
       - type: u1
-      - type: u1
-      - type: smart_types::strl
-      - type: u2
-      - type: smart_types::strl
-      - type: smart_types::strl
-      - type: smart_types::strl
-      - type: smart_types::strl
+
+
+      - type: ndict(1, 0)
       - size: 11
       - id: comment_2
         type: smart_types::strl
@@ -323,31 +315,15 @@ types:
       - type: smart_types::strl
       - size: 44
 
-      - id: count_2
-        type: u1
-      - type: dict(count_2, 0)
-
-      - id: count_3
-        type: u1
-      - type: dict(count_3, 4)
-
-      - id: count_4
-        type: u1
-      - type: dict(count_4, 1)
+      - type: ndict(1, 0)
+      - type: ndict(1, 4)
+      - type: ndict(1, 1)
 
       - type: u1
 
-      - id: count_5
-        type: u1
-      - type: list(count_5, 0)
-
-      - id: count_6
-        type: u1
-      - type: dict(count_6, 0)
-
-      - id: count_7
-        type: u1
-      - type: dict(count_7, 0)
+      - type: nlist(1, 0)
+      - type: ndict(1, 0)
+      - type: ndict(1, 0)
 
       - type: u2
 
@@ -369,97 +345,178 @@ types:
       - type: u2
       - type: u2
 
-      - id: count_8
-        type: u1
-      - type: dict(count_8, 0)
+      - type: ndict(1, 0)
 
       - type: u1
 
-      - id: count_9
-        type: u1
-      - type: dict(count_9, 0)
+      - type: ndict(1, 0)
 
       - type: u4
       - type: u4
 
       - type: u1
 
-      - id: count_10
-        type: u1
-      - type: dict(count_10, 0)
-
-      - id: count_11
-        type: u1
-      - type: dict(count_11, 0)
-
-      - id: count_12
-        type: u1
-      - type: dict(count_12, 1)
-
-      - id: count_13
-        type: u1
-      - type: dict(count_13, 2)
+      - type: ndict(1, 0)
+      - type: ndict(1, 0)
+      - type: ndict(1, 1)
+      - type: ndict(1, 2)
 
       - type: u1
       - type: u4
       - type: u4
 
-      - id: count_14
-        type: u1
-      - type: dict(count_14, 0)
-
-      - id: count_15
-        type: u1
-      - type: dict(count_15, 4)
+      - type: ndict(1, 0)
+      - type: ndict(1, 4)
 
       - type: u2
 
-      - id: count_16
+      - type: ndict(1, 0)
+      - type: ndict(1, 2)
+      - type: ndict(1, 4)
+
+      - size: 3
+
+      - type: ndict(1, 0)
+
+      - size: 56
+
+      - type: ndict(2, 0)
+
+      - id: count_21
+        type: u2
+      - type: dict(count_21, 256)
+
+      - id: count_22
+        type: u2
+      - type: dict(count_22, 256)
+
+      - type: ndict(2, 1)
+      - type: ndict(2, 0)
+      - type: ndict(2, 2)
+      - type: ndict(2, 2)
+
+      - size: 32
+
+      - type: ndict(2, 0)
+
+      - size: 8
+
+      - type: smart_types::strl
+      - type: smart_types::strl
+
+      - size: 5
+
+      - type: ndict(1, 0)
+      - type: ndict(1, 1)
+      - type: ndict(1, 2)
+      - type: ndict(1, 4)
+
+      - size: 68
+
+      - id: submodule_1_subslot
+        type: submodule
+      - id: submodule_2_subslot
+        type: submodule
+      - id: submodule_3_subslot
+        type: submodule
+      - id: submodule_4_subslot
+        type: submodule
+      - id: submodule_5_subslot
+        type: submodule
+      - id: submodule_6_subslot
+        type: submodule
+      - id: submodule_7_subslot
+        type: submodule
+      - id: submodule_8_subslot
+        type: submodule
+
+      - size: 36
+
+
+
+
+  submodule:
+    seq:
+      - id: subslot
+        type: u4
+      - id: present
         type: u1
-      - type: dict(count_16, 0)
+      - id: submodule_config
+        type: submodule_config
+        if: present == 1
 
-      - id: count_17
-        type: u1
-      - type: dict(count_17, 2)
+  submodule_config:
+    seq:
+      - size: 5
+      - id: subslot
+        type: u4
+        valid: _parent.subslot
+      - size: 23
 
+      - type: smart_types::strl
+      - type: smart_types::strl
+      - type: u1
+      - type: smart_types::strl
+      - type: smart_types::strl
+      - size: 20
+      - id: pni_start_addr_str
+        type: smart_types::strl
+      - size: 8
+      - id: input_size_bytes
+        type: u2
 
+      # - id: pnq_start_addr_str
+      #   type: smart_types::strl
+      # - size: 8
+      # - id: output_size_bytes
+      #   type: u2
+      - id: submodule_1_pnq_start_addr_str
+        type: smart_types::strl
+      - size: 8
+        # TODO: refactor this logic
+        if: submodule_1_pnq_start_addr_str.len > 0
+      - id: submodule_1_output_size_bytes
+        type: u2
+        if: submodule_1_pnq_start_addr_str.len > 0
 
+      - type: u2
+        # TODO: refactor this logic
+        if: submodule_1_pnq_start_addr_str.len > 0
+      - type: u1
 
+        # "OctetString"
+      - type: smart_types::strl
 
+      - id: count_25
+        type: u2
+      - type: u1
+      - type: smart_types::strl
+      - type: u2
 
+      - id: count_26
+        type: u2
+      - type: u1
+      - type: dict(count_26,4)
 
+      - size: 8
+      - size: 12
+        # TODO: refactor this logic
+        if: submodule_1_pnq_start_addr_str.len == 0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      - type: nlist(1,0)
+      - type: u2
+      - type: smart_types::strl
+      - type: u2
+      - type: ndict(1,4)
+      - type: ndict(1,1)
+      - type: u2
+      - type: ndict(1,0)
+      - type: u2
 
 
 
   idevice_config:
     seq:
-      - type: smart_types::nulls(4)
-
       - id: num_transfer_area
         type: u1
 
@@ -505,7 +562,30 @@ types:
 
 
 
-
+  nlist:
+    params:
+      - id: count_type
+        type: u4
+      - id: entry_type
+        type: u4
+    seq:
+      - id: count
+        type:
+          switch-on: count_type
+          cases:
+            1: u1
+            2: u2
+            4: u4
+      - id: entries
+        type:
+          switch-on: entry_type
+          cases:
+            0: smart_types::strl
+            1: u1
+            2: u2
+            4: u4
+        repeat: expr
+        repeat-expr: count
 
   list:
     params:
@@ -525,6 +605,60 @@ types:
         repeat: expr
         repeat-expr: len
 
+  ndict0:
+    params:
+      - id: count_type
+        type: u4
+      - id: num_pre_null
+        type: u4
+      - id: entry_type
+        type: u4
+    seq:
+      - id: count
+        type:
+          switch-on: count_type
+          cases:
+            1: u1
+            2: u2
+            4: u4
+      - type: smart_types::nulls(num_pre_null)
+      - id: entries
+        type:
+          switch-on: entry_type
+          cases:
+            0: entry_str_str
+            1: entry_str_u1
+            2: entry_str_u2
+            4: entry_str_u4
+            256: entry_u2_str
+        repeat: expr
+        repeat-expr: count
+
+  ndict:
+    params:
+      - id: count_type
+        type: u4
+      - id: entry_type
+        type: u4
+    seq:
+      - id: count
+        type:
+          switch-on: count_type
+          cases:
+            1: u1
+            2: u2
+            4: u4
+      - id: entries
+        type:
+          switch-on: entry_type
+          cases:
+            0: entry_str_str
+            1: entry_str_u1
+            2: entry_str_u2
+            4: entry_str_u4
+            256: entry_u2_str
+        repeat: expr
+        repeat-expr: count
 
   dict:
     params:
@@ -577,9 +711,14 @@ types:
     seq:
       - id: label
         type: u2
+      - id: strlen
+        type: u2
       - id: value
-        type: smart_types::strl
-
+        type: str
+        size: strlen
+        encoding: gbk
+        # try this for now
+        # type: smart_types::strl
 
 
 
