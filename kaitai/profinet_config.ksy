@@ -85,10 +85,24 @@ types:
   # this block is big-endian, matching the PLC endianness
   # while other blocks are little-endian, matching PC endianness
   precompiled_profinet_block:
-    # meta:
-    #   endian: be
+    meta:
+      endian: be
     seq:
-      - size: 596
+      # - size: 596
+
+      - size: 42
+      - id: start_up_time_ms
+        type: u2
+      - size: 91
+
+      - type: u2
+      - type: u2
+      - id: block_len
+        type: u2le
+
+      - size: block_len
+
+      - size: 5
 
       - id: precompiled_sub_block
         type: precompiled_sub_block
@@ -150,23 +164,23 @@ types:
       - size: 18
 
 
-      - type: smart_types::strl_be
-      - size: 9
-      - type: smart_types::strl_be
-      - id: subslot_1
-        type: u2
-      - id: flag_1
-        type: u2
-      - id: size_1
-        type: u2
-      - type: smart_types::strl_be
-      - id: subslot_2
-        type: u2
-      - id: flag_2
-        type: u2
-      - id: size_2
-        type: u2
       # TODO: figure out the structure
+      # - type: smart_types::strl_be
+      # - size: 9
+      # - type: smart_types::strl_be
+      # - id: subslot_1
+      #   type: u2
+      # - id: flag_1
+      #   type: u2
+      # - id: size_1
+      #   type: u2
+      # - type: smart_types::strl_be
+      # - id: subslot_2
+      #   type: u2
+      # - id: flag_2
+      #   type: u2
+      # - id: size_2
+      #   type: u2
       # comment out for now
       # - type: smart_types::strl_be
       # - size: 27
