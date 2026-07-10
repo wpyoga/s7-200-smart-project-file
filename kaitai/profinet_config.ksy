@@ -90,7 +90,7 @@ types:
     seq:
       # - size: 596
 
-      - size: 42
+      - size: 40
       - id: start_up_time_ms
         type: u2
       - size: 91
@@ -538,7 +538,8 @@ types:
       - type: ndict(1,1)
       - type: u2
       - type: ndict(1,0)
-      - type: u2
+      - type: ndict(1,0)
+      - type: ndict(1,0)
 
 
 
@@ -553,10 +554,11 @@ types:
         repeat-expr: num_transfer_area
 
       - type: smart_types::strl
+        if: num_transfer_area > 0
       - type: smart_types::strl
-
-
-
+        if: num_transfer_area > 0
+      - type: smart_types::strl
+        if: num_transfer_area > 0
 
   transfer_area:
     seq:
