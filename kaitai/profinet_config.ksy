@@ -93,8 +93,7 @@ types:
     meta:
       endian: be
     seq:
-      # - size: 596
-
+      # looks like some kind of header or preamble
       - size: 40
       - id: start_up_time_ms
         type: u2
@@ -107,12 +106,15 @@ types:
 
       - size: block_len
 
-      - size: 5
+      - type: u2
+      - id: num_sub_block
+        type: u2le
+      - type: smart_types::null1
 
       - id: precompiled_sub_block
         type: precompiled_sub_block
         repeat: expr
-        repeat-expr: 2
+        repeat-expr: num_sub_block
         # todo: find this info somewhere
         # this is the number of devices
       - type: smart_types::null1
@@ -218,13 +220,13 @@ types:
 
   controller_config_block:
     seq:
-      - id: num_controller
+      - id: num_controller_device
         type: u1
       - id: controller_config
         type: controller_config
         repeat: expr
-        # repeat-expr: num_controller
-        repeat-expr: 2
+        repeat-expr: num_controller_device
+        # repeat-expr: 2
 
   controller_config:
     seq:
