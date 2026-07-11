@@ -14,7 +14,7 @@ Format description:
 
 - 1 byte version
   - 08: R02.04.00.00 & R03.01.00.00
-  - 07: R01.00.00.00
+  - 07: R01.00.00.00 & MWP
 - 2 bytes: 88 13 (5000)
 - 2 bytes null
 - 2 bytes data page index (0-based)
