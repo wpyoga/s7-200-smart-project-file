@@ -47,6 +47,12 @@ seq:
 
   - id: system_block
     type: system_block
+    if: preamble.editor_version > 0x10
+
+  - size: 1218
+    # MWP system block seems to be fixed-length
+    # padding for now since we haven't deciphered it yet
+    if: preamble.editor_version == 0x10
 
   - type: u1
     # this is 1 for R02.04.00.00 and R03.01.00.00

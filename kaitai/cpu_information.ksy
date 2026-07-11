@@ -7,6 +7,7 @@ meta:
 seq:
   # - size: 0x8be33
   # - size: 0xc579
+  # - size: 0xb284
 
   - type: smart_types::null1
 
@@ -105,6 +106,7 @@ types:
 
       - id: cpu_attr3
         type: u4
+        # 06 db 00 00: MWP (but the following attrs differ)
         # 06 db 00 01: v2.x v1.x
         # 06 db 06 db: ST32
 
