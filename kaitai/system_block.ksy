@@ -290,6 +290,7 @@ types:
             'cpu_series::sr': cpu_io
             'cpu_series::st_g2': cpu_io_g2
             'cpu_series::cr_s': cpu_io
+            'cpu_series::cr': cpu_io
 
   cpu_io:
     seq:
@@ -503,6 +504,7 @@ enums:
     0x01: sr
     0x20: st_g2
     0x81: cr_s
+    0x80: cr
 
   cpu_io:
     0x02: xx20

@@ -6,6 +6,7 @@ meta:
 
 seq:
   # - size: 0x8be33
+  # - size: 0xc579
 
   - type: smart_types::null1
 
@@ -36,12 +37,14 @@ types:
 
       - id: cpu_family
         size: 6
-        # 00 22 00 43 03 fc: ST / SR
+        # 00 22 00 43 03 fc: ST / SR but also sometimes CR40
         # 00 00 00 00 00 00: CR / CRs
 
       - id: cpu_family2
         size: 6
-        valid: cpu_family
+        # valid: cpu_family
+        # this valid condition is not always met
+        # TODO: investigate
 
       - id: cpu_ver
         type: u2
