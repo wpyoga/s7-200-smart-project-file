@@ -12,6 +12,7 @@ seq:
   # - size: 0x0a70
   # - size: 0x0a7c
   # - size: 0x2e525
+  # - size: 0x54006
 
   - id: marker
     type: u1
@@ -267,15 +268,20 @@ types:
 
       - id: aux_type
         type: u2
+        if: index != 0xffff
 
       - type: u2
+        if: index != 0xffff
 
       - type: u2
+        if: index != 0xffff
 
       - type: smart_types::null1
+        if: index != 0xffff
 
       - id: comment
         type: smart_types::strl
+        if: index != 0xffff
 
 
 

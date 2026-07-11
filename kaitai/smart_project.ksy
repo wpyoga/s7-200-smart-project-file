@@ -106,18 +106,23 @@ seq:
 
   - id: profinet_config
     type: profinet_config
+    if: preamble.editor_version > 0x18
 
   - id: web_server_config
     type: web_server_config
+    if: preamble.editor_version > 0x19
 
   - id: motion_axis_group_config
     type: motion_axis_group_config
+    if: preamble.editor_version > 0x1a
 
   - id: pid_config_2
     type: pid_config_2
+    if: preamble.editor_version > 0x1a
 
   - id: hsc_config_2
     type: hsc_config_2
+    if: preamble.editor_version > 0x1b
 
   - id: unknown_data70
     type: unknown_data70
