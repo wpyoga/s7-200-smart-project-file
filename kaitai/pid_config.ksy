@@ -7,6 +7,8 @@ meta:
 seq:
   # - size: 0x8ca8b
   # - size: 0x43380
+  # - size: 0x58826
+  # - size: 0x58c75
 
   - type: u1
     valid: 1
@@ -79,13 +81,17 @@ types:
       - id: range_high
         type: u4
 
-      - type: f4
+      - type: u4
+      - id: digital_cycle_time
+        type: f4
 
-      - type: f4
       - type: u1
-      - type: u4
-      - type: u4
-      - type: u4
+      - id: enable_alarm_pv_low
+        type: u4
+      - id: enable_alarm_pv_high
+        type: u4
+      - id: enable_alarm_analog_input_error
+        type: u4
       - id: alarm_pv_low
         type: f4
       - id: alarm_pv_high
@@ -94,11 +100,16 @@ types:
       - id: pid_init_pou_name
         type: smart_types::strl
 
-      - type: u4
-      - type: u4
+      - id: maybe_add_manual_control
+        type: u4
       - type: u1
-      - type: u4
-      - type: u4
+      - id: index
+        type: u4
+      - id: enabled
+        type: u4
+      - id: index_copy
+        type: u4
+        valid: index
       - id: memory_allocation_offset
         type: u4
 
