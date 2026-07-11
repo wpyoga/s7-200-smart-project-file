@@ -6,6 +6,8 @@ meta:
 
 seq:
   # - size: 0x62f89
+  # - size: 0x427a4
+  # - size: 0xc5e5
 
   - id: marker
     type: u1
@@ -14,11 +16,22 @@ seq:
   - type: u2
     valid: 2
 
-  - size: 96
+  - type: u2
+
+  - id: marker_3
+    type: u2
+
+  - size: 92
+    if: marker_3 == 1
+
+  - size: 11
+    if: marker_3 == 0
 
   - id: marker_2
-    type: u2
+    type: u1
     valid: 0x1b
+
+  - type: u1
 
   - type: u1
     valid: 2
@@ -30,7 +43,7 @@ seq:
     type: pid
     repeat: expr
     repeat-expr: num_pid
-    size: 347
+    # size: 347
 
   - type: smart_types::nulls(100)
 
