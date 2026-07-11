@@ -13,6 +13,16 @@ types:
         size: len
         encoding: ASCII
 
+  # string prefixed with 2-byte big endian length, no null terminator
+  strl_be:
+    seq:
+      - id: len
+        type: u2be
+      - id: contents
+        type: str
+        size: len
+        encoding: ASCII
+
   # string prefixed with 1-byte length, no null terminator
   strl1:
     seq:
