@@ -13,6 +13,8 @@ seq:
   # - size: 0x0a7c
   # - size: 0x2e525
   # - size: 0x54006
+  # - size: 0xd19a
+  # - size: 0xb62c
 
   - id: marker
     type: u1
@@ -112,7 +114,9 @@ types:
         # 1: normal assignment
         # 2: assignment for undefined memory type
 
-      - type: smart_types::nulls(4)
+      # - type: smart_types::nulls(4)
+      # sometimes when row is invalid, this value is garbage
+      - type: u4
 
       - type: u1
         valid: 1
@@ -167,10 +171,27 @@ types:
 
       - id: identifier_type
         type: u2
+        # 01 00: / world
+        # 01 01: 44 251 250 253 254 1023 65535 99999
+        # 01 04: 16#FF 16#FFFF
+        # 01 05: 2#11
+        # 01 06: 'abcdefghijkl' 'abcd'
+        # 01 08: "abcd"
+        # 01 07: 3.14
+        # 02 00: VB333 VW2222 VD2 V1 VB254 VW254 VD254
 
       - id: identifier_subtype
         type: u2
         # should mean data type or size
+        # 01 00: / world
+        # 02 01: 16#FF 2#11 44 251 250 253 254
+        # 04 01: 16#FFFF 1023 65535
+        # 08 01: 3.14 99999
+        # 10 01: 'abcdefghijkl' 'abcd' "abcd"
+        # 02 10: VB333 VB254
+        # 04 10: VW2222 VW254
+        # 08 10: VD2 VD254
+        # 40 10: V1
 
       - id: element
         type:
@@ -184,6 +205,7 @@ types:
             0x0501: elem_constant_type(identifier_subtype)
             0x0601: elem_ascii_constant_type(identifier_subtype)  # ascii
             0x0701: elem_constant_type(identifier_subtype)
+            0x0801: elem_ascii_constant_type(identifier_subtype)
 
 
   elem_offset_type:
@@ -252,9 +274,7 @@ types:
 
 
 
-
-
-
+  # MAYBE: rename to data_page_comment
   data_page_aux:
     params:
       - id: version
@@ -269,9 +289,23 @@ types:
       - id: aux_type
         type: u2
         if: index != 0xffff
+        # 02 01: row contains only comment starting at column 0
+        # 02 07: row does not contain comment, or empty row
+        # 02 02: row contains comment at column 35
+
 
       - type: u2
         if: index != 0xffff
+        # MAYBE: starting column of comment
+        # OR: length of valid data
+        #  0: row contains only comment at column 0
+        #  3: row contains only comment at column 35
+        #  7: row invalid, invalid element at column 7
+        # 10: valid assignment row without comment, row length 10
+        # 11: valid assignment row without comment, row length 11
+        # 20: valid assignment row without comment, row length 20
+        # 35: valid assignment row with comment (at column 35)
+        # 45: valid assignment row without comment, row length 45
 
       - type: u2
         if: index != 0xffff
