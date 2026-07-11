@@ -15,6 +15,8 @@ seq:
   # - size: 0x54006
   # - size: 0xd19a
   # - size: 0xb62c
+  # - size: 0xb173
+  # - size: 0x641b
 
   - id: marker
     type: u1
@@ -34,6 +36,8 @@ types:
     seq:
       - id: version
         type: u1
+        # 08: R02.04.00.00 & R03.01.00.00
+        # 07: R01.00.00.00 & MWP
 
       - id: marker
         type: u2
@@ -72,6 +76,13 @@ types:
           cases:
             8: protection_v2
             7: protection_v1
+        if: version_again > 2
+
+      - type: smart_types::nulls(2)
+        if: version_again == 2
+        # TODO: figure out the exact mechanism here
+        # was version_again some kind of sub-version?
+        # obviously we cannot rely on version == 7
 
       - id: num_rows
         type: u2
@@ -81,22 +92,22 @@ types:
         repeat: expr
         repeat-expr: num_rows
 
-      - id: aux_version
+      - id: comment_version
         type: u1
 
-      - id: num_rows_aux
+      - id: num_rows_comment
         type: u2
 
-      - id: data_page_aux
-        type: data_page_aux(aux_version)
+      - id: data_page_comment
+        type: data_page_comment(comment_version)
         repeat: expr
-        repeat-expr: num_rows_aux
+        repeat-expr: num_rows_comment
 
-      - id: aux2_len
+      - id: aux_len
         type: u2
 
-      - id: unknown_aux2
-        size: aux2_len
+      - id: unknown_aux
+        size: aux_len
 
 
   data_page_row:
@@ -114,13 +125,15 @@ types:
         # 1: normal assignment
         # 2: assignment for undefined memory type
 
-      # - type: smart_types::nulls(4)
       # sometimes when row is invalid, this value is garbage
+      # otherwise it is usually null
       - type: u4
 
       - type: u1
         valid: 1
 
+      # sometimes when row is empty, this value is garbage
+      # otherwise it is usually null
       - type: u4
 
       - type: smart_types::nulls(4)
@@ -275,7 +288,7 @@ types:
 
 
   # MAYBE: rename to data_page_comment
-  data_page_aux:
+  data_page_comment:
     params:
       - id: version
         type: u1
