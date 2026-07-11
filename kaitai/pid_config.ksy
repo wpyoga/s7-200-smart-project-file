@@ -73,7 +73,10 @@ types:
 
       - type: smart_types::nulls(4)
 
-      - size: 9
+      - id: alarm_analog_input_module_position
+        type: u1
+
+      - size: 8
 
       - id: range_low
         type: u4
