@@ -60,8 +60,13 @@ seq:
   - id: pulse_catch_bits
     type: pulse_catch_bits
 
-  - id: unknown_block_2
-    type: unknown_block_2
+  - type: u1
+    valid: 1
+
+  - id: em_config
+    type: em_config
+    repeat: expr
+    repeat-expr: 7
 
   - type: u1
     valid: 1
@@ -89,17 +94,6 @@ seq:
 
   - id: disable_edit_in_run
     type: u4
-
-
-
-
-
-
-
-
-
-
-
 
 
 types:
@@ -214,21 +208,21 @@ types:
         valid:
           any-of: [1, 0]
 
-  unknown_block_2:
-    seq:
-      - type: u1
-        valid: 1
-
-      - type: unknown_block_2_sub
-        repeat: expr
-        repeat-expr: 7
-
-  unknown_block_2_sub:
+  em_config:
     seq:
       - type: u4
+        valid: 0
+
       - type: u4
-      - type: u4
-      - type: u4
+        valid: 2
+
+      - id: em_type
+        type: u4
+        # 01: not_present
+        # 10: present
+
+      - id: configuration_address
+        type: u4
 
   cpu_security_mwp:
     seq:
