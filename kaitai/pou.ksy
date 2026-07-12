@@ -39,6 +39,7 @@ seq:
   # - size: 0x0a73
   # - size: 0x8427
   # - size: 0x991c
+  # - size: 0x6d0
 
   - id: version
     type: u1
@@ -46,7 +47,7 @@ seq:
       any-of: [7, 8]
 
   - id: pou_type
-    type: u4
+    type: u2
     enum: pou_type
 
   - id: index
@@ -65,13 +66,11 @@ seq:
     # imported means imported from library
     # native means POU from this program
 
-  # - id: protection
-  #   type: u1
+  - id: protection
+    type: u1
 
-  # - id: origin
-  #   type: u1
-
-  # - type: u2
+  - id: origin
+    type: u1
 
   - type: smart_types::unknown(16)
     # this is null if native POU

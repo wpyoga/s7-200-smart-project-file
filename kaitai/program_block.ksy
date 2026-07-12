@@ -10,6 +10,7 @@ seq:
   # - size: 0x0af4
   # - size: 0x0a70
   # - size: 0x0a7c
+  # - size: 0x6cd
 
   - id: version
     type: u1
