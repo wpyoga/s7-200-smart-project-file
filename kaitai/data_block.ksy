@@ -17,6 +17,7 @@ seq:
   # - size: 0xb62c
   # - size: 0xb173
   # - size: 0x641b
+  # - size: 0x21391
 
   - id: marker
     type: u1
@@ -78,7 +79,7 @@ types:
             7: protection_v1
         if: version_again > 2
 
-      - type: smart_types::nulls(2)
+      - type: protection_mwp
         if: version_again == 2
         # TODO: figure out the exact mechanism here
         # was version_again some kind of sub-version?
@@ -283,6 +284,12 @@ types:
     seq:
       - type: smart_types::nulls(22)
 
+  protection_mwp:
+    seq:
+      - id: len
+        type: u2
+
+      - size: len
 
 
 
