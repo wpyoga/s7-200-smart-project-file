@@ -13,9 +13,13 @@ seq:
   # - size: 0xe7fd
   # - size: 0x12fe1
   # - size: 0x5d2e6
+  # - size: 0x9bf1
 
-  - type: u1
-    valid: 2
+  - id: version
+    type: u1
+    # valid: 2
+    # 2: R02.04.00.00
+    # 1: R01.00.00.00
 
   - id: num_td
     type: u4
@@ -29,9 +33,14 @@ seq:
 types:
   td:
     seq:
+      - id: version
+        type: u1
+        # 3: R02.04.00.00
+        # 1: R01.00.00.00
+
       - id: marker
-        type: u2
-        valid: 0x0103
+        type: u1
+        valid: 1
 
       - id: flag_1
         type: u4
