@@ -9,28 +9,42 @@ seq:
   # - size: 0x1bcc95
   # - size: 0x59995
   # - size: 0x59e24
+  # - size: 0x3d150
+  # - size: 0x9956
 
-  - type: u1
-    valid: 4
+  - id: version
+    type: u1
+    # valid: 4
+    # sometimes 2
+    # 1 on v1.x
 
   - type: u4
     valid: 4
+    if: version >= 2
 
   - id: num_hsc
     type: u4
 
   - id: hsc_data
-    type: hsc_data
+    type: hsc_data(version)
     repeat: expr
     repeat-expr: num_hsc
 
 
 types:
   hsc_data:
+    params:
+      - id: hsc_version
+        type: u4
     seq:
+      - id: version
+        type: u1
+        # valid: hsc_version
+        # for version < 2, this does not match
+
       - id: marker
-        type: u2
-        valid: 0x0104
+        type: u1
+        valid: 1
 
       - id: mode
         type: u4
