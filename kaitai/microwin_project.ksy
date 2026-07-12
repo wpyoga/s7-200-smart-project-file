@@ -19,6 +19,7 @@ meta:
     - td_config
     - get_put_config
     - data_log_config
+    - project_info
 
 seq:
   - id: preamble
@@ -45,16 +46,7 @@ seq:
     if: preamble.editor_version >= 0x10
 
   - id: system_block
-    type:
-      switch-on: preamble.editor_version
-      cases:
-        0x1c: system_block
-        0x1b: system_block
-        0x1a: system_block
-        0x18: system_block
-        0x12: system_block
-        0x10: system_block_mwp
-        0x0a: system_block_mwp  # maybe use v3?
+    type: system_block_mwp
 
   - type: u1
     # this is sometimes 1 and sometimes 0
@@ -100,26 +92,26 @@ seq:
   - id: motion_config
     type: motion_config
 
-  - id: modem_config
-    type: modem_config
+  # - id: modem_config
+  #   type: modem_config
 
-  - id: eth_config
-    type: eth_config
+  # - id: eth_config
+  #   type: eth_config
 
-  - id: asi_config
-    type: asi_config
+  # - id: asi_config
+  #   type: asi_config
 
-  - id: internet_config
-    type: internet_config
+  # - id: internet_config
+  #   type: internet_config
 
-  - id: pid_config
-    type: pid_config
+  # - id: pid_config
+  #   type: pid_config
 
-  - id: netr_netw_config
-    type: netr_netw_config
+  # - id: netr_netw_config
+  #   type: netr_netw_config
 
-  - id: project_info
-    type: project_info
+  # - id: project_info
+  #   type: project_info
 
 
 
@@ -134,3 +126,10 @@ seq:
 
   - id: data_log_config
     type: data_log_config
+
+
+
+
+  # this block is always at the end
+  - id: project_info
+    type: project_info
