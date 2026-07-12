@@ -37,8 +37,8 @@ seq:
 
   - type: u2
 
-  - id: output_tables
-    type: output_tables
+  - id: output_tables_digital
+    type: output_tables_digital
 
   - type: u1
     valid: 1
@@ -51,14 +51,11 @@ seq:
   - id: cpu_comm_port
     type: cpu_comm_port
 
-  - id: input_filter
-    type: input_filter
+  - id: input_filter_digital
+    type: input_filter_digital
 
-  - id: unknown_block
-    type: unknown_block
-
-  - type: u4
-  - type: u4
+  - id: input_filter_analog
+    type: input_filter_analog
 
   - id: pulse_catch_bits
     type: pulse_catch_bits
@@ -75,7 +72,31 @@ seq:
   - type: u1
     valid: 1
 
-  - size: 146
+  - id: output_tables_analog
+    type: output_tables_analog
+
+  - type: u1
+    valid: 1
+
+  - id: led_on_item_forced
+    type: u4
+
+  - id: led_on_module_io_error
+    type: u4
+
+  - type: u1
+    valid: 1
+
+  - id: disable_edit_in_run
+    type: u4
+
+
+
+
+
+
+
+
 
 
 
@@ -138,7 +159,7 @@ types:
       - id: port_1_gap_update_factor
         type: u4
 
-  input_filter:
+  input_filter_digital:
     seq:
       - type: u1
         valid: 1
@@ -162,15 +183,24 @@ types:
         # 1:  0.40 ms ??? TODO: verify
         # 0:  0.20 ms ??? TODO: verify
 
-  unknown_block:
+  input_filter_analog:
+    instances:
+      deadband:
+        value: deadband_16 * 16
     seq:
       - type: u1
         valid: 2
 
+      # 32 values for input filters from AIW0 to AIW62
       - type: u4
         repeat: expr
         repeat-expr: 32
-        valid: 1
+
+      - id: num_samples
+        type: u4
+
+      - id: deadband_16
+        type: u4
 
   pulse_catch_bits:
     seq:
@@ -202,7 +232,7 @@ types:
 
   cpu_security_mwp:
     seq:
-      - id: maybe_hash
+      - id: password_encoded
         size: 8
 
       - id: privilege_level
@@ -210,11 +240,12 @@ types:
         # 1: Level 1 = Full
         # 2: Level 2 = Partial
         # 3: Level 3 = Minimum
+        # 4: Level 4 = Disallow Upload
 
       - type: u2
 
   # 128 outputs from Q0.0 to Q15.7
-  output_tables:
+  output_tables_digital:
     seq:
       - id: freeze
         type: u4
@@ -223,6 +254,22 @@ types:
         type: u4
         repeat: expr
         repeat-expr: 128
+
+  # 32 outputs from AQW0 to AQW62
+  output_tables_analog:
+    seq:
+      - id: freeze
+        type: u4
+      - id: on_in_stop
+        type: s4
+        repeat: expr
+        repeat-expr: 32
+
+
+
+
+
+
 
 
 

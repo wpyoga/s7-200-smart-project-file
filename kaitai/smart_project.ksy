@@ -64,9 +64,8 @@ seq:
         0x0a: system_block_mwp  # maybe use v3?
 
   - type: u1
-    # this is 1 for R02.04.00.00 and R03.01.00.00
-    #   and also for R04.00 (MWP)
-    # this is 0 for R01.00.00.00
+    # this is sometimes 1 and sometimes 0
+    # not related to version -- not sure what this is
 
   - id: timestamp2a
     type: smart_types::timestamp
