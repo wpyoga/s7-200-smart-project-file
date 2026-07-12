@@ -9,6 +9,9 @@ seq:
   # - size: 0x43380
   # - size: 0x58826
   # - size: 0x58c75
+  # - size: 0x3c882
+  # - size: 0x9082
+  # - size: 0x9f14
 
   - type: u1
     valid: 1
@@ -24,14 +27,38 @@ seq:
   - id: pid_int_pou_name
     type: smart_types::strl
 
-  - size: 42
+  # - size: 38
+
+  - type: u2
+    valid: 2
+    repeat: expr
+    repeat-expr: 3
+
+  - type: smart_types::null1
+
+  - type: u4
+    valid: 0x22
+
+  - id: version
+    type: u1
+
+  - type: smart_types::nulls(6)
+
+  - size: 24
+    if: version >= 8
+
+  - size: 20
+    if: version == 7
 
 
 types:
   pid_data:
     seq:
-      - type: u1
-        valid: 3
+      - id: version
+        type: u1
+        # valid: 3
+        # 3 on newer
+        # 1 found on R01.00.00.00
 
       - id: some_records
         size: 11
@@ -71,7 +98,8 @@ types:
       - id: sp_high
         type: f4
 
-      - type: smart_types::nulls(4)
+      - id: flag
+        type: u4
 
       - id: alarm_analog_input_module_position
         type: u1
@@ -106,21 +134,19 @@ types:
       - id: maybe_add_manual_control
         type: u4
       - type: u1
-      - id: index
-        type: u4
+      - type: u4
       - id: enabled
         type: u4
-      - id: index_copy
-        type: u4
-        valid: index
+      - type: u4
       - id: memory_allocation_offset
         type: u4
 
       - id: pid_name
         type: smart_types::strl
 
-
-
+      - id: maybe_comment
+        type: smart_types::strl
+        if: version == 1
 
 
 
