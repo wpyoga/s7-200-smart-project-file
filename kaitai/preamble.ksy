@@ -7,6 +7,15 @@ meta:
 seq:
   - id: editor_version
     type: u1
+    valid:
+      any-of:
+        - 0x1c
+        - 0x1b
+        - 0x1a
+        - 0x18
+        - 0x12
+        - 0x10
+        - 0x0a
 
   # Encoded version (usually 8 bytes, sometimes 4)
   - id: mwsmart_comm_version
@@ -23,26 +32,50 @@ seq:
   # might be version, not sure
   - id: magic
     type: u1
-    valid: 3
+    valid:
+      any-of: [3, 2, 0]
+    # this is still present as early as MicroWIN v4.0 SP9
+    # 3: v1.x v2.x
+    # 2: mw4sp9
+    # 0: seems like Micro/WIN32 v3.2 (R03.20 in the project file)
+
+  - type: u4
+    valid: 1
+    if: magic == 2
 
   - id: modbus_station_port0
     type: u4
+    if: magic >= 2
+
+  - type: u4
+    valid: 0
+    if: magic == 2
+  - type: u4
+    valid: 0
+    if: magic == 2
 
   - id: last_connected_ip
     type: smart_types::ipv4_addr
+    if: magic >= 2
 
   - type: smart_types::null1
+    if: magic >= 2
 
   # seems to be: software version that originally created this project
   - id: software_version
     type: smart_types::strl
+    if: magic >= 2
 
   - type: smart_types::null1
+    if: magic >= 2
 
   - id: project_name
     type: smart_types::strl
 
   - type: smart_types::null1
+
+  - type: smart_types::null1
+    if: magic == 0
 
   - id: view_mode
     type: u4

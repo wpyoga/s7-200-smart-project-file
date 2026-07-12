@@ -39,11 +39,16 @@ seq:
   - type: u1
     valid: 0x01
 
+  # TODO: consider whether these timestamps are
+  #       part of the system block
+  #       maybe also the preceding 0x01 marker
   - id: timestamp1c
     type: smart_types::timestamp
+    if: preamble.editor_version >= 0x10
 
   - id: timestamp1d
     type: smart_types::timestamp
+    if: preamble.editor_version >= 0x10
 
   - id: system_block
     type: system_block
@@ -53,6 +58,9 @@ seq:
     # MWP system block seems to be fixed-length
     # padding for now since we haven't deciphered it yet
     if: preamble.editor_version == 0x10
+
+  - size: 335
+    if: preamble.editor_version == 0x0a
 
   - type: u1
     # this is 1 for R02.04.00.00 and R03.01.00.00
@@ -106,29 +114,31 @@ seq:
 
   - id: get_put_config
     type: get_put_config
+    if: preamble.editor_version > 0x12
 
   - id: data_log_config
     type: data_log_config
+    if: preamble.editor_version > 0x12
 
   - id: profinet_config
     type: profinet_config
-    if: preamble.editor_version > 0x18
+    if: preamble.editor_version >= 0x19
 
   - id: web_server_config
     type: web_server_config
-    if: preamble.editor_version > 0x19
+    if: preamble.editor_version >= 0x1a
 
   - id: motion_axis_group_config
     type: motion_axis_group_config
-    if: preamble.editor_version > 0x1a
+    if: preamble.editor_version >= 0x1b
 
   - id: pid_config_2
     type: pid_config_2
-    if: preamble.editor_version > 0x1a
+    if: preamble.editor_version >= 0x1b
 
   - id: hsc_config_2
     type: hsc_config_2
-    if: preamble.editor_version > 0x1b
+    if: preamble.editor_version >= 0x1c
 
   - id: unknown_data70
     type: unknown_data70

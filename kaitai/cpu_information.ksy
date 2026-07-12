@@ -25,6 +25,11 @@ seq:
   - id: cpu_features
     type: cpu_features
     size: cpu_features_len
+    if: cpu_features_len > 0
+
+  # TODO: figure out the structure
+  - type: smart_types::nulls(5)
+    if: cpu_features_len == 0
 
 
 types:
