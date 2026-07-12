@@ -40,6 +40,7 @@ seq:
   # - size: 0x8427
   # - size: 0x991c
   # - size: 0x6d0
+  # - size: 0x12ab
 
   - id: version
     type: u1
@@ -137,7 +138,7 @@ types:
             0x0080: protection_v3
             0x000d: protection_v2
             0x000b: protection_v1
-            0x000a: smart_types::unknown(5)
+            0x000a: protection_mwp
 
       - id: timestamp_created
         type: smart_types::timestamp
@@ -1527,6 +1528,15 @@ types:
     seq:
       - size: 22
       - type: smart_types::nulls(3)
+
+  protection_mwp:
+    seq:
+      - id: len
+        type: u1
+
+      - size: len
+
+      - type: u4
 
   var_status:
     seq:
