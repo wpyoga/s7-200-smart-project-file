@@ -6,6 +6,7 @@ meta:
     - smart_types
     - preamble
     - system_block
+    - system_block_mwp
     - program_block
     - symbol_table
     - status_chart
@@ -51,16 +52,16 @@ seq:
     if: preamble.editor_version >= 0x10
 
   - id: system_block
-    type: system_block
-    if: preamble.editor_version > 0x10
-
-  - size: 1218
-    # MWP system block seems to be fixed-length
-    # padding for now since we haven't deciphered it yet
-    if: preamble.editor_version == 0x10
-
-  - size: 335
-    if: preamble.editor_version == 0x0a
+    type:
+      switch-on: preamble.editor_version
+      cases:
+        0x1c: system_block
+        0x1b: system_block
+        0x1a: system_block
+        0x18: system_block
+        0x12: system_block
+        0x10: system_block_mwp
+        0x0a: system_block_mwp  # maybe use v3?
 
   - type: u1
     # this is 1 for R02.04.00.00 and R03.01.00.00

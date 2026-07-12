@@ -30,7 +30,7 @@ seq:
   - id: version
     type: u2
     valid:
-      any-of: [0x010e, 0x030f, 0x060f, 0x0613]
+      any-of: [0x030f, 0x060f, 0x0613]
 
   - type:
       switch-on: version
@@ -38,7 +38,6 @@ seq:
         0x0613: smart_types::nulls(44)
         0x060f: smart_types::nulls(44)
         0x030f: smart_types::nulls(35)
-        0x010e: cpu_security_mwp # just a guess for now
 
   - id: sometimes_version_info
     type: smart_types::strl1
@@ -48,18 +47,9 @@ seq:
 
   - type: u1
     valid: 1
-    # present in smart, missing in mwp
 
-  # only in SMART
   - id: cpu_rs485
     type: cpu_rs485
-    if: version != 0x010e
-
-
-
-  - id: output_tables
-    type: output_tables
-    if: version == 0x010e
 
   - type: u1
     valid: 1
@@ -69,47 +59,8 @@ seq:
     repeat: expr
     repeat-expr: 6
 
-  # only in Micro/WIN
-  - id: cpu_comm_port
-    type: cpu_comm_port
-    if: version == 0x010e
-
-  - id: input_filter
-    type: input_filter
-    if: version == 0x010e
-
-  - id: unknown_block
-    type: unknown_block
-    if: version == 0x010e
-
-  - type: u4
-  - type: u4
-
-  - id: pulse_catch_bits
-    type: pulse_catch_bits
-    if: version == 0x010e
-
-  - id: unknown_block_2
-    type: unknown_block_2
-    if: version == 0x010e
-
   - id: cpu_security
     type: cpu_security(version)
-    if: version != 0x010e
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   - type: u1
     valid: 1
@@ -182,11 +133,11 @@ seq:
 
   - id: unknown_data_2
     type: smart_types::rec(2,4)
-    if: version != 0x010e and cpu_security.block_version == 6
+    if: cpu_security.block_version == 6
 
   - id: unknown_data_3
     type: smart_types::rec(4,4)
-    if: version != 0x010e and cpu_security.block_version == 6
+    if: cpu_security.block_version == 6
 
 
 types:
@@ -267,7 +218,6 @@ types:
         type: smart_types::strn(64)
 
 
-  # only in SMART
   cpu_rs485:
     seq:
       - type: u1
@@ -281,148 +231,6 @@ types:
         enum: baud_rate
 
       - type: smart_types::nulls(8)
-
-  # only in Micro/WIN
-  cpu_comm_port:
-    seq:
-      - type: u1
-        valid: 1
-
-      - id: port_0_plc_address
-        type: u4
-
-      - id: port_0_highest_address
-        type: u4
-
-      - id: port_0_baud_rate
-        type: u4
-        # 0: 9.6kbps
-        # 2: 19.2kbps ??? TODO: verify
-        # 4: 187.5kbps
-
-      - id: port_0_retry_count
-        type: u4
-
-      - id: port_0_gap_update_factor
-        type: u4
-
-      - id: port_1_plc_address
-        type: u4
-
-      - id: port_1_highest_address
-        type: u4
-
-      - id: port_1_baud_rate
-        type: u4
-        # 0: 9.6kbps
-        # 2: 19.2kbps ??? TODO: verify
-        # 4: 187.5kbps
-
-      - id: port_1_retry_count
-        type: u4
-
-      - id: port_1_gap_update_factor
-        type: u4
-
-  input_filter:
-    seq:
-      - type: u1
-        valid: 1
-
-      # input filter is divided into groups:
-      # group 0: I0.0 ~ I0.3
-      # group 1: I0.4 ~ I0.7
-      # group 1: I1.0 ~ I1.3 ??? TODO: verify
-      # group 2: I1.4 ~ I1.7 ??? TODO: verify
-      # group 3: I2.0 ~ I2.3 ??? TODO: verify
-      # group 4: I2.4 ~ I2.7 ??? TODO: verify
-      - id: filter
-        type: u4
-        repeat: expr
-        repeat-expr: 6
-        # 7: 12.80 ms ??? TODO: verify
-        # 6:  6.40 ms
-        # 5:  3.20 ms
-        # 3:  1.60 ms
-        # 2:  0.80 ms ??? TODO: verify
-        # 1:  0.40 ms ??? TODO: verify
-        # 0:  0.20 ms ??? TODO: verify
-
-  unknown_block:
-    seq:
-      - type: u1
-        valid: 2
-
-      - type: u4
-        repeat: expr
-        repeat-expr: 32
-        valid: 1
-
-  pulse_catch_bits:
-    seq:
-      - type: u1
-        valid: 1
-
-      # 24 bits from I0.0 to I2.7
-      - type: u4
-        repeat: expr
-        repeat-expr: 24
-        valid:
-          any-of: [1, 0]
-
-  unknown_block_2:
-    seq:
-      - type: u1
-        valid: 1
-
-      - type: unknown_block_2_sub
-        repeat: expr
-        repeat-expr: 7
-
-  unknown_block_2_sub:
-    seq:
-      - type: u4
-      - type: u4
-      - type: u4
-      - type: u4
-
-  cpu_security_mwp:
-    seq:
-      - id: maybe_hash
-        size: 8
-
-      - id: privilege_level
-        type: u2
-        # 1: Level 1 = Full
-        # 2: Level 2 = Partial
-        # 3: Level 3 = Minimum
-
-      - type: u2
-
-  # 128 outputs from Q0.0 to Q15.7
-  output_tables:
-    seq:
-      - id: freeze
-        type: u4
-
-      - id: on_in_stop
-        type: u4
-        repeat: expr
-        repeat-expr: 128
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   cpu_config:
