@@ -8,6 +8,8 @@ seq:
   # - size: 0x5eb67
   # - size: 0x5ecae
   # - size: 0xba6ba
+  # - size: 0x8e089
+  # - size: 0xba798
 
   - id: marker
     type: u1
@@ -28,8 +30,7 @@ seq:
     # 04 00 00 00: i-device
     # 08 00 00 00: controller & i-device
 
-  - id: parameter_assignment_by_higher_level_io_controller
-    type: u4
+  - type: u4
 
   - type: u1
     valid: 1
@@ -67,20 +68,24 @@ seq:
 
   - id: controller_config_block
     type: controller_config_block
-    if: flag != 3
+    if: profinet_device_config == 2 or profinet_device_config == 8
 
   - type: smart_types::null1
   # - type: u1
 
   - id: idevice_config
     type: idevice_config
+    # if: profinet_device_config == 4 or profinet_device_config == 8
 
   - id: precompiled_profinet_block
     type: precompiled_profinet_block
     if: profinet_device_config > 0
 
+  - type: smart_types::null1
+    if: profinet_device_config == 0
+
   # TODO: figure out the actual logic
-  - type: smart_types::nulls(1)
+  - type: smart_types::null1
     if: profinet_device_config == 0
 
 types:
@@ -93,43 +98,58 @@ types:
       endian: be
     seq:
       # looks like some kind of header or preamble
-      - size: 40
-      - id: start_up_time_ms
-        type: u2
-      - size: 91
+      # - size: 40
+      - size: 4
 
-      - type: u2
-      - type: u2
+      # related to i-device config
+      - id: block_len_1
+        type: u4le
+
+      - size: block_len_1
+
+      # - id: start_up_time_ms
+      #   type: u2
+
+      # # - size: 91
+      # - size: 20
+      # - id: marker_2
+      #   type: u2
+      # - size: 69
+      # # - size: 29
+
+      - type: u1
+
+      - type: u4le
+
+      # also related to i-device config
       - id: block_len
-        type: u2le
+        type: u4le
 
       - size: block_len
 
-      - type: u2
+      # related to controller config
       - id: num_sub_block
-        type: u2le
-      - type: smart_types::null1
-
+        type: u4le
       - id: precompiled_sub_block
         type: precompiled_sub_block
         repeat: expr
         repeat-expr: num_sub_block
         # todo: find this info somewhere
         # this is the number of devices
-      - type: smart_types::null1
+        # configured under controller
 
   precompiled_sub_block:
     meta:
       endian: be
     seq:
-      - type: u2
+      - type: u1
       - type: u2
       - id: block_len
         type: u2le
       - id: precompiled_sub_data
         type: precompiled_sub_data
         size: block_len
-      - type: smart_types::null1
+      - type: smart_types::nulls(2)
 
   precompiled_sub_data:
     meta:
