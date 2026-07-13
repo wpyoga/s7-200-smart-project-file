@@ -41,6 +41,7 @@ seq:
   # - size: 0x991c
   # - size: 0x6d0
   # - size: 0x12ab
+  - size: 0x3a49c
 
   - id: version
     type: u1
@@ -1501,9 +1502,10 @@ types:
           any-of: [0, 1, 2, 4]
       - type: u1
         valid:
-          any-of: [0, 2]
+          any-of: [0, 2, 3]
         # usually 0
         # 2 seen in MBUSM1 and MBUS_MSG migrated from V2 to V3
+        # 3 seen in a custom user library (my own)
 
   protection_v2:
     seq:
