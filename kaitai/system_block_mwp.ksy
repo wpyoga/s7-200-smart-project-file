@@ -36,7 +36,9 @@ seq:
       cases:
         0x010e: cpu_security_mwp
 
-  - type: u2
+  - type: u1
+
+  - type: u1
 
   - id: output_tables_digital
     type: output_tables_digital
@@ -61,7 +63,8 @@ seq:
   - id: pulse_catch_bits
     type: pulse_catch_bits
 
-  - type: u1
+  - id: unknown
+    type: u1
     valid: 1
 
   - id: em_config
