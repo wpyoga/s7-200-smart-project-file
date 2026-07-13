@@ -11,16 +11,21 @@ seq:
   # - size: 0x8f9f
   # - size: 0x8fc3
   # - size: 0x81c01
+  # - size: 0x88ac
 
   - id: version
     type: u1
     valid:
-      any-of: [3]
+      any-of: [3, 2]
+
   - id: marker_1
     type: u4
     valid: 1
+    if: version >= 3
+
   - id: status_chart_count
     type: u2
+
   - id: status_charts
     type: status_chart1
     repeat: expr
@@ -34,29 +39,40 @@ types:
         type: u1
         valid:
           any-of: [7, 8]
+
       - id: marker_4000
         type: u2
         valid: 4000
+
       - type: smart_types::nulls(2)
 
       - id: index
         type: u2
+
       - id: version
         type: u2
         valid:
           any-of: [1]
+
       - id: null_bytes
         type:
           switch-on: block_version
           cases:
             7: smart_types::nulls(18)
             8: smart_types::nulls(22)
+
       - id: marker_2
         type: u2
         valid: 2
+
       - id: name
         type: smart_types::strl
-      - type: smart_types::nulls(8)
+
+      - type: u4
+
+      - type: u4
+        valid: 0
+
       - id: entry_count
         type: u2
       - id: entry
