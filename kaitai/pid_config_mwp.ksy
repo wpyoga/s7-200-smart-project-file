@@ -10,7 +10,7 @@ seq:
 
   - id: marker
     type: u2
-    valid: 2
+    valid: 0x02
 
   - id: marker_2
     type: u1
@@ -28,11 +28,12 @@ seq:
   - type: u2
     valid: 2
 
-  - type: u1
-    valid: 2
+  - id: memory_allocation_offset_address_type
+    type: u2
+    valid: 0x1002
+    # 02 10: VB
 
-  - type: u4
-    valid: 16
+  - type: smart_types::nulls(3)
 
   - id: memory_allocation_offset
     type: u4
