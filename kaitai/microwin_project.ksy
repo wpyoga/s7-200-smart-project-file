@@ -11,14 +11,7 @@ meta:
     - status_chart
     - data_block
     - cpu_information
-    - unknown_data10
-    - motion_config
-    - pid_config
-    - hsc_config
-    - pwm_config
-    - td_config
-    - get_put_config
-    - data_log_config
+    - wizard_data
     - project_info
 
 seq:
@@ -79,57 +72,10 @@ seq:
   - id: cpu_information
     type: cpu_information
 
-  - id: unknown_data10
-    type: unknown_data10
-
-
-  # looks like the configs do not have fixed position
-  # might be based on magic number
-
-  - id: td_config
-    type: td_config
-
-  - id: motion_config
-    type: motion_config
-
-  # - id: modem_config
-  #   type: modem_config
-
-  # - id: eth_config
-  #   type: eth_config
-
-  # - id: asi_config
-  #   type: asi_config
-
-  # - id: internet_config
-  #   type: internet_config
-
-  # - id: pid_config
-  #   type: pid_config
-
-  # - id: netr_netw_config
-  #   type: netr_netw_config
-
-  # - id: project_info
-  #   type: project_info
-
-
-
-
-
-
-  - id: hsc_config
-    type: hsc_config
-
-  - id: pwm_config
-    type: pwm_config
-
-  - id: data_log_config
-    type: data_log_config
-
-
-
+  - id: wizard_data
+    type: wizard_data
 
   # this block is always at the end
   - id: project_info
     type: project_info
+

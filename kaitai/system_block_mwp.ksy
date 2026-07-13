@@ -15,6 +15,7 @@ seq:
   # - size: 0x579
   # - size: 0x57d
   # - size: 0x56b
+  # - size: 0x53d
 
   # maybe this needs to be split into 2
   # the first byte looks like the main version number
