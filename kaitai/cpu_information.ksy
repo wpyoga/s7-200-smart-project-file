@@ -8,6 +8,9 @@ seq:
   # - size: 0x8be33
   # - size: 0xc579
   # - size: 0xb284
+  # - size: 0x1a14
+  # - size: 0x2bef1
+  # - size: 0x94dc
 
   - type: smart_types::null1
 
@@ -22,14 +25,13 @@ seq:
   - id: cpu_features_len
     type: u2
 
+  # TODO: figure out the structure
   - id: cpu_features
     type: cpu_features
     size: cpu_features_len
     if: cpu_features_len > 0
 
-  # TODO: figure out the structure
-  - type: smart_types::nulls(5)
-    if: cpu_features_len == 0
+  - type: smart_types::null1
 
 
 types:
@@ -117,7 +119,7 @@ types:
 
       - id: cpu_attr3_copy
         type: u4
-        valid: cpu_attr3
+        # valid: cpu_attr3
 
       - id: cpu_attr4
         type: u2
@@ -126,7 +128,7 @@ types:
 
       - id: cpu_attr4_copy
         type: u2
-        valid: cpu_attr4
+        # valid: cpu_attr4
 
       - id: cpu_attr5
         type: u2
@@ -164,7 +166,9 @@ types:
         # 30: ST40 v1.x
         # 18: CR60s
 
-      - type: smart_types::nulls(6)
+      - type: u2
+        repeat: expr
+        repeat-expr: 3
 
       - id: cpu_attr10
         size: 3
@@ -189,7 +193,7 @@ types:
         size: 8
 
       - type: u2
-        valid: 4
+        # valid: 4
 
       - id: cpu_attr15
         type: u2
@@ -200,6 +204,7 @@ types:
       - type: u2
         valid: 1
 
+      # maybe max number of expansion modules??
       - id: cpu_attr16
         type: u2
         # 00 10: v2.8 ST32
@@ -210,7 +215,7 @@ types:
       - id: num_expansion_module
         type: u2
 
-      - type: smart_types::nulls(2)
+      - type: u2
 
       - type: u1
         # 04: ST60 ST32
@@ -229,7 +234,7 @@ types:
         # 00 00: v2.5 ~ v2.0 v1.x
 
       - type: u2
-        valid: 0xfb00
+        # valid: 0xfb00
 
       - id: cpu_attr17
         type: u2
@@ -287,13 +292,17 @@ types:
       - id: cpu_num_do
         type: u1
 
-      - type: smart_types::nulls(2)
+      - id: cpu_num_ai
+        type: u1
+
+      - id: cpu_num_aq
+        type: u1
 
       - id: cpu_attr27
         type: u1
-        valid: cpu_attr9
 
-      - type: smart_types::nulls(8)
+      - type: u4
+      - type: u4
 
       - id: cpu_attr28
         type: u4
