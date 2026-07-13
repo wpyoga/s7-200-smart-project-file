@@ -7,10 +7,7 @@ meta:
 seq:
   # - size: 0x5eb67
   # - size: 0x5ecae
-
-  # - id: profinet_data
-  #   size: 78202
-  #   size: 35682
+  # - size: 0xba6ba
 
   - id: marker
     type: u1
@@ -54,6 +51,7 @@ seq:
 
   - id: flag
     type: u4
+    # 00 00 00 00: controller & i-device not configured
     # 02 00 00 00: maybe controller
     # 03 00 00 00: maybe i-device
     #              (also when device is both controller and i-device)
@@ -69,9 +67,10 @@ seq:
 
   - id: controller_config_block
     type: controller_config_block
-    # size: 32403
+    if: flag != 3
 
-  - type: smart_types::nulls(1)
+  - type: smart_types::null1
+  # - type: u1
 
   - id: idevice_config
     type: idevice_config
@@ -226,7 +225,7 @@ types:
         type: controller_config
         repeat: expr
         repeat-expr: num_controller_device
-        # repeat-expr: 2
+
 
   controller_config:
     seq:
@@ -560,9 +559,12 @@ types:
         repeat: expr
         repeat-expr: num_transfer_area
 
-      - type: smart_types::strl
+      # - type: smart_types::nulls(5)
+      - id: cpu_name
+        type: smart_types::strl
         if: num_transfer_area > 0
-      - type: smart_types::strl
+      - id: cpu_description
+        type: smart_types::strl
         if: num_transfer_area > 0
       - type: smart_types::strl
         if: num_transfer_area > 0
@@ -596,6 +598,8 @@ types:
       - id: offset
         type: u4
 
+      # null is actually at the start of transfer area
+      # - type: smart_types::null1
 
 
   nlist:
