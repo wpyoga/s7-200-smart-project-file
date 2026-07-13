@@ -27,7 +27,7 @@ seq:
   - type: u1
     valid: 1
 
-  - type: smart_types::nulls(20)
+  - type: smart_types::nulls(4)
 
 
 

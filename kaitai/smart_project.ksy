@@ -11,7 +11,7 @@ meta:
     - status_chart
     - data_block
     - cpu_information
-    - unknown_data10
+    - project_info
     - motion_config
     - pid_config
     - hsc_config
@@ -24,7 +24,6 @@ meta:
     - motion_axis_group_config
     - pid_config_2
     - hsc_config_2
-    - unknown_data70
 
 seq:
   - id: preamble
@@ -82,8 +81,8 @@ seq:
   - id: cpu_information
     type: cpu_information
 
-  - id: unknown_data10
-    type: unknown_data10
+  - id: project_info
+    type: project_info
 
   - id: motion_config
     type: motion_config
@@ -128,6 +127,6 @@ seq:
     type: hsc_config_2
     if: preamble.editor_version >= 0x1c
 
-  - id: unknown_data70
-    type: unknown_data70
+  - id: footer_nulls
+    type: smart_types::nulls(16)
 

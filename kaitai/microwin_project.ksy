@@ -79,3 +79,6 @@ seq:
   - id: project_info
     type: project_info
 
+  - id: footer_nulls
+    type: smart_types::nulls(16)
+

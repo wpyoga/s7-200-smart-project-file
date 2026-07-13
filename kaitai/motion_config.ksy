@@ -10,11 +10,6 @@ seq:
   # - size: 0x41ca5
   # - size: 0x426af
 
-  - type: u1
-    valid: 1
-
-  - type: smart_types::nulls(4)
-
   - id: version
     type: u1
     # 3: v2.x

@@ -17,7 +17,8 @@ seq:
 
   - id: version
     type: u1
-    # valid: 2
+    valid:
+      any-of: [2, 1]
     # 2: R02.04.00.00
     # 1: R01.00.00.00
 
@@ -28,6 +29,9 @@ seq:
     type: td
     repeat: expr
     repeat-expr: num_td
+
+  - type: smart_types::nulls(4)
+    if: version >= 2
 
 
 types:

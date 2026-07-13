@@ -8,8 +8,6 @@ seq:
   # - size: 0x8dfc4
   # - size: 0x5e851
 
-  - type: smart_types::nulls(4)
-
   - type: u1
     valid: 4
 

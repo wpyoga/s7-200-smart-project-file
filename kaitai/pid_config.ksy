@@ -64,8 +64,6 @@ types:
         size: 11
         repeat: expr
         repeat-expr: 14
-        # this is the same format found in unknown_data20
-        # might be related
 
       - id: maybe_controller_type
         type: u1
