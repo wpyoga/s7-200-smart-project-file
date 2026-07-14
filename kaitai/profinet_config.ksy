@@ -19,7 +19,7 @@ seq:
     type: u1
     valid: 1
 
-  - id: start_up_time
+  - id: start_up_time_ms
     type: u4
 
   - id: profinet_device_config
@@ -98,47 +98,200 @@ types:
       endian: be
     seq:
       # looks like some kind of header or preamble
-      # - size: 40
       - size: 4
 
       # related to i-device config
-      - id: block_len_1
+      - id: block_len_a
         type: u4le
+      - id: precompiled_config_a
+        type: precompiled_config_a
+        size: block_len_a
 
-      - size: block_len_1
 
-      # - id: start_up_time_ms
-      #   type: u2
-
-      # # - size: 91
-      # - size: 20
-      # - id: marker_2
-      #   type: u2
-      # - size: 69
-      # # - size: 29
 
       - type: u1
 
-      - type: u4le
+      - id: profinet_device_config_sub
+        type: u4le
+        valid: _parent.profinet_device_config
 
       # also related to i-device config
-      - id: block_len
+      - id: block_len_b
         type: u4le
-
-      - size: block_len
+      - id: precompiled_config_b
+        type: precompiled_config_b
+        size: block_len_b
 
       # related to controller config
-      - id: num_sub_block
+      - id: num_controller_config
         type: u4le
-      - id: precompiled_sub_block
-        type: precompiled_sub_block
+      - id: precompiled_controller_config
+        type: precompiled_controller_config
         repeat: expr
-        repeat-expr: num_sub_block
+        repeat-expr: num_controller_config
         # todo: find this info somewhere
         # this is the number of devices
         # configured under controller
 
-  precompiled_sub_block:
+  # precompiled_config_a:
+  #   meta:
+  #     endian: be
+  #   seq:
+  #     - size: 30
+
+  #     - id: start_up_time_ms
+  #       type: u4
+
+  #     - id: marker_1
+  #       type: u2
+  #       # valid: 1
+
+  #     - id: marker_2
+  #       type: u2
+  #       # valid: 0x1cd0
+
+  #     - id: marker_0
+  #       type: u2
+  #       valid: 0
+
+  #     - size: 14
+  #     - id: marker
+  #       type: u2
+  #       valid: 0x0119
+
+  # precompiled_config_b_old:
+  #   meta:
+  #     endian: be
+  #   seq:
+  #     - id: marker_2
+  #       type: u2
+  #       # valid: 0x1cd0
+
+  #     - id: marker_0
+  #       type: u2
+  #       valid: 0
+
+  #     - size: 14
+  #     - id: marker
+  #       type: u2
+  #       # valid: 0x0119
+
+  #     - size: 10
+
+  #     - id: start_up_time_ms
+  #       type: u4
+
+  precompiled_config_a:
+    meta:
+      endian: be
+    seq:
+      - type: precompiled_marked_block
+        repeat: eos
+
+  precompiled_config_b:
+    meta:
+      endian: be
+    seq:
+      - type: precompiled_marked_block
+        repeat: eos
+
+  precompiled_marked_block:
+    meta:
+      endian: be
+    seq:
+      - id: block_len
+        type: u1
+      - id: marker
+        type: u1
+        valid:
+          any-of: [0xd0, 0xd6, 0xd5, 0xd7, 0xd8]
+      - size: block_len - 2
+        if: block_len != 255
+      # TODO: confirm this logic... seems wrong
+      # block_len of 255 seems to denote an internal
+      # structure containing its own block lengths
+      - type: precompiled_marked_block_sub
+        if: block_len == 255
+
+
+  precompiled_marked_block_sub:
+    meta:
+      endian: be
+    seq:
+      - type: u4
+      - type: u4
+
+      - id: block_len
+        type: u2
+      - id: sub_block_2
+        type: sub_block_2
+        size: block_len
+      # and this has yet another sub block
+      # with internal marked length
+
+  sub_block_2:
+    meta:
+      endian: be
+    seq:
+      - type: u1
+      - type: u4
+      - type: u4
+      - type: u4
+      - type: u1
+        valid: 1
+
+      - id: block_len
+        type: u2
+      - id: sub_block_3
+        type: sub_block_3
+        size: block_len
+
+  sub_block_3:
+    meta:
+      endian: be
+    seq:
+      - size: 12
+      - id: max_subslot
+        type: u2
+      - size: 28
+      - type: precompiled_subslot
+        size: 24
+        repeat: eos
+
+  # these are all i-device config
+  precompiled_subslot:
+    meta:
+      endian: be
+    seq:
+      - id: subslot
+        type: u2
+        # 1000 ~ 1007: transfer area
+        # 32768: DAP
+        # 32769: Ethernet Port 1
+      - type: u2
+        valid: 0
+      - id: type
+        type: u1
+        #  0: not idevice
+        # 10: input
+        # 20: output
+      - type: u2
+        valid:
+          expr: 'type == 0 or _ == 0'
+      - id: length
+        type: u1
+      - type: u1
+        valid: 0
+      - size: 6
+      - id: length_copy
+        type: u1
+        # valid: length
+        valid:
+          expr: 'type == 0 or _ == length'
+      - size: 8
+
+
+  precompiled_controller_config:
     meta:
       endian: be
     seq:
