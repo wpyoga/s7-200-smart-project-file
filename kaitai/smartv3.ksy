@@ -12,6 +12,8 @@ seq:
     type: header
   - id: zip_encrypted
     type: encrypted_body
+
+
 types:
   header:
     seq:
@@ -38,15 +40,6 @@ types:
     seq:
       - id: body
         size-eos: True
-  null:
-    params:
-      - id: len
-        type: u4
-    seq:
-      - id: zero
-        type: u1
-        repeat: expr
-        repeat-expr: len
 
 
 enums:
@@ -54,3 +47,4 @@ enums:
     0: lad
     1: stl
     2: fbd
+
