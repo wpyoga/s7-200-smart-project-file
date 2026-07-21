@@ -111,7 +111,8 @@ types:
 
       - id: unknown
         type: f8
-        valid: 0.0
+        valid:
+          expr: _ == 0.0
 
       - id: accel_ms
         type: u4

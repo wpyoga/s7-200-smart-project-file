@@ -256,7 +256,8 @@ types:
         type: f8
 
       - type: f8
-        valid: 0.0
+        valid:
+          expr: _ == 0.0
 
 
   axis_v1:
