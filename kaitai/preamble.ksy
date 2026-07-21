@@ -114,7 +114,7 @@ types:
       - id: last_connected_printer
         type: str
         size: 32
-        encoding: ASCII
+        encoding: ISO-8859-1
 
       # there is something really funny going on here
       # if the marker+unkown block is not null, the
@@ -165,11 +165,11 @@ types:
       - id: print_header
         size: 256
         type: strz
-        encoding: ASCII
+        encoding: ISO-8859-1
       - id: print_footer
         size: 256
         type: strz
-        encoding: ASCII
+        encoding: ISO-8859-1
       - type: smart_types::nulls(512)
       - type: smart_types::nulls(2)
       - id: lad_print_options

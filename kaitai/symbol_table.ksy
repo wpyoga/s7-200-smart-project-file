@@ -47,7 +47,7 @@ types:
       - id: null_bytes
         size: 'table_version == 8 ? 22 : 18'
         type: str
-        encoding: ASCII
+        encoding: ISO-8859-1
       - id: marker_0200
         type: u2
         valid: 2

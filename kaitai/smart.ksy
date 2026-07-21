@@ -21,7 +21,7 @@ types:
       - id: signature
         type: str
         size: 4
-        encoding: ASCII
+        encoding: ISO-8859-1
         valid:
           any-of:
             - '"DEM\0"'
@@ -29,7 +29,7 @@ types:
       - id: file_version
         type: str
         size: 12
-        encoding: ASCII
+        encoding: ISO-8859-1
         valid:
           any-of:
             - '"R01.00.00.00"'

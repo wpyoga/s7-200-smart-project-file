@@ -1081,7 +1081,7 @@ types:
       - id: label_l
         type: strz
         size: 24
-        encoding: ASCII
+        encoding: ISO-8859-1
         # 1st
         # box label, or first label on the left side
         # 2nd
@@ -1105,7 +1105,7 @@ types:
       - id: label_r
         type: strz
         size: 24
-        encoding: ASCII
+        encoding: ISO-8859-1
         # 1st
         # first label on the right side
         # 2nd

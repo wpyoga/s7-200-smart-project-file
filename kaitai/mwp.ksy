@@ -21,13 +21,13 @@ types:
       - id: signature
         type: str
         size: 4
-        encoding: ASCII
+        encoding: ISO-8859-1
         valid: '"GJK\0"'
 
       - id: file_version
         type: str
         size: 6
-        encoding: ASCII
+        encoding: ISO-8859-1
         valid:
           any-of:
             - '"R03.20"'

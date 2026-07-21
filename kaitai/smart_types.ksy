@@ -11,7 +11,7 @@ types:
       - id: contents
         type: str
         size: len
-        encoding: ASCII
+        encoding: ISO-8859-1
 
   # string prefixed with 2-byte big endian length, no null terminator
   strl_be:
@@ -21,7 +21,7 @@ types:
       - id: contents
         type: str
         size: len
-        encoding: ASCII
+        encoding: ISO-8859-1
 
   # string prefixed with 1-byte length, no null terminator
   strl1:
@@ -31,7 +31,7 @@ types:
       - id: contents
         type: str
         size: len
-        encoding: ASCII
+        encoding: ISO-8859-1
 
   # string with predetermined length, no null terminator
   strn:
@@ -42,7 +42,7 @@ types:
       - id: contents
         type: str
         size: len
-        encoding: ASCII
+        encoding: ISO-8859-1
 
   unknown:
     params:

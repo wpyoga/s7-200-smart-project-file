@@ -929,7 +929,9 @@ types:
       - id: value
         type: str
         size: strlen
-        encoding: gbk
+        encoding: ISO-8859-1
+        # use ISO-8859-1 because it will not result in conversion losses
+        # then we will convert to GBK as necessary in the Python script
         # try this for now
         # type: smart_types::strl
 

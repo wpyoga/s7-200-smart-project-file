@@ -23,7 +23,7 @@ types:
       - id: file_version
         type: str
         size: 12
-        encoding: ASCII
+        encoding: ISO-8859-1
         valid:
           any-of: ['"R03.00.00.00"', '"R03.01.00.00"']
       - type: smart_types::nulls(2)
